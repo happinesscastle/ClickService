@@ -81,25 +81,13 @@
     <Content Include="bin\Debug\ClickServerService.pdb" />
     <Content Include="bin\Debug\Dapper.dll" />
     <Content Include="bin\Debug\RCG.dll" />
-    <Content Include="bin\Debug\ServiceLogs\ErrorLog_12_4_2021.txt" />
-    <Content Include="bin\Debug\ServiceLogs\ErrorLog_2022-06-15.txt" />
-    <Content Include="bin\Debug\ServiceLogs\ErrorLog_2022-06-18.txt" />
-    <Content Include="bin\Debug\ServiceLogs\ErrorLog_2022-06-19.txt" />
-    <Content Include="bin\Debug\ServiceLogs\ErrorLog_2022-06-20.txt" />
-    <Content Include="bin\Debug\ServiceLogs\ErrorLog_6_13_2021.txt" />
-    <Content Include="bin\Debug\ServiceLogs\ServiceLog_12_4_2021.txt" />
-    <Content Include="bin\Debug\ServiceLogs\ServiceLog_2022-06-15.txt" />
-    <Content Include="bin\Debug\ServiceLogs\ServiceLog_2022-06-16.txt" />
-    <Content Include="bin\Debug\ServiceLogs\ServiceLog_2022-06-18.txt" />
-    <Content Include="bin\Debug\ServiceLogs\ServiceLog_2022-06-19.txt" />
-    <Content Include="bin\Debug\ServiceLogs\ServiceLog_2022-06-20.txt" />
-    <Content Include="bin\Debug\ServiceLogs\ServiceLog_6_12_2021.txt" />
-    <Content Include="bin\Debug\ServiceLogs\ServiceLog_6_13_2021.txt" />
-    <Content Include="bin\Debug\ServiceLogs\ServiceLog_Recive2022-06-18.txt" />
     <Content Include="RCG.dll" />
   </ItemGroup>
   <ItemGroup>
     <None Include="bin\Debug\ClickServerService.InstallLog" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="bin\Debug\ServiceLogs\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -55,9 +55,14 @@
     <Compile Include="CashierClass.cs" />
     <Compile Include="ClassStock.cs" />
     <Compile Include="ClsClickService.cs" />
+    <Compile Include="Improved\ClsReceiver.cs" />
+    <Compile Include="Improved\ClsSender.cs" />
+    <Compile Include="Improved\ClsStarter.cs" />
     <Compile Include="CouponClass.cs" />
     <Compile Include="GamesClass.cs" />
     <Compile Include="MainClass.cs" />
+    <Compile Include="Models\Access_Point.cs" />
+    <Compile Include="Models\ServerConfigView.cs" />
     <Compile Include="Pattern.cs" />
     <Compile Include="ProductTemplateClass.cs" />
     <Compile Include="SwiperClass.cs" />

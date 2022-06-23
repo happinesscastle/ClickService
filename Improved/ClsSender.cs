@@ -1,664 +1,62 @@
-﻿using System.Text.RegularExpressions;
-using ClickServerService.ClassCode;
+﻿using System.Collections.Generic;
+using ClickServerService.Models;
 using System.Threading.Tasks;
-using System.ServiceProcess;
-using System.ComponentModel;
 using System.Net.Sockets;
 using System.Threading;
-using System.IO.Ports;
-using System.Timers;
 using System.Data;
+using System.Linq;
 using System.Text;
-using System.Net;
 using System.IO;
 using System;
 
-namespace ClickServerService
+namespace ClickServerService.Improved
 {
-    public class ClsClickService //: ServiceBase
+    public class ClsSender
     {
-        public int MultiRun_AP_ID = 0;
-        public int Main_ID_GameCenter = 1;
-        private SwiperClass objSwiper = new SwiperClass();
-        private MainClass objMain = new MainClass();
-        private GamesClass objGames = new GamesClass();
-        private CardClass objcard = new CardClass();
-        private UsersClass objUser = new UsersClass();
-        private Pattern objPattern = new Pattern();
-        private Club objClub = new Club();
-        public int SwiperID;
-        public int GameCenterID;
+        /// <summary>
+        /// Global Variables
+        /// </summary>
+        ServerConfigView serverConfigView = new ServerConfigView();
 
-        private string TimeStamp;
-        private DataTable TempP1_DT = new DataTable();
-        public SerialPort spTX;
-        public SerialPort spRX;
-        public bool _checkBoxShowAll = false;
-        public int TCP_CountValidateReceivedData = 1;
-        public string ap_IP = "";// Copy
-        public bool TCPIpState_Main1 = false;
+        MainClass objMain = new MainClass();
+        SwiperClass objSwiper = new SwiperClass();
+        CardClass objcard = new CardClass();
+        UsersClass objUser = new UsersClass();
+        Pattern objPattern = new Pattern();
 
-        public Thread receiveThread;
-
-        public int cblValidateReceivedData;
-        public bool chbAP1 = false;
-        public string txtAp1_IP = "0.0.0.0";
-        public string txtServerIp = "";
-        public int cblRepeatConfig = 2;
-        public bool chbShowAllRecive = false;
-        public string txtRecive = "";
-        public bool chbShowAllSend = false;
-        public string txtSend = "";
-        public bool chbDecreasePriceInLevel2 = false;
-        public bool timerChargeRate_State = false;
-        public bool flagConnectToSQL = false;
-
-        private System.Timers.Timer timer = new System.Timers.Timer();
-        private System.Timers.Timer timerChargeRate = new System.Timers.Timer();
-        private System.Timers.Timer timerChargeRate_SetNonRecive = new System.Timers.Timer();
-        private System.Timers.Timer Timer_SendData = new System.Timers.Timer();
-        private System.Timers.Timer Timer_Create_Repair_CheckList = new System.Timers.Timer();
-
-        private string DispStringRecive;
-        private string DispStringSplit;
-        public int TCP_RepeatCount = 1;
-        private DateTime DispStringReciveTime;
-        private DateTime DispStringSendTime;
-        public string SwiperName_ForShow = "";
-        public string CardMacAddress_ForShow = "";
-        public TcpClient ap_Client;// Copy
-        private IContainer components = (IContainer)null;
-
-        public ClsClickService(int multiRun_AP_ID)
-        {
-            //InitializeComponent();
-            MultiRun_AP_ID = multiRun_AP_ID;
-            Start();
-        }
-
-        public void Start()
-        {
-            Console.WriteLine("Start Run : + " + MultiRun_AP_ID);
-
-            WriteToFile($"Service {MultiRun_AP_ID} is started at " + (object)DateTime.Now);
-
-            timer.Elapsed += new ElapsedEventHandler(OnElapsedTime);
-            timer.Interval = 3000.0;
-            timer.Enabled = true;
+        //string ap_IP = "";// Copy -> serverConfigView.AP_IP
+        TcpClient ap_Client;// Copy
 
 
+        int MultiRun_AP_ID = 0;
+        int Main_ID_GameCenter = 1;
+        int TCP_RepeatCount = 1;
 
-            timerChargeRate.Elapsed += new ElapsedEventHandler(timerChargeRate_Tick);
-            timerChargeRate.Interval = 100.0;
-            timerChargeRate.Enabled = false;
+        bool chbDecreasePriceInLevel2 = false;
 
+        string DispStringRecive;
+        string txtRecive = "", txtSend = "";
 
-            timerChargeRate_SetNonRecive.Elapsed += new ElapsedEventHandler(timerChargeRate_SetNonRecive_Tick);
-            timerChargeRate_SetNonRecive.Interval = 300000.0;
-            timerChargeRate_SetNonRecive.Enabled = true;
-
-
-            Timer_SendData.Elapsed += new ElapsedEventHandler(Timer_SendData_Tick);
-            Timer_SendData.Interval = 1000.0;
-            Timer_SendData.Enabled = true;
-
-            objMain._pbNCStatus();
-            AppLoadMain();
-
-
-            Timer_Create_Repair_CheckList.Elapsed += new ElapsedEventHandler(Timer_Create_Repair_CheckList_Tick);
-            Timer_Create_Repair_CheckList.Interval = 1800000.0;
-            Timer_Create_Repair_CheckList.Enabled = true;
-
-        }
-
-        private void Timer_Create_Repair_CheckList_Tick(object sender, EventArgs e)
-        {
-            Create_Repair_CheckList();
-        }
-
-        private void Create_Repair_CheckList()
-        {
-            new Thread(new ThreadStart(new RepairClass().Create_Repair_Today_CheckList)).Start();
-        }
-
-        private void timerChargeRate_SetNonRecive_Tick(object sender, EventArgs e)
-        {
-            objSwiper.Swiper_StateUpdateToNotReciveForChargeRate();
-        }
-
-        private void timerChargeRate_Tick(object sender, EventArgs e)
-        {
-            if (DateTime.Now.Minute != 0)
-                return;
-            objGames.Charge_Rate_GetAll(objMain.ID_GameCenter_Local_Get());
-            timerChargeRate.Interval = 60000.0;
-        }
+        public ClsSender() { }
 
         public void AppLoadMain()
-        {// Copy 2
-            try
-            {
-                flagConnectToSQL = false;
-                cblValidateReceivedData = 2;
-                chbAP1 = false;
-                txtAp1_IP = "0.0.0.0";
-                txtServerIp = "0.0.0.0";
-                cblRepeatConfig = 2;
-                chbShowAllRecive = true;
-                txtRecive = "";
-                chbShowAllSend = true;
-                txtSend = "";
-                chbDecreasePriceInLevel2 = false;
-                objMain.Decript_Connection_String();
-                MainClass.key_Value_List = objMain.Key_Value_Get();
-                objSwiper.Swiper_Update_Config_StateAll(0, objMain.ID_GameCenter_Local_Get());
-
-                if (!objMain.licence_Check())
-                {
-                    WriteToFile(DateTime.Now.ToString() + ":1:Licence ERROR ");
-                    timer.Enabled = false;
-                    Timer_SendData.Enabled = false;
-                    //Dispose();
-                }
-                else
-                {
-                    timer.Enabled = true;
-                    Timer_SendData.Enabled = true;
-                    objMain.LoadGameCenterID();
-                    Main_ID_GameCenter = objMain.ID_GameCenter_Local_Get();
-
-                    DataTable byGameCenter = objMain.ServerConfig_GetByGameCenter(objMain.ID_GameCenter_Local_Get(), MultiRun_AP_ID);
-                    Console.WriteLine("byGameCenter.Rows.Count : " + byGameCenter.Rows.Count.ToString());
-                    if (byGameCenter.Rows.Count > 0)
-                    {
-                        txtServerIp = byGameCenter.Rows[0]["ServerIP"].ToString();
-                        chbAP1 = Convert.ToBoolean(byGameCenter.Rows[0]["AP_IsEnable"].ToString());
-                        Console.WriteLine($"chbAP{MultiRun_AP_ID} Fill : " + chbAP1.ToString());
-                        txtAp1_IP = byGameCenter.Rows[0]["AP_IP"].ToString();
-                        cblRepeatConfig = int.Parse(byGameCenter.Rows[0]["RepeatConfig"].ToString());
-                        cblValidateReceivedData = int.Parse(byGameCenter.Rows[0]["ValidateReceivedData"].ToString());
-                        chbDecreasePriceInLevel2 = Convert.ToBoolean(byGameCenter.Rows[0]["IsDecreasePriceInLevel2"].ToString());
-                        chbShowAllRecive = Convert.ToBoolean(byGameCenter.Rows[0]["IsShowAllRecive"].ToString());
-                        _checkBoxShowAll = Convert.ToBoolean(byGameCenter.Rows[0]["IsShowAllRecive"].ToString());
-                        chbShowAllSend = Convert.ToBoolean(byGameCenter.Rows[0]["IsShowAllSend"].ToString());
-                        WriteToFile("txtServerIp:" + txtServerIp + $",chbAP{MultiRun_AP_ID}:" + chbAP1.ToString() + $",txtAp{MultiRun_AP_ID}_IP:" + txtAp1_IP + ",cblRepeatConfig:" + (object)cblRepeatConfig + "cblValidateReceivedData:" + (object)cblValidateReceivedData + ",chbDecreasePriceInLevel2:" + chbDecreasePriceInLevel2.ToString() + ",chbShowAllRecive:" + chbShowAllRecive.ToString() + ",chbShowAllSend:" + chbShowAllSend.ToString());
-                    }
-                    else
-                        WriteToFile("Not find service config. Please config server service");
-
-                    timerChargeRate.Enabled = MainClass.key_Value_List.Select("KeyName ='Enable_Charge_Rate'")[0]["Value"].ToString().ToLower() == "true";
-                    flagConnectToSQL = true;
-                    try
-                    {
-                        receiveThread.Interrupt();
-                        receiveThread.Abort();
-                    }
-                    catch (Exception ex)
-                    {
-                    }
-                    try
-                    {
-                        txtServerIp = GetLocalIPAddress();
-                    }
-                    catch
-                    {
-                        txtServerIp = "";
-                    }
-                    TCP_RepeatCount = cblRepeatConfig;
-                    TCP_CountValidateReceivedData = cblValidateReceivedData;
-                    objSwiper.Swiper_Update_Config_StateByGameCenterID(objMain.ID_GameCenter_Local_Get(), 0);
-                    TCP_CountValidateReceivedData = cblValidateReceivedData;
-                    ap_IP = "";
-                    if (chbAP1)
-                    {
-                        try
-                        {
-                            ap_IP = txtAp1_IP;
-                            receiveThread = new Thread(new ThreadStart(Receive_TCP));
-                            receiveThread.Start();
-                        }
-                        catch
-                        {
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                objMain.ErrorLog(ex);
-            }
-        }
-
-        public string GetLocalIPAddress()
         {
-            foreach (IPAddress address in Dns.GetHostEntry(Dns.GetHostName()).AddressList)
+            List<ServerConfigView> byGameCenter = objMain.ServerConfig_GetByGameCenterID(objMain.ID_GameCenter_Local_Get(), MultiRun_AP_ID);
+            if (byGameCenter.Any())
             {
-                if (address.AddressFamily == AddressFamily.InterNetwork)
-                    return address.ToString();
+                serverConfigView = byGameCenter.FirstOrDefault();
+                ////chbShowAllSend = Convert.ToBoolean(byGameCenter.Rows[0]["IsShowAllSend"].ToString());
             }
-            throw new Exception("Local IP Address Not Found!");
-        }
+            while (true)
+            {
+              
+                Task.Run(() => Timer_SendData_Tick());
 
-        private void OnElapsedTime(object source, ElapsedEventArgs e)
-        {// Copy
-            if (chbAP1)
-            {
-                try
-                {
-                    if ((Send_Main(ap_IP, "check", ap_Client) == 1) && receiveThread.IsAlive)
-                    {
-                        objMain.ServerConfig_SetAp1Status(objMain.ID_GameCenter_Local_Get(), true, MultiRun_AP_ID);
-                    }
-                    else
-                    {
-                        WriteToFile(DateTime.Now.ToString() + $": Ap{MultiRun_AP_ID} is Disconnect.");
-                        objMain.ServerConfig_SetAp1Status(objMain.ID_GameCenter_Local_Get(), false, MultiRun_AP_ID);
-                        try
-                        {
-                            Console.WriteLine($"TCp_IP_Thread_{MultiRun_AP_ID}.Abort()");
-                            receiveThread.Interrupt();
-                            receiveThread.Abort();
-
-                        }
-                        catch (Exception ex)
-                        {
-                            WriteToFile($"Ap{MultiRun_AP_ID} NoStart :" + (object)ex);
-                        }
-                        try
-                        {
-                            ap_Client.Close();
-                        }
-                        catch (Exception ex)
-                        {
-                            WriteToFile(DateTime.Now.ToString() + $":Ap{MultiRun_AP_ID} Close -" + ex.Message);
-                        }
-                        ap_IP = txtAp1_IP;
-                        Console.WriteLine($"Start TCp_IP_Thread_{MultiRun_AP_ID}");
-                        receiveThread = new Thread(new ThreadStart(Receive_TCP));
-                        receiveThread.Start();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    WriteToFile(DateTime.Now.ToString() + $": Ap{MultiRun_AP_ID} :" + ex.Message);
-                }
-            }
-            if (!flagConnectToSQL)
-            {
-                AppLoadMain();
-                return;
-            }
-            try
-            {
-                DataTable byGameCenter = objMain.ServerConfig_GetByGameCenter(objMain.ID_GameCenter_Local_Get(), MultiRun_AP_ID);
-                if (byGameCenter.Rows.Count > 0 && Convert.ToBoolean(byGameCenter.Rows[0]["IsRestart"].ToString()))
-                    AppLoadMain();
-            }
-            catch (Exception ex)
-            {
-                objMain.ErrorLog(ex);
             }
         }
 
-        public void WriteToFile(string Message)
-        {// Copy
-            try
-            {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("WriteToFile : " + Message);
-                Console.ForegroundColor = ConsoleColor.White;
-                string path1 = AppDomain.CurrentDomain.BaseDirectory + "\\ServiceLogs";
-                if (!Directory.Exists(path1))
-                    Directory.CreateDirectory(path1);
-                string path2 = AppDomain.CurrentDomain.BaseDirectory + "\\ServiceLogs\\ServiceLog_" + DateTime.Now.Date.ToShortDateString().Replace('/', '_') + ".txt";
-                if (!File.Exists(path2))
-                {
-                    using (StreamWriter text = File.CreateText(path2))
-                        text.WriteLine(Message);
-                }
-                else
-                {
-                    using (StreamWriter streamWriter = File.AppendText(path2))
-                        streamWriter.WriteLine(Message);
-                }
-            }
-            catch
-            {
-            }
-        }
-
-        public void WriteToFile_SendRecive(string Message, int SendOrRecive, DateTime dtSR)
+        private void Timer_SendData_Tick()
         {
-            string path1 = AppDomain.CurrentDomain.BaseDirectory + "\\ServiceLogs";
-            if (!Directory.Exists(path1))
-                Directory.CreateDirectory(path1);
-            string path2 = "";
-            switch (SendOrRecive)
-            {
-                case 1:
-                    if (objMain.Server_SendMessage_Insert(Message, dtSR) != 1)
-                    {
-                        string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-                        DateTime dateTime = DateTime.Now;
-                        dateTime = dateTime.Date;
-                        string str = dateTime.ToShortDateString().Replace('/', '_');
-                        path2 = baseDirectory + "\\ServiceLogs\\ServiceLog_Send" + str + ".txt";
-                        break;
-                    }
-                    break;
-                case 2:
-                    if (objMain.Server_ReciveMessage_Insert(Message, dtSR) != 1)
-                    {
-                        string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-                        DateTime dateTime = DateTime.Now;
-                        dateTime = dateTime.Date;
-                        string str = dateTime.ToShortDateString().Replace('/', '_');
-                        path2 = baseDirectory + "\\ServiceLogs\\ServiceLog_Recive" + str + ".txt";
-                    }
-                    break;
-            }
-            if (!(path2 != ""))
-                return;
-            if (!File.Exists(path2))
-            {
-                using (StreamWriter text = File.CreateText(path2))
-                    text.WriteLine(Message);
-            }
-            else
-            {
-                using (StreamWriter streamWriter = File.AppendText(path2))
-                    streamWriter.WriteLine(Message);
-            }
-        }
-
-        public string MacAndTimeStamp_Create(string MacAddress)
-        {
-            string str1 = ((int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds).ToString();
-            string str2 = str1.Substring(str1.Length - 5, 4);
-            char ch1 = MacAddress[0];
-            string str3 = ch1.ToString();
-            ch1 = MacAddress[1];
-            string str4 = ch1.ToString();
-            string str5 = str3 + str4 + str2[0].ToString();
-            char ch2 = MacAddress[2];
-            string str6 = ch2.ToString();
-            ch2 = MacAddress[3];
-            string str7 = ch2.ToString();
-            string str8 = str5 + str6 + str7 + str2[1].ToString();
-            char ch3 = MacAddress[4];
-            string str9 = ch3.ToString();
-            ch3 = MacAddress[5];
-            string str10 = ch3.ToString();
-            string str11 = str8 + str9 + str10 + str2[2].ToString();
-            char ch4 = MacAddress[6];
-            string str12 = ch4.ToString();
-            ch4 = MacAddress[7];
-            string str13 = ch4.ToString();
-            return str11 + str12 + str13 + str2[3].ToString();
-        }
-
-        public void Receive_TCP()
-        {// Copy
-            DispStringRecive = "";
-            DispStringSplit = "";
-            try
-            {
-                int port = 1000;
-                byte[] numArray = new byte[256];
-                while (true)
-                {
-                    try
-                    {
-                        ap_Client = new TcpClient();
-                    }
-                    catch
-                    {
-                        WriteToFile($"Co_StartTcpIp_{MultiRun_AP_ID}");
-                        ap_Client.Close();
-                    }
-
-                    ap_Client.Connect(ap_IP, port);
-                    Console.WriteLine($"clientAp{MultiRun_AP_ID}.Connect (IP : {ap_IP} , Port: {port})");
-
-                    NetworkStream stream = ap_Client.GetStream();
-
-                    try
-                    {
-                        int count;
-                        while ((count = stream.Read(numArray, 0, numArray.Length)) > 0)
-                        {
-                            DispStringRecive = "";
-                            DispStringSplit = "";
-                            try
-                            {
-                                string str2 = Encoding.ASCII.GetString(numArray, 0, count).Replace("\n", "");
-
-                                Console.ForegroundColor = ConsoleColor.Cyan;
-                                Console.WriteLine("+Recive :<" + ap_IP + " : <- " + str2);
-                                Console.ForegroundColor = ConsoleColor.White;
-
-                                DispStringRecive += str2;
-                                try
-                                {
-                                    string[] strArray = DispStringRecive.Split('[');
-                                    for (int index = 0; index < strArray.Length; ++index)
-                                    {
-                                        DispStringSplit = strArray[index].Trim();
-                                        if (DispStringSplit.Length > 0)
-                                        {
-                                            DispStringSplit = "[" + strArray[index].Trim();
-                                            DispStringReciveTime = DateTime.Now;
-                                            if (Recive_ProcessData(DispStringSplit, MultiRun_AP_ID) == "true")
-                                                Recive_DisplayText(DispStringSplit, $"P{MultiRun_AP_ID}");
-                                            else if (_checkBoxShowAll)
-                                                Recive_DisplayText(DispStringSplit, $"P{MultiRun_AP_ID}");
-                                        }
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    objMain.ErrorLog(ex);
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                    }
-
-                }
-            }
-            catch (SocketException ex)
-            {
-            }
-            finally
-            {
-            }
-        }
-
-        public string Recive_ProcessData(string ReciveText, int P)
-        {// Copy
-            bool flag = false;
-            try
-            {
-                ReciveText = ReciveText.Trim();
-                try
-                {
-                    if (ReciveText.Contains("CONFIG"))
-                    {
-                        if (new Regex("^[[][0-9a-fA-F]{12}[]][+]CONFIG$", RegexOptions.IgnoreCase).Match(ReciveText).Success)
-                        {
-                            ReceiveStorage_Insert(ReciveText, P);
-                            flag = true;
-
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    objMain.ErrorLog(ex);
-                    objMain.ErrorLogTemp("error Process_ReciveData CONFIG :exp= " + ex.Message + ",ReciveText=" + ReciveText);
-                }
-                try
-                {
-                    if (ReciveText.Contains("OKCFG") && !flag)
-                    {
-                        if (new Regex("^[[][0-9a-fA-F]{12}[]]OKCFG[0-9]{1}$", RegexOptions.IgnoreCase).Match(ReciveText).Success)
-                        {
-                            ReceiveStorage_Insert(ReciveText, P);
-                            flag = true;
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    objMain.ErrorLog(ex);
-                    objMain.ErrorLogTemp("error Process_ReciveData OKCFG :exp= " + ex.Message + ",ReciveText=" + ReciveText);
-                }
-                try
-                {
-                    if (ReciveText.Contains("CID") && !flag)
-                    {
-                        if (new Regex("^[[][0-9a-f]{12}[]][+]CID[=][0-9a-fA-F]{8}[,][0-9]{1}$", RegexOptions.IgnoreCase).Match(ReciveText).Success)
-                        {
-                            ReceiveStorage_Insert(ReciveText, P);
-                            flag = true;
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    objMain.ErrorLog(ex);
-                    objMain.ErrorLogTemp("error Process_ReciveData CID :exp= " + ex.Message + ",ReciveText=" + ReciveText);
-                }
-                try
-                {
-                    if (ReciveText.Contains("+P=") && !flag)
-                    {
-                        if (new Regex("^[[][0-9a-f]{12}[]][+]P[=][0-9a-fA-F]{8}[,][0-9]{1}$", RegexOptions.IgnoreCase).Match(ReciveText).Success)
-                        {
-                            ReceiveStorage_Insert(ReciveText, P);
-                            flag = true;
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    objMain.ErrorLog(ex);
-                    objMain.ErrorLogTemp("error Process_ReciveData +P :exp= " + ex.Message + ",ReciveText=" + ReciveText);
-                }
-                try
-                {
-                    if (ReciveText.Contains("+T=") && !flag)
-                    {
-                        if (new Regex("^[[][0-9a-f]{12}[]][+]T[=][0-9a-fA-F]{8}[,][0-9]{4}[,][A-Z]{1}$", RegexOptions.IgnoreCase).Match(ReciveText).Success)
-                        {
-                            ReceiveStorage_Insert(ReciveText, P);
-                            flag = true;
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    objMain.ErrorLog(ex);
-                    objMain.ErrorLogTemp("error Process_ReciveData +T :exp= " + ex.Message + ",ReciveText=" + ReciveText);
-                }
-                try
-                {
-                    if (ReciveText.Contains("Error_conf") && !flag)
-                    {
-                        ReceiveStorage_Insert(ReciveText, P);
-                        flag = true;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    objMain.ErrorLog(ex);
-                    objMain.ErrorLogTemp("error Process_ReciveData Error_config :exp= " + ex.Message + ",ReciveText=" + ReciveText);
-                }
-                try
-                {
-                    if (ReciveText.Contains("HID") && !flag)
-                    {
-                        new Regex("^[[][0-9a-f]{12}[]][+]HID[=][0-9a-fA-F]{8}[,][0-9]{1}$", RegexOptions.IgnoreCase).Match(ReciveText);
-                        ReceiveStorage_Insert(ReciveText, P);
-                        flag = true;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    objMain.ErrorLog(ex);
-                    objMain.ErrorLogTemp("error Process_ReciveData HID :exp= " + ex.Message + ",ReciveText=" + ReciveText);
-                }
-                try
-                {
-                    if (ReciveText.Contains("OK_") && !flag)
-                    {
-                        new Regex("^[[][0-9a-fA-F]{12}[]]OKCFG_[0-9a-fA-F]$", RegexOptions.IgnoreCase).Match(ReciveText);
-                        ReceiveStorage_Insert(ReciveText, P);
-                        flag = true;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    objMain.ErrorLog(ex);
-                    objMain.ErrorLogTemp("error Process_ReciveData OKCFG_HID :exp= " + ex.Message + ",ReciveText=" + ReciveText);
-                }
-                return flag.ToString().ToLower();
-            }
-            catch (Exception ex)
-            {
-                objMain.ErrorLog(ex);
-                objMain.ErrorLogTemp("error Process_ReciveData :" + ex.Message);
-                return flag.ToString().ToLower();
-            }
-        }
-
-        public bool ReceiveStorage_Insert(string ReciveText, int P)
-        {
-            try
-            {
-                objMain.ReceiveStorage_insert(ReciveText, P);
-                if (ReciveText.Contains("OKCFG1"))
-                    objMain.ReceiveStorage_insert(ReciveText, P);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                objMain.ErrorLogTemp("ReceiveStorage_Insert:exp:" + ex.Message + "ReciveText:" + ReciveText);
-                return false;
-            }
-        }
-
-        private void Recive_DisplayText(string ReciveData, string TcpIPName)
-        {
-            if (txtRecive.Length > 10000)
-            {
-                txtRecive = "";
-                txtSend = "";
-            }
-            if (!chbShowAllRecive)
-            {
-                if (txtRecive.Contains(ReciveData))
-                    return;
-                WriteToFile_SendRecive(TcpIPName + "-" + (object)DispStringReciveTime.Hour + ":" + (object)DispStringReciveTime.Minute + ":" + (object)DispStringReciveTime.Second + ":" + (object)DispStringReciveTime.Millisecond + "-" + ReciveData, 2, DispStringReciveTime);
-                Console.WriteLine(TcpIPName + "-" + (object)DispStringReciveTime.Hour + ":" + (object)DispStringReciveTime.Minute + ":" + (object)DispStringReciveTime.Second + ":" + (object)DispStringReciveTime.Millisecond + "-" + ReciveData, 2, DispStringReciveTime);
-                txtRecive = txtRecive + TcpIPName + "-" + (object)DispStringReciveTime.Hour + ":" + (object)DispStringReciveTime.Minute + ":" + (object)DispStringReciveTime.Second + ":" + (object)DispStringReciveTime.Millisecond + "-" + ReciveData;
-            }
-            else
-            {
-                WriteToFile_SendRecive(TcpIPName + "-" + (object)DispStringReciveTime.Hour + ":" + (object)DispStringReciveTime.Minute + ":" + (object)DispStringReciveTime.Second + ":" + (object)DispStringReciveTime.Millisecond + "-" + ReciveData, 2, DispStringReciveTime);
-                Console.WriteLine(TcpIPName + "-" + (object)DispStringReciveTime.Hour + ":" + (object)DispStringReciveTime.Minute + ":" + (object)DispStringReciveTime.Second + ":" + (object)DispStringReciveTime.Millisecond + "-" + ReciveData, 2, DispStringReciveTime);
-                txtRecive = txtRecive + TcpIPName + "-" + (object)DispStringReciveTime.Hour + ":" + (object)DispStringReciveTime.Minute + ":" + (object)DispStringReciveTime.Second + ":" + (object)DispStringReciveTime.Millisecond + "-" + ReciveData;
-            }
-        }
-
-        private void Timer_SendData_Tick(object sender, EventArgs e)
-        {// Copy
             DataTable storageGetForSend = objMain.ReceiveStorage_GetForSend();
             for (int index1 = 0; index1 < storageGetForSend.Rows.Count; ++index1)
             {
@@ -709,196 +107,196 @@ namespace ClickServerService
                         string Command1 = "[" + str3 + "]AT+TPRC=" + str4;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(ap_IP, Command1, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command1, ap_Client);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command2 = "[" + str3 + "]AT+TTIK=" + str5;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(ap_IP, Command2, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command2, ap_Client);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command3 = "[" + str3 + "]A1=" + str6;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(ap_IP, Command3, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command3, ap_Client);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command4 = "[" + str3 + "]A2=" + str7;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(ap_IP, Command4, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command4, ap_Client);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command5 = "[" + str3 + "]A3=" + str8;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(ap_IP, Command5, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command5, ap_Client);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command6 = "[" + str3 + "]A4=" + str9;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(ap_IP, Command6, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command6, ap_Client);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command7 = "[" + str3 + "]A5=" + str10;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(ap_IP, Command7, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command7, ap_Client);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command8 = "[" + str3 + "]B1=" + str11;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(ap_IP, Command8, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command8, ap_Client);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command9 = "[" + str3 + "]B2=" + str12;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(ap_IP, Command9, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command9, ap_Client);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command10 = "[" + str3 + "]B3=" + str13;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(ap_IP, Command10, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command10, ap_Client);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command11 = "[" + str3 + "]B4=" + str14;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(ap_IP, Command11, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command11, ap_Client);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command12 = "[" + str3 + "]B5=" + str15;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(ap_IP, Command12, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command12, ap_Client);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command13 = "[" + str3 + "]C1=" + str16;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(ap_IP, Command13, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command13, ap_Client);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command14 = "[" + str3 + "]C2=" + str17;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(ap_IP, Command14, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command14, ap_Client);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command15 = "[" + str3 + "]C3=" + str18;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(ap_IP, Command15, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command15, ap_Client);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command16 = "[" + str3 + "]C4=" + str19;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(ap_IP, Command16, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command16, ap_Client);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command17 = "[" + str3 + "]C5=" + str20;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(ap_IP, Command17, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command17, ap_Client);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command18 = "[" + str3 + "]D1=" + str21;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(ap_IP, Command18, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command18, ap_Client);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command19 = "[" + str3 + "]D2=" + str22;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(ap_IP, Command19, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command19, ap_Client);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command20 = "[" + str3 + "]D3=" + str23;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(ap_IP, Command20, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command20, ap_Client);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command21 = "[" + str3 + "]D4=" + str24;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(ap_IP, Command21, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command21, ap_Client);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command22 = "[" + str3 + "]D5=" + str25;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(ap_IP, Command22, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command22, ap_Client);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command23 = "[" + str3 + "]E1=" + str26;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(ap_IP, Command23, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command23, ap_Client);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command24 = "[" + str3 + "]E2=" + str27;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(ap_IP, Command24, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command24, ap_Client);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command25 = "[" + str3 + "]E3=" + str28;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(ap_IP, Command25, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command25, ap_Client);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command26 = "[" + str3 + "]E4=" + str29;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(ap_IP, Command26, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command26, ap_Client);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command27 = "[" + str3 + "]E5=" + str30;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(ap_IP, Command27, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command27, ap_Client);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command28 = "[" + str3 + "]END-DATA";
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(ap_IP, Command28, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command28, ap_Client);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                     }
@@ -906,9 +304,9 @@ namespace ClickServerService
                     {
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            DispStringSendTime = DateTime.Now;
-                            Send_DisplayText(str2, $"P{MultiRun_AP_ID}", t_SwiperName, t_CardmacAddress);
-                            Send_Main(ap_IP, str2, ap_Client);
+                            //DispStringSendTime = DateTime.Now;
+                            Send_DisplayText(str2, $"P{MultiRun_AP_ID}", t_SwiperName, t_CardmacAddress, DateTime.Now);
+                            Send_Main(serverConfigView.AP_IP, str2, ap_Client);
                             Thread.Sleep(10);
                         }
                     }
@@ -921,7 +319,7 @@ namespace ClickServerService
                         for (int index3 = 0; index3 < TCP_RepeatCount + 2; ++index3)
                         {
                             Send_DisplayText(str2, $"P{MultiRun_AP_ID}", "", "");
-                            Send_Main(ap_IP, Command, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command, ap_Client);
                             Thread.Sleep(100);
                         }
                     }
@@ -943,14 +341,14 @@ namespace ClickServerService
                                     for (int index3 = 0; index3 < TCP_RepeatCount + 5; ++index3)
                                     {
                                         Send_DisplayText(str4, $"P{MultiRun_AP_ID}", "", "");
-                                        Send_Main(ap_IP, str4, ap_Client);
+                                        Send_Main(serverConfigView.AP_IP, str4, ap_Client);
                                         Thread.Sleep(70);
                                     }
                                     Thread.Sleep(100);
                                     for (int index3 = 0; index3 < TCP_RepeatCount + 5; ++index3)
                                     {
                                         Send_DisplayText(str5, $"P{MultiRun_AP_ID}", "", "");
-                                        Send_Main(ap_IP, str5, ap_Client);
+                                        Send_Main(serverConfigView.AP_IP, str5, ap_Client);
                                         Thread.Sleep(70);
                                     }
                                 }
@@ -963,6 +361,79 @@ namespace ClickServerService
                     }
                 }
             }
+        }
+
+        private void Send_DisplayText(string SendData, string TcpIPName, string t_SwiperName, string t_CardmacAddress, DateTime? sendTime = null)
+        {// Copy
+            if (txtRecive.Length > 10000)
+            {
+                txtRecive = "";
+                txtSend = "";
+            }
+            if (sendTime == null)
+                sendTime = DateTime.Now;
+            string sendTimeString = sendTime.Value.ToString("hh:mm:ss:fff");
+            if (!serverConfigView.IsShowAllSend.Value)
+            {
+                if (SendData.Length <= 0 || txtSend.Contains(TcpIPName + "-" + SendData))
+                    return;
+                WriteToFile_SendRecive(TcpIPName + "-" + sendTimeString + "-" + SendData + "-" + t_SwiperName + "-" + t_CardmacAddress, 1, sendTime.Value);
+                txtSend = txtSend + TcpIPName + "-" + SendData + sendTimeString + "-" + t_SwiperName + t_CardmacAddress;
+            }
+            else if (SendData.Length > 0)
+            {
+                WriteToFile_SendRecive(TcpIPName + "-" + sendTimeString + "-" + SendData + "-" + t_SwiperName + "-" + t_CardmacAddress, 1, sendTime.Value);
+                txtSend = txtSend + TcpIPName + "-" + SendData + sendTimeString + "-" + t_SwiperName + t_CardmacAddress;
+            }
+        }
+
+        public int Send_Main(string IpAp, string Command, TcpClient client)
+        {// Copy 2
+            try
+            {
+                if (client.Connected)
+                {
+                    NetworkStream stream = client.GetStream();
+                    byte[] bytes = Encoding.ASCII.GetBytes(Command);
+                    stream.Write(bytes, 0, bytes.Length);
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine($"+Send :> {IpAp} -> {Command}");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    return 1;
+                }
+                else
+                    return -1;
+            }
+            catch (Exception ex)
+            {
+                return -1;
+            }
+        }
+
+        public string MacAndTimeStamp_Create(string MacAddress)
+        {
+            string str1 = ((int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds).ToString();
+            string str2 = str1.Substring(str1.Length - 5, 4);
+            char ch1 = MacAddress[0];
+            string str3 = ch1.ToString();
+            ch1 = MacAddress[1];
+            string str4 = ch1.ToString();
+            string str5 = str3 + str4 + str2[0].ToString();
+            char ch2 = MacAddress[2];
+            string str6 = ch2.ToString();
+            ch2 = MacAddress[3];
+            string str7 = ch2.ToString();
+            string str8 = str5 + str6 + str7 + str2[1].ToString();
+            char ch3 = MacAddress[4];
+            string str9 = ch3.ToString();
+            ch3 = MacAddress[5];
+            string str10 = ch3.ToString();
+            string str11 = str8 + str9 + str10 + str2[2].ToString();
+            char ch4 = MacAddress[6];
+            string str12 = ch4.ToString();
+            ch4 = MacAddress[7];
+            string str13 = ch4.ToString();
+            return str11 + str12 + str13 + str2[3].ToString();
         }
 
         public string Send_Process_Main(string ReciveText)
@@ -1194,8 +665,8 @@ namespace ClickServerService
                                         string str9 = addressByChargeRate.Rows[0]["TicketErrorStop"].ToString();
                                         string str10 = addressByChargeRate.Rows[0]["PullUp"].ToString();
                                         objSwiper.Swiper_Update_Config_State(6, MacAddress);
-                                        str1 = "[" + str6 + "]AT+CFG7=" + (object)num2 + "," + str8 + "," + str9 + "," + str10;
-                                        str2 = "[" + str6 + "]AT+CFG7=" + (object)num2 + "," + str8 + "," + str9 + "," + str10;
+                                        str1 = "[" + str6 + "]AT+CFG7=" + num2 + "," + str8 + "," + str9 + "," + str10;
+                                        str2 = "[" + str6 + "]AT+CFG7=" + num2 + "," + str8 + "," + str9 + "," + str10;
                                     }
                                     if (str7 == "3")
                                     {
@@ -1204,8 +675,8 @@ namespace ClickServerService
                                         string str9 = addressByChargeRate.Rows[0]["TicketErrorStop"].ToString();
                                         string str10 = addressByChargeRate.Rows[0]["PullUp"].ToString();
                                         objSwiper.Swiper_Update_Config_State(6, MacAddress);
-                                        str1 = "[" + str6 + "]AT+CFG7=" + (object)num2 + "," + str8 + "," + str9 + "," + str10;
-                                        str2 = "[" + str6 + "]AT+CFG7=" + (object)num2 + "," + str8 + "," + str9 + "," + str10;
+                                        str1 = "[" + str6 + "]AT+CFG7=" + num2 + "," + str8 + "," + str9 + "," + str10;
+                                        str2 = "[" + str6 + "]AT+CFG7=" + num2 + "," + str8 + "," + str9 + "," + str10;
                                     }
                                 }
                                 catch
@@ -1339,7 +810,7 @@ namespace ClickServerService
                                                 if (!chbDecreasePriceInLevel2)
                                                 {
                                                     int num8 = objcard.Card_Play_Details_Insert(str8, 0, 0, Main_ID_GameCenter, str6, num5, 0, 0, IsPersonnel, num1, ID_Swiper, ID_Play_Type, 0, 0, 0, empty);
-                                                    str2 = str2 + " -L1 -" + (object)num8;
+                                                    str2 = str2 + " -L1 -" + num8;
                                                 }
                                             }
                                             else if (tuple.Item5 > 0)
@@ -1352,7 +823,7 @@ namespace ClickServerService
                                                 if (!chbDecreasePriceInLevel2)
                                                 {
                                                     int num8 = objcard.Card_Play_Details_Insert(str8, 0, 0, Main_ID_GameCenter, str6, num5, 0, 0, IsPersonnel, num1, ID_Swiper, ID_Play_Type, 0, 0, 0, empty);
-                                                    str2 = str2 + " -L1 -" + (object)num8;
+                                                    str2 = str2 + " -L1 -" + num8;
                                                     objcard.Card_CardProductTiming_SetFreeGame(str8, tuple.Item3, tuple.Item5 - 1);
                                                 }
                                             }
@@ -1377,7 +848,7 @@ namespace ClickServerService
                                                         {
                                                             int num8 = objcard.Card_Play_Details_Insert(str8, 0, 0, Main_ID_GameCenter, str6, num5, 0, 0, IsPersonnel, num1, ID_Swiper, ID_Play_Type, 0, 0, 0, empty);
                                                             objcard.Card_CardProductTiming_SetChargePrice(str8, tuple.Item3, tuple.Item2 - num5);
-                                                            str2 = str2 + " -L1 -" + (object)num8;
+                                                            str2 = str2 + " -L1 -" + num8;
                                                         }
                                                     }
                                                     else
@@ -1396,7 +867,7 @@ namespace ClickServerService
                                                     if (!chbDecreasePriceInLevel2)
                                                     {
                                                         int num8 = objcard.Card_Play_Details_Insert(str8, 0, 0, Main_ID_GameCenter, str6, num5, 0, 0, IsPersonnel, num1, ID_Swiper, ID_Play_Type, 0, 0, 0, empty);
-                                                        str2 = str2 + " -L1 -" + (object)num8;
+                                                        str2 = str2 + " -L1 -" + num8;
                                                     }
                                                 }
                                             }
@@ -1419,13 +890,13 @@ namespace ClickServerService
                                                     Pay_GiftPortion += int.Parse(dataTable.Rows[index]["Real_Charge"].ToString());
                                                     int num10 = int.Parse(dataTable.Rows[index]["Real_FreegameCount"].ToString());
                                                     int num11 = int.Parse(dataTable.Rows[index]["Real_FreeDailyGamesCount"].ToString());
-                                                    if (num11 > 0 && ("," + dataTable.Rows[index]["FreeDailyGames"].ToString() + ",").Contains("," + (object)num1 + ",") && objcard.Card_Play_Details_Get_Today(str8, dataTable.Rows[index]["FreeDailyGames"].ToString()).Rows.Count < num11)
+                                                    if (num11 > 0 && ("," + dataTable.Rows[index]["FreeDailyGames"].ToString() + ",").Contains("," + num1 + ",") && objcard.Card_Play_Details_Get_Today(str8, dataTable.Rows[index]["FreeDailyGames"].ToString()).Rows.Count < num11)
                                                     {
                                                         empty = Guid.Parse(dataTable.Rows[index]["ID"].ToString());
                                                         flag6 = true;
                                                         break;
                                                     }
-                                                    if (num10 > 0 && ("," + dataTable.Rows[index]["FreeGames"].ToString() + ",").Contains("," + (object)num1 + ","))
+                                                    if (num10 > 0 && ("," + dataTable.Rows[index]["FreeGames"].ToString() + ",").Contains("," + num1 + ","))
                                                     {
                                                         empty = Guid.Parse(dataTable.Rows[index]["ID"].ToString());
                                                         flag5 = true;
@@ -1458,7 +929,7 @@ namespace ClickServerService
                                                 if (!chbDecreasePriceInLevel2)
                                                 {
                                                     int num10 = objcard.Card_UpdatePriceAndBonus_PlayDetails2(str8, num8, num9, Main_ID_GameCenter, str6, num5, num8, num9, IsPersonnel, num1, ID_Swiper, ID_Play_Type, 0, 0, 0, empty);
-                                                    str2 = str2 + " -L1 -" + (object)num10;
+                                                    str2 = str2 + " -L1 -" + num10;
                                                 }
                                             }
                                             else
@@ -1482,14 +953,14 @@ namespace ClickServerService
                                                         if (num8 >= num11)
                                                         {
                                                             int num12 = objcard.Card_UpdatePriceAndBonus_PlayDetails2(str8, num8 - num11, num9, Main_ID_GameCenter, str6, num5, num8 - num11, num9, IsPersonnel, num1, ID_Swiper, ID_Play_Type, num5, 0, Pay_GiftPortion, empty);
-                                                            str2 = str2 + " -L1 -" + (object)num12;
+                                                            str2 = str2 + " -L1 -" + num12;
                                                         }
                                                         else
                                                         {
                                                             int Pay_BonusPortion = num11 - num8;
                                                             int num12 = num9 - Pay_BonusPortion;
                                                             int num13 = objcard.Card_UpdatePriceAndBonus_PlayDetails2(str8, 0, num12, Main_ID_GameCenter, str6, num5, 0, num12, IsPersonnel, num1, ID_Swiper, ID_Play_Type, num5 - Pay_BonusPortion, Pay_BonusPortion, Pay_GiftPortion, empty);
-                                                            str2 = str2 + " -L1 -" + (object)num13;
+                                                            str2 = str2 + " -L1 -" + num13;
                                                         }
                                                     }
                                                 }
@@ -1551,7 +1022,7 @@ namespace ClickServerService
                         {
                             try
                             {
-                                str3_Title = addressByChargeRate.Rows[0]["Title"].ToString() + ":" + (object)num1 + ":";
+                                str3_Title = addressByChargeRate.Rows[0]["Title"].ToString() + ":" + num1 + ":";
                                 str4_Mac = MacCode;
                             }
                             catch { }
@@ -1565,7 +1036,7 @@ namespace ClickServerService
                             {
                                 try
                                 {
-                                    str3_Title = addressByChargeRate.Rows[0]["Title"].ToString() + ":" + (object)num1 + ":";
+                                    str3_Title = addressByChargeRate.Rows[0]["Title"].ToString() + ":" + num1 + ":";
                                 }
                                 catch { }
                                 int num2 = int.Parse(addressByChargeRate.Rows[0]["ID_Games"].ToString());
@@ -1620,7 +1091,7 @@ namespace ClickServerService
                                         if (tuple.Item6)
                                         {
                                             int num8 = objcard.Card_Play_Details_Insert(str8, 0, 0, Main_ID_GameCenter, str6, num6, 0, 0, IsPersonnel, num2, ID_Swiper, ID_Play_Type, 0, 0, 0, empty);
-                                            str2 = str2 + " -L2 -" + (object)num8;
+                                            str2 = str2 + " -L2 -" + num8;
                                             flag3 = true;
                                             ID_Play_Type = 10;
                                         }
@@ -1629,7 +1100,7 @@ namespace ClickServerService
                                             flag3 = true;
                                             ID_Play_Type = 9;
                                             int num8 = objcard.Card_Play_Details_Insert(str8, 0, 0, Main_ID_GameCenter, str6, num6, 0, 0, IsPersonnel, num2, ID_Swiper, ID_Play_Type, 0, 0, 0, empty);
-                                            str2 = str2 + " -L2 -" + (object)num8;
+                                            str2 = str2 + " -L2 -" + num8;
                                             objcard.Card_CardProductTiming_SetFreeGame(str8, tuple.Item3, tuple.Item5 - 1);
                                         }
                                         else if (tuple.Item4 > 0)
@@ -1639,7 +1110,7 @@ namespace ClickServerService
                                                 flag3 = true;
                                                 ID_Play_Type = 11;
                                                 int num8 = objcard.Card_Play_Details_Insert(str8, 0, 0, Main_ID_GameCenter, str6, num6, 0, 0, IsPersonnel, num2, ID_Swiper, ID_Play_Type, 0, 0, 0, empty);
-                                                str2 = str2 + " -L2 -" + (object)num8;
+                                                str2 = str2 + " -L2 -" + num8;
                                                 objcard.Card_CardProductTiming_SetChargePrice(str8, tuple.Item3, tuple.Item2 - num6);
                                             }
                                             else
@@ -1652,7 +1123,7 @@ namespace ClickServerService
                                         {
                                             ID_Play_Type = 5;
                                             int num8 = objcard.Card_Play_Details_Insert(str8, 0, 0, Main_ID_GameCenter, str6, num6, 0, 0, IsPersonnel, num2, ID_Swiper, ID_Play_Type, 0, 0, 0, empty);
-                                            str2 = str2 + " -L2 -" + (object)num8;
+                                            str2 = str2 + " -L2 -" + num8;
                                             flag3 = true;
                                         }
                                     }
@@ -1674,13 +1145,13 @@ namespace ClickServerService
                                                 Pay_GiftPortion += int.Parse(dataTable.Rows[index]["Real_Charge"].ToString());
                                                 int num10 = int.Parse(dataTable.Rows[index]["Real_FreegameCount"].ToString());
                                                 int num11 = int.Parse(dataTable.Rows[index]["Real_FreeDailyGamesCount"].ToString());
-                                                if (num11 > 0 && ("," + dataTable.Rows[index]["FreeDailyGames"].ToString() + ",").Contains("," + (object)num2 + ",") && objcard.Card_Play_Details_Get_Today(str8, dataTable.Rows[index]["FreeDailyGames"].ToString()).Rows.Count < num11)
+                                                if (num11 > 0 && ("," + dataTable.Rows[index]["FreeDailyGames"].ToString() + ",").Contains("," + num2 + ",") && objcard.Card_Play_Details_Get_Today(str8, dataTable.Rows[index]["FreeDailyGames"].ToString()).Rows.Count < num11)
                                                 {
                                                     empty = Guid.Parse(dataTable.Rows[index]["ID"].ToString());
                                                     flag5 = true;
                                                     break;
                                                 }
-                                                if (num10 > 0 && ("," + dataTable.Rows[index]["FreeGames"].ToString() + ",").Contains("," + (object)num2 + ","))
+                                                if (num10 > 0 && ("," + dataTable.Rows[index]["FreeGames"].ToString() + ",").Contains("," + num2 + ","))
                                                 {
                                                     empty = Guid.Parse(dataTable.Rows[index]["ID"].ToString());
                                                     flag4 = true;
@@ -1704,7 +1175,7 @@ namespace ClickServerService
                                         if (flag5 | flag4)
                                         {
                                             int num10 = objcard.Card_UpdatePriceAndBonus_PlayDetails2(str8, num8, num9, Main_ID_GameCenter, str6, num6, num8, num9, IsPersonnel, num2, ID_Swiper, ID_Play_Type, 0, 0, 0, empty);
-                                            str2 = str2 + " -L2 -" + (object)num10;
+                                            str2 = str2 + " -L2 -" + num10;
                                         }
                                         else
                                         {
@@ -1721,14 +1192,14 @@ namespace ClickServerService
                                                 if (num8 >= num10)
                                                 {
                                                     int num11 = objcard.Card_UpdatePriceAndBonus_PlayDetails2(str8, num8 - num10, num9, Main_ID_GameCenter, str6, num6, num8 - num10, num9, IsPersonnel, num2, ID_Swiper, ID_Play_Type, num6, 0, Pay_GiftPortion, empty);
-                                                    str2 = str2 + " -L2 -" + (object)num11;
+                                                    str2 = str2 + " -L2 -" + num11;
                                                 }
                                                 else
                                                 {
                                                     int Pay_BonusPortion = num10 - num8;
                                                     int num11 = num9 - Pay_BonusPortion;
                                                     int num12 = objcard.Card_UpdatePriceAndBonus_PlayDetails2(str8, 0, num11, Main_ID_GameCenter, str6, num6, 0, num11, IsPersonnel, num2, ID_Swiper, ID_Play_Type, num6 - Pay_BonusPortion, Pay_BonusPortion, Pay_GiftPortion, empty);
-                                                    str2 = str2 + " -L2 -" + (object)num12;
+                                                    str2 = str2 + " -L2 -" + num12;
                                                 }
                                             }
                                             else
@@ -1940,8 +1411,7 @@ namespace ClickServerService
                     {
                         string str5 = ReciveText.Substring(1, 12);
                         string str6 = str5.Substring(0, 2) + str5.Substring(3, 2) + str5.Substring(6, 2) + str5.Substring(9, 2);
-                        Thread.Sleep(1);//SEM
-                        string timeStamp = TimeStamp;
+                        //string timeStamp = TimeStamp;
                         string MacAddress = str6;
                         string str7 = MacAndTimeStamp_Create(MacAddress);
                         DataTable addressByChargeRate = objSwiper.Swiper_GetByMacAddressByChargeRate(MacAddress.ToUpper());
@@ -1954,11 +1424,9 @@ namespace ClickServerService
                             catch
                             {
                             }
-                            Thread.Sleep(1);//SEM
-                            str1 = "[" + str7 + "]AT+CFG1=" + timeStamp;
-                            Thread.Sleep(1);//SEM
-                            str2 = "[" + str7 + "]AT+CFG1=" + timeStamp;
-                            Thread.Sleep(1);//SEM
+                            // str1 = "[" + str7 + "]AT+CFG1=" + timeStamp;
+                            // str2 = "[" + str7 + "]AT+CFG1=" + timeStamp;
+                            str1 = str2 = "[" + str7 + "]AT+CFG1=";
                             objSwiper.Swiper_Update_Config_State(0, MacAddress);
                         }
                     }
@@ -1975,7 +1443,7 @@ namespace ClickServerService
                     {
                         string str5 = ReciveText.Substring(1, 12);
                         string str6 = str5.Substring(0, 2) + str5.Substring(3, 2) + str5.Substring(6, 2) + str5.Substring(9, 2);
-                        string timeStamp = TimeStamp;
+                        //string timeStamp = TimeStamp;
                         string MacAddress = str6;
                         string str7 = MacAndTimeStamp_Create(MacAddress);
                         DataTable addressByChargeRate = objSwiper.Swiper_GetByMacAddressByChargeRate(MacAddress);
@@ -2043,7 +1511,7 @@ namespace ClickServerService
                                                     str9 = str35.Length > 9 ? str35.Substring(0, 9) : str35;
                                                     str10 = dataTable.Rows[0]["Date"].ToString().Substring(2, 10);
                                                     DateTime dateTime = Convert.ToDateTime(dataTable.Rows[0]["MiladiDate"].ToString());
-                                                    str11 = dateTime.Hour.ToString() + ":" + (object)dateTime.Minute;
+                                                    str11 = dateTime.Hour.ToString() + ":" + dateTime.Minute;
                                                     str12 = objMain.comma(dataTable.Rows[0]["Price"].ToString());
                                                     str13 = objMain.comma(dataTable.Rows[0]["PriceKol"].ToString());
                                                 }
@@ -2059,7 +1527,7 @@ namespace ClickServerService
                                                     str14 = str35.Length > 9 ? str35.Substring(0, 9) : str35;
                                                     str15 = dataTable.Rows[1]["Date"].ToString().Substring(2, 10);
                                                     DateTime dateTime = Convert.ToDateTime(dataTable.Rows[1]["MiladiDate"].ToString());
-                                                    str16 = dateTime.Hour.ToString() + ":" + (object)dateTime.Minute;
+                                                    str16 = dateTime.Hour.ToString() + ":" + dateTime.Minute;
                                                     str17 = objMain.comma(dataTable.Rows[1]["Price"].ToString());
                                                     str18 = objMain.comma(dataTable.Rows[1]["PriceKol"].ToString());
                                                 }
@@ -2075,7 +1543,7 @@ namespace ClickServerService
                                                     str19 = str35.Length > 9 ? str35.Substring(0, 9) : str35;
                                                     str20 = dataTable.Rows[2]["Date"].ToString().Substring(2, 10);
                                                     DateTime dateTime = Convert.ToDateTime(dataTable.Rows[2]["MiladiDate"].ToString());
-                                                    str21 = dateTime.Hour.ToString() + ":" + (object)dateTime.Minute;
+                                                    str21 = dateTime.Hour.ToString() + ":" + dateTime.Minute;
                                                     str22 = objMain.comma(dataTable.Rows[2]["Price"].ToString());
                                                     str23 = objMain.comma(dataTable.Rows[2]["PriceKol"].ToString());
                                                 }
@@ -2091,7 +1559,7 @@ namespace ClickServerService
                                                     str24 = str35.Length > 9 ? str35.Substring(0, 9) : str35;
                                                     str25 = dataTable.Rows[3]["Date"].ToString().Substring(2, 10);
                                                     DateTime dateTime = Convert.ToDateTime(dataTable.Rows[3]["MiladiDate"].ToString());
-                                                    str26 = dateTime.Hour.ToString() + ":" + (object)dateTime.Minute;
+                                                    str26 = dateTime.Hour.ToString() + ":" + dateTime.Minute;
                                                     str28 = objMain.comma(dataTable.Rows[3]["Price"].ToString());
                                                     str29 = objMain.comma(dataTable.Rows[3]["PriceKol"].ToString());
                                                 }
@@ -2107,7 +1575,7 @@ namespace ClickServerService
                                                     str30 = str35.Length > 9 ? str35.Substring(0, 9) : str35;
                                                     str31 = dataTable.Rows[4]["Date"].ToString().Substring(2, 10);
                                                     DateTime dateTime = Convert.ToDateTime(dataTable.Rows[4]["MiladiDate"].ToString());
-                                                    str32 = dateTime.Hour.ToString() + ":" + (object)dateTime.Minute;
+                                                    str32 = dateTime.Hour.ToString() + ":" + dateTime.Minute;
                                                     str33 = objMain.comma(dataTable.Rows[4]["Price"].ToString());
                                                     str34 = objMain.comma(dataTable.Rows[4]["PriceKol"].ToString());
                                                 }
@@ -2349,63 +1817,49 @@ namespace ClickServerService
             }
         }
 
-        public int Send_Main(string IpAp, string Command, TcpClient client)
-        {// Copy 2
+        /// <summary>
+        /// Insert in Database if Not Write in File
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="sendOrRecive"> 1-> Send * 2-> Recive</param>
+        /// <param name="dtSR"></param>
+        public void WriteToFile_SendRecive(string message, int sendOrRecive, DateTime dtSR)
+        {
             try
             {
-                if (client.Connected)
+                string pathFileSendRecive = AppDomain.CurrentDomain.BaseDirectory + "\\ServiceLogs";
+                if (!Directory.Exists(pathFileSendRecive))
+                    Directory.CreateDirectory(pathFileSendRecive);
+
+                pathFileSendRecive = "";
+                string tempTime = DateTime.Now.ToString("yyyy-MM-dd");
+
+                if (sendOrRecive == 1)
                 {
-                    NetworkStream stream = client.GetStream();
-                    byte[] bytes = Encoding.ASCII.GetBytes(Command);
-                    stream.Write(bytes, 0, bytes.Length);
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine($"+Send :> {IpAp} -> {Command}");
-                    Console.ForegroundColor = ConsoleColor.White;
-                    return 1;
+                    if (objMain.Server_SendMessage_Insert(message, dtSR) != 1)
+                        pathFileSendRecive = $"\\ServiceLog_Send{tempTime}.txt";
+                }
+                else if (sendOrRecive == 2)
+                {
+                    if (objMain.Server_ReciveMessage_Insert(message, dtSR) != 1)
+                        pathFileSendRecive = $"\\ServiceLog_Recive{tempTime}.txt";
+                }
+
+                if (string.IsNullOrWhiteSpace(pathFileSendRecive))
+                    return;
+                pathFileSendRecive = AppDomain.CurrentDomain.BaseDirectory + pathFileSendRecive;
+                if (File.Exists(pathFileSendRecive))
+                {
+                    using (StreamWriter streamWriter = File.AppendText(pathFileSendRecive))
+                        streamWriter.WriteLine(message);
                 }
                 else
-                    return -1;
+                {
+                    using (StreamWriter text = File.CreateText(pathFileSendRecive))
+                        text.WriteLine(message);
+                }
             }
-            catch (Exception ex)
-            {
-                return -1;
-            }
+            catch { }
         }
-
-        private void Send_DisplayText(string SendData, string TcpIPName, string t_SwiperName, string t_CardmacAddress)
-        {// Copy
-            if (txtRecive.Length > 10000)
-            {
-                txtRecive = "";
-                txtSend = "";
-            }
-            if (!chbShowAllSend)
-            {
-                if (SendData.Length <= 0 || txtSend.Contains(TcpIPName + "-" + SendData))
-                    return;
-                WriteToFile_SendRecive(TcpIPName + "-" + (object)DispStringSendTime.Hour + ":" + (object)DispStringSendTime.Minute + ":" + (object)DispStringSendTime.Second + ":" + (object)DispStringSendTime.Millisecond + "-" + SendData + "-" + t_SwiperName + "-" + t_CardmacAddress, 1, DispStringSendTime);
-                txtSend = txtSend + TcpIPName + "-" + SendData + (object)DispStringSendTime.Hour + ":" + (object)DispStringSendTime.Minute + ":" + (object)DispStringSendTime.Second + ":" + (object)DispStringSendTime.Millisecond + "-" + t_SwiperName + t_CardmacAddress;
-            }
-            else if (SendData.Length > 0)
-            {
-                WriteToFile_SendRecive(TcpIPName + "-" + (object)DispStringSendTime.Hour + ":" + (object)DispStringSendTime.Minute + ":" + (object)DispStringSendTime.Second + ":" + (object)DispStringSendTime.Millisecond + "-" + SendData + "-" + t_SwiperName + "-" + t_CardmacAddress, 1, DispStringSendTime);
-                txtSend = txtSend + TcpIPName + "-" + SendData + (object)DispStringSendTime.Hour + ":" + (object)DispStringSendTime.Minute + ":" + (object)DispStringSendTime.Second + ":" + (object)DispStringSendTime.Millisecond + "-" + t_SwiperName + t_CardmacAddress;
-            }
-        }
-
-        //protected override void Dispose(bool disposing)
-        //{
-        //    if (disposing && components != null)
-        //        components.Dispose();
-        //    base.Dispose(disposing);
-        //}
-
-        // private void InitializeComponent()
-        // {
-        // components = (IContainer)new Container();
-        // ServiceName = "Service1";
-        // }
-
-        public delegate void DelegateStandardPattern();
     }
 }

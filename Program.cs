@@ -4,11 +4,15 @@
 // MVID: 6BDFD2F8-7BA8-4B8A-8EC1-401DFA893333
 // Assembly location: C:\Users\Win10\Desktop\ClickServerService.exe
 
+using ClickServerService.Models;
 using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.ServiceProcess;
 using System.Threading;
 using System.Threading.Tasks;
+
 
 namespace ClickServerService
 {
@@ -17,17 +21,35 @@ namespace ClickServerService
         private static void Main()
         {
             MainClass mainClass = new MainClass();
-            DataTable accessPoints = mainClass.GetAccessPoints();
-            if (accessPoints.Rows.Count > 0)
+            List<Access_Point> accessPoints = mainClass.GetAccessPoints();
+            if (accessPoints.Any())
             {
-                for (int i = 0; i < accessPoints.Rows.Count; i++)
+                foreach (var item in accessPoints.Where(q=>q.AP_ID == 3))
                 {
                     Thread.Sleep(10);
-                    Task.Run(() => new ClsClickService(Convert.ToInt32(accessPoints.Rows[i]["AP_ID"].ToString())));
+                    //Task.Run(() => new Improved.ClsReceiver(Convert.ToInt32(accessPoints.Rows[i]["AP_ID"].ToString())));
+                    // new Improved.ClsReceiver(Convert.ToInt32(accessPoints.Rows[i]["AP_ID"].ToString()));
+                    Task.Run(() => new ClsClickService(item.AP_ID));
                     Thread.Sleep(10);
-                    Console.WriteLine("+accessPoints : " + accessPoints.Rows[i]["AP_ID"].ToString());
+                    Console.WriteLine("+accessPoints : " + item.AP_ID.ToString());
                     Thread.Sleep(10);
+
                 }
+
+
+                //for (int i = 0; i < accessPoints.Count(); i++)
+                //{
+
+                //    Thread.Sleep(10);
+                //    //Task.Run(() => new Improved.ClsReceiver(Convert.ToInt32(accessPoints.Rows[i]["AP_ID"].ToString())));
+
+                //   // new Improved.ClsReceiver(Convert.ToInt32(accessPoints.Rows[i]["AP_ID"].ToString()));
+
+                //    Task.Run(() => new ClsClickService(Convert.ToInt32(accessPoints.Rows[i]["AP_ID"].ToString())));
+                //    Thread.Sleep(10);
+                //    Console.WriteLine("+accessPoints : " + accessPoints.Rows[i]["AP_ID"].ToString());
+                //    Thread.Sleep(10);
+                //}
             }
             var a = Task.Run(() => ForBeConteneud());
             a.Wait();

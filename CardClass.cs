@@ -1,10 +1,4 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: ClickServerService.CardClass
-// Assembly: ClickServerService, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-// MVID: 6BDFD2F8-7BA8-4B8A-8EC1-401DFA893333
-// Assembly location: C:\Users\Win10\Desktop\ClickServerService.exe
-
-using ClickServerService.ClassCode;
+﻿using ClickServerService.ClassCode;
 using System;
 using System.Data;
 using System.Data.SqlClient;

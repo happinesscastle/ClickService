@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Net.Sockets;
 using System.ServiceProcess;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,21 +26,22 @@ namespace ClickServerService
             List<Access_Point> accessPoints = mainClass.GetAccessPoints();
             if (accessPoints.Any())
             {
-                foreach (var item in accessPoints.Where(q => q.AP_ID == 3))
+                foreach (var item in accessPoints)
                 {
-                    //Thread.Sleep(10);
-                    //Task.Run(() => new ClsReceiver(item.AP_ID).Start());
-                    Task.Run(() => new ClsClickService(item.AP_ID));
+                    //Task.Run(() => new ClsClickService(item.AP_ID));
+                    Thread.Sleep(1);
+                    TcpClient tcp = new TcpClient();
+                    tcp.Connect(item.AP_IP, 1000);
+                    Thread.Sleep(1);
+                    Task.Run(() => new ClsSender(item.AP_ID).Start(ref tcp));
 
-                    //Thread.Sleep(10);
-                    //ClsSender cls = new ClsSender(item.AP_ID);
-                    
-                    //cls.StartTimer();
+                    Thread.Sleep(1);
+                    Task.Run(() => new ClsReceiver(item.AP_ID).Start(ref tcp));
+                    Thread.Sleep(1);
 
-                     //new ClsReceiver(item.AP_ID).Start();
+
                     Console.WriteLine("+accessPoints : " + item.AP_ID.ToString());
                     Thread.Sleep(10);
-
                 }
 
 

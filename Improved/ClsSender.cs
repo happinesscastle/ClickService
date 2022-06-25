@@ -63,18 +63,18 @@ namespace ClickServerService.Improved
             {
                 serverConfigView = byGameCenter.FirstOrDefault();
                 ////chbShowAllSend = Convert.ToBoolean(byGameCenter.Rows[0]["IsShowAllSend"].ToString());
-                ap_Client = new TcpClient(serverConfigView.AP_IP, port);
+                //ap_Client = new TcpClient(serverConfigView.AP_IP, port);
                 Console.WriteLine(" ip : " + serverConfigView.AP_IP);
             }
             else
                 Console.WriteLine("Not find service config. Please config server service");
         }
 
-        public void StartTimer()
+        public void Start(ref TcpClient tcp)
         {
             while (true)
             {
-
+                ap_Client = tcp;
                 // Task tsk = Task.Run(() => Timer_SendData_Tick());
                 Timer_SendData_Tick();
                 Thread.Sleep(1000);
@@ -86,12 +86,10 @@ namespace ClickServerService.Improved
         private void Timer_SendData_Tick()
         {
             DataTable storageGetForSend = objMain.ReceiveStorage_GetForSend();
-            Console.WriteLine("*S*ReceiveStorage_GetForSend Count : " + storageGetForSend.Rows.Count);
             for (int index1 = 0; index1 < storageGetForSend.Rows.Count; ++index1)
             {
                 string str1 = Send_Process_Main(storageGetForSend.Rows[index1]["ReciveText"].ToString());
                 DispStringRecive = str1;
-                Console.WriteLine("*S*Send_Process_Main : " + str1);
                 if (!(str1 == ""))
                 {
                     string str2 = str1.Split('!')[0].ToString();

@@ -44,15 +44,16 @@ namespace ClickServerService.Improved
 
             AppLoadMain();
             //Thread.Sleep(10);
-           
+
         }
 
-        public void Start()
+        public void Start(ref TcpClient tcp)
         {
 
             while (true)
             {
                 //Task tsk = Task.Run(() => OnElapsedTime());
+                ap_Client = tcp;
                 OnElapsedTime();
                 Thread.Sleep(3000);
                 //  tsk.Wait(TimeSpan.FromSeconds(3));
@@ -178,7 +179,7 @@ namespace ClickServerService.Improved
         {
             try
             {
-                if (client!= null && client.Connected)
+                if (client != null && client.Connected)
                 {
                     NetworkStream stream = client.GetStream();
                     byte[] bytes = Encoding.ASCII.GetBytes(Command);
@@ -227,7 +228,7 @@ namespace ClickServerService.Improved
                         }
                         try
                         {
-                            ap_Client.Close();
+                            // ap_Client.Close();
                         }
                         catch (Exception ex)
                         {
@@ -274,20 +275,25 @@ namespace ClickServerService.Improved
                 {
                     try
                     {
-                        ap_Client = new TcpClient();
+                        //   ap_Client = new TcpClient();
                     }
                     catch
                     {
                         WriteToFile($"Co_StartTcpIp_{MultiRun_AP_ID}");
-                        ap_Client.Close();
+                        //   ap_Client.Close();
                     }
 
-                    ap_Client.Connect(serverConfigView.AP_IP, port);
+                    //  ap_Client.Connect(serverConfigView.AP_IP, port);
                     // Thread.Sleep(1);
                     Console.WriteLine($"*R*clientAp{MultiRun_AP_ID}.Connect (IP : {serverConfigView.AP_IP} , Port: {port})");
-
-                    NetworkStream stream = ap_Client.GetStream();
-
+                    NetworkStream stream = null;
+                    if (!ap_Client.Connected)
+                    {
+                        ap_Client.Close();
+                        ap_Client = new TcpClient();
+                        ap_Client.Connect(serverConfigView.AP_IP, 1000);
+                    }
+                    stream = ap_Client.GetStream();
                     try
                     {
                         int count;

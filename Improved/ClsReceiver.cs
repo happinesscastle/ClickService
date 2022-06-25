@@ -42,24 +42,28 @@ namespace ClickServerService.Improved
         {
             MultiRun_AP_ID = apID;
 
-            //AppLoadMain();
-            Thread.Sleep(10);
-            //while (true)
-            //{
-            //    Task tsk = Task.Run(() => AppLoadMain());
-            //    tsk.Wait(TimeSpan.FromSeconds(3));
+            AppLoadMain();
+            //Thread.Sleep(10);
+           
+        }
 
-            //}
+        public void Start()
+        {
 
-             AppLoadMain();
-             
+            while (true)
+            {
+                //Task tsk = Task.Run(() => OnElapsedTime());
+                OnElapsedTime();
+                Thread.Sleep(3000);
+                //  tsk.Wait(TimeSpan.FromSeconds(3));
+
+            }
         }
 
         public void AppLoadMain()
         {// Copy 2
             try
             {
-                Thread.Sleep(5);
                 flagConnectToSQL = false;
 
                 //cblValidateReceivedData = 2;
@@ -69,7 +73,7 @@ namespace ClickServerService.Improved
                 serverConfigView.AP_IsEnable = false;
 
                 //txtAp1_IP = "0.0.0.0";
-             //   serverConfigView.AP_IP = "0.0.0.0";
+                //   serverConfigView.AP_IP = "0.0.0.0";
 
                 //txtServerIp = "0.0.0.0";
                 serverConfigView.ServerIP = "0.0.0.0";
@@ -123,8 +127,11 @@ namespace ClickServerService.Improved
                     flagConnectToSQL = true;
                     try
                     {
-                        receiveThread.Interrupt();
-                        receiveThread.Abort();
+                        if (receiveThread != null)
+                        {
+                            receiveThread.Interrupt();
+                            receiveThread.Abort();
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -171,13 +178,13 @@ namespace ClickServerService.Improved
         {
             try
             {
-                if (client.Connected)
+                if (client!= null && client.Connected)
                 {
                     NetworkStream stream = client.GetStream();
                     byte[] bytes = Encoding.ASCII.GetBytes(Command);
                     stream.Write(bytes, 0, bytes.Length);
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine($"+Send :> {IpAp} -> {Command}");
+                    Console.WriteLine($"*R*+Send :> {IpAp} -> {Command}");
                     Console.ForegroundColor = ConsoleColor.White;
                     return 1;
                 }
@@ -209,7 +216,7 @@ namespace ClickServerService.Improved
                         objMain.ServerConfig_SetAp1Status(objMain.ID_GameCenter_Local_Get(), false, MultiRun_AP_ID);
                         try
                         {
-                            Console.WriteLine($"TCp_IP_Thread_{MultiRun_AP_ID}.Abort()");
+                            Console.WriteLine($"*R*TCp_IP_Thread_{MultiRun_AP_ID}.Abort()");
                             receiveThread.Interrupt();
                             receiveThread.Abort();
 
@@ -228,7 +235,7 @@ namespace ClickServerService.Improved
                         }
                         //ap_IP = txtAp1_IP;
                         ////ap_IP = serverConfigView.AP_IP;
-                        Console.WriteLine($"Start TCp_IP_Thread_{MultiRun_AP_ID}");
+                        Console.WriteLine($"*R*Start TCp_IP_Thread_{MultiRun_AP_ID}");
                         receiveThread = new Thread(new ThreadStart(Receive_TCP));
                         receiveThread.Start();
                     }
@@ -274,10 +281,10 @@ namespace ClickServerService.Improved
                         WriteToFile($"Co_StartTcpIp_{MultiRun_AP_ID}");
                         ap_Client.Close();
                     }
-                    
+
                     ap_Client.Connect(serverConfigView.AP_IP, port);
-                    Thread.Sleep(1);
-                    Console.WriteLine($"clientAp{MultiRun_AP_ID}.Connect (IP : {serverConfigView.AP_IP} , Port: {port})");
+                    // Thread.Sleep(1);
+                    Console.WriteLine($"*R*clientAp{MultiRun_AP_ID}.Connect (IP : {serverConfigView.AP_IP} , Port: {port})");
 
                     NetworkStream stream = ap_Client.GetStream();
 
@@ -293,7 +300,7 @@ namespace ClickServerService.Improved
                                 string str2 = Encoding.ASCII.GetString(numArray, 0, count).Replace("\n", "");
                                 Thread.Sleep(1);
                                 Console.ForegroundColor = ConsoleColor.Cyan;
-                                Console.WriteLine("+Recive :<" + serverConfigView.AP_IP + " : <- " + str2);
+                                Console.WriteLine("*R*+Recive :<" + serverConfigView.AP_IP + " : <- " + str2);
                                 Console.ForegroundColor = ConsoleColor.White;
 
                                 DispStringRecive += str2;
@@ -481,13 +488,13 @@ namespace ClickServerService.Improved
                     return;
                 WriteToFile_SendRecive($"{tcpIpName}-{reciveTimeStr}-{reciveData}", 2, reciveTime);
                 txtRecive += $"{tcpIpName}-{reciveTimeStr}-{reciveData}";
-                Console.WriteLine($"{tcpIpName}-{reciveTimeStr}-{reciveData}", 2, reciveTime);
+                Console.WriteLine($"*R*{tcpIpName}-{reciveTimeStr}-{reciveData}", 2, reciveTime);
             }
             else
             {
                 WriteToFile_SendRecive($"{tcpIpName}-{reciveTimeStr}-{reciveData}", 2, reciveTime);
                 txtRecive += $"{tcpIpName}-{reciveTimeStr}-{reciveData}";
-                Console.WriteLine($"{tcpIpName}-{reciveTimeStr}-{reciveData}", 2, reciveTime);
+                Console.WriteLine($"*R*{tcpIpName}-{reciveTimeStr}-{reciveData}", 2, reciveTime);
             }
         }
 
@@ -524,7 +531,7 @@ namespace ClickServerService.Improved
             try
             {
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("WriteToFile : " + message);
+                Console.WriteLine("*R*WriteToFile : " + message);
                 Console.ForegroundColor = ConsoleColor.White;
 
                 string pathFileLog = AppDomain.CurrentDomain.BaseDirectory + "\\ServiceLogs";

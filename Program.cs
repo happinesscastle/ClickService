@@ -4,6 +4,7 @@
 // MVID: 6BDFD2F8-7BA8-4B8A-8EC1-401DFA893333
 // Assembly location: C:\Users\Win10\Desktop\ClickServerService.exe
 
+using ClickServerService.Improved;
 using ClickServerService.Models;
 using System;
 using System.Collections.Generic;
@@ -24,13 +25,18 @@ namespace ClickServerService
             List<Access_Point> accessPoints = mainClass.GetAccessPoints();
             if (accessPoints.Any())
             {
-                foreach (var item in accessPoints.Where(q=>q.AP_ID == 3))
+                foreach (var item in accessPoints.Where(q => q.AP_ID == 3))
                 {
-                    Thread.Sleep(10);
-                    //Task.Run(() => new Improved.ClsReceiver(Convert.ToInt32(accessPoints.Rows[i]["AP_ID"].ToString())));
-                    // new Improved.ClsReceiver(Convert.ToInt32(accessPoints.Rows[i]["AP_ID"].ToString()));
+                    //Thread.Sleep(10);
+                    //Task.Run(() => new ClsReceiver(item.AP_ID).Start());
                     Task.Run(() => new ClsClickService(item.AP_ID));
-                    Thread.Sleep(10);
+
+                    //Thread.Sleep(10);
+                    //ClsSender cls = new ClsSender(item.AP_ID);
+                    
+                    //cls.StartTimer();
+
+                     //new ClsReceiver(item.AP_ID).Start();
                     Console.WriteLine("+accessPoints : " + item.AP_ID.ToString());
                     Thread.Sleep(10);
 

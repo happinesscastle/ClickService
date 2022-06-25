@@ -32,35 +32,66 @@ namespace ClickServerService.Improved
         int Main_ID_GameCenter = 1;
         int TCP_RepeatCount = 1;
 
-        bool chbDecreasePriceInLevel2 = false;
+        //bool chbDecreasePriceInLevel2 = false; -> serverConfigView.IsDecreasePriceInLevel2.Value
 
         string DispStringRecive;
         string txtRecive = "", txtSend = "";
 
-        public ClsSender() { }
+        public ClsSender(int multiRun_AP_ID)
+        {
+            MultiRun_AP_ID = multiRun_AP_ID;
+            AppLoadMain();
+        }
 
         public void AppLoadMain()
         {
+            Console.WriteLine("AppLoadMain");
+            txtRecive = "";
+            txtSend = "";
+            int port = 1000;
+
+            objMain.Decript_Connection_String();
+            MainClass.key_Value_List = objMain.Key_Value_Get();
+            objSwiper.Swiper_Update_Config_StateAll(0, objMain.ID_GameCenter_Local_Get());
+
+            objMain.LoadGameCenterID();
+            Main_ID_GameCenter = objMain.ID_GameCenter_Local_Get();
+
             List<ServerConfigView> byGameCenter = objMain.ServerConfig_GetByGameCenterID(objMain.ID_GameCenter_Local_Get(), MultiRun_AP_ID);
+            Console.WriteLine("byGameCenter.Count : " + byGameCenter.Count);
             if (byGameCenter.Any())
             {
                 serverConfigView = byGameCenter.FirstOrDefault();
                 ////chbShowAllSend = Convert.ToBoolean(byGameCenter.Rows[0]["IsShowAllSend"].ToString());
+                ap_Client = new TcpClient(serverConfigView.AP_IP, port);
+                Console.WriteLine(" ip : " + serverConfigView.AP_IP);
             }
+            else
+                Console.WriteLine("Not find service config. Please config server service");
+        }
+
+        public void StartTimer()
+        {
             while (true)
             {
-              
-                Task.Run(() => Timer_SendData_Tick());
+
+                // Task tsk = Task.Run(() => Timer_SendData_Tick());
+                Timer_SendData_Tick();
+                Thread.Sleep(1000);
 
             }
         }
 
+
         private void Timer_SendData_Tick()
         {
             DataTable storageGetForSend = objMain.ReceiveStorage_GetForSend();
+            Console.WriteLine("*S*ReceiveStorage_GetForSend Count : " + storageGetForSend.Rows.Count);
             for (int index1 = 0; index1 < storageGetForSend.Rows.Count; ++index1)
             {
                 string str1 = Send_Process_Main(storageGetForSend.Rows[index1]["ReciveText"].ToString());
+                DispStringRecive = str1;
+                Console.WriteLine("*S*Send_Process_Main : " + str1);
                 if (!(str1 == ""))
                 {
                     string str2 = str1.Split('!')[0].ToString();
@@ -397,7 +428,9 @@ namespace ClickServerService.Improved
                     byte[] bytes = Encoding.ASCII.GetBytes(Command);
                     stream.Write(bytes, 0, bytes.Length);
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine($"+Send :> {IpAp} -> {Command}");
+                    Thread.Sleep(1);
+                    Console.WriteLine($"*S*+Send :> {IpAp} -> {Command}");
+                    Thread.Sleep(1);
                     Console.ForegroundColor = ConsoleColor.White;
                     return 1;
                 }
@@ -807,7 +840,7 @@ namespace ClickServerService.Improved
                                                 ID_Play_Type = 10;
                                                 str2 = "[" + str7 + "]AT+PRC=" + (int.Parse(s) - 1).ToString() + "-" + str12;
                                                 str1 = "[" + str7 + "]AT+PRC=" + (int.Parse(s) - 1).ToString() + "-" + str12;
-                                                if (!chbDecreasePriceInLevel2)
+                                                if (!serverConfigView.IsDecreasePriceInLevel2.Value)
                                                 {
                                                     int num8 = objcard.Card_Play_Details_Insert(str8, 0, 0, Main_ID_GameCenter, str6, num5, 0, 0, IsPersonnel, num1, ID_Swiper, ID_Play_Type, 0, 0, 0, empty);
                                                     str2 = str2 + " -L1 -" + num8;
@@ -820,7 +853,7 @@ namespace ClickServerService.Improved
                                                 ID_Play_Type = 9;
                                                 str2 = "[" + str7 + "]AT+PRC=" + (tuple.Item5 - 1).ToString() + "-" + str11;
                                                 str1 = "[" + str7 + "]AT+PRC=" + (tuple.Item5 - 1).ToString() + " - " + str11;
-                                                if (!chbDecreasePriceInLevel2)
+                                                if (!serverConfigView.IsDecreasePriceInLevel2.Value)
                                                 {
                                                     int num8 = objcard.Card_Play_Details_Insert(str8, 0, 0, Main_ID_GameCenter, str6, num5, 0, 0, IsPersonnel, num1, ID_Swiper, ID_Play_Type, 0, 0, 0, empty);
                                                     str2 = str2 + " -L1 -" + num8;
@@ -844,7 +877,7 @@ namespace ClickServerService.Improved
                                                         string str14 = num7.ToString();
                                                         string str15 = objMain.comma(str14);
                                                         str1 = "[" + str13 + "]AT+PRC=" + str15;
-                                                        if (!chbDecreasePriceInLevel2)
+                                                        if (!serverConfigView.IsDecreasePriceInLevel2.Value)
                                                         {
                                                             int num8 = objcard.Card_Play_Details_Insert(str8, 0, 0, Main_ID_GameCenter, str6, num5, 0, 0, IsPersonnel, num1, ID_Swiper, ID_Play_Type, 0, 0, 0, empty);
                                                             objcard.Card_CardProductTiming_SetChargePrice(str8, tuple.Item3, tuple.Item2 - num5);
@@ -864,7 +897,7 @@ namespace ClickServerService.Improved
                                                     ID_Play_Type = 5;
                                                     str2 = "[" + str7 + "]AT+PRC=--";
                                                     str1 = "[" + str7 + "]AT+PRC=--";
-                                                    if (!chbDecreasePriceInLevel2)
+                                                    if (!serverConfigView.IsDecreasePriceInLevel2.Value)
                                                     {
                                                         int num8 = objcard.Card_Play_Details_Insert(str8, 0, 0, Main_ID_GameCenter, str6, num5, 0, 0, IsPersonnel, num1, ID_Swiper, ID_Play_Type, 0, 0, 0, empty);
                                                         str2 = str2 + " -L1 -" + num8;
@@ -900,7 +933,7 @@ namespace ClickServerService.Improved
                                                     {
                                                         empty = Guid.Parse(dataTable.Rows[index]["ID"].ToString());
                                                         flag5 = true;
-                                                        if (!chbDecreasePriceInLevel2)
+                                                        if (!serverConfigView.IsDecreasePriceInLevel2.Value)
                                                         {
                                                             objPattern.Gift_Pattern_series_List_Update(dataTable.Rows[index]["ID"].ToString(), num10 - 1);
                                                             break;
@@ -926,7 +959,7 @@ namespace ClickServerService.Improved
                                             {
                                                 str2 = "[" + str7 + "]AT+PRC=---";
                                                 str1 = "[" + str7 + "]AT+PRC=---";
-                                                if (!chbDecreasePriceInLevel2)
+                                                if (!serverConfigView.IsDecreasePriceInLevel2.Value)
                                                 {
                                                     int num10 = objcard.Card_UpdatePriceAndBonus_PlayDetails2(str8, num8, num9, Main_ID_GameCenter, str6, num5, num8, num9, IsPersonnel, num1, ID_Swiper, ID_Play_Type, 0, 0, 0, empty);
                                                     str2 = str2 + " -L1 -" + num10;
@@ -942,7 +975,7 @@ namespace ClickServerService.Improved
                                                     str2 = "[" + str7 + "]AT+PRC=" + objMain.comma(num10.ToString());
                                                     string str10 = num10.ToString().Length > 7 ? num10.ToString() : objMain.comma(num10.ToString());
                                                     str1 = "[" + str7 + "]AT+PRC=" + str10;
-                                                    if (!chbDecreasePriceInLevel2)
+                                                    if (!serverConfigView.IsDecreasePriceInLevel2.Value)
                                                     {
                                                         int num11 = objPattern.Gift_Pattern_Series_list_Calculate2(str8, num5);
                                                         if (num6 > 0)
@@ -1027,7 +1060,7 @@ namespace ClickServerService.Improved
                             }
                             catch { }
                         }
-                        if (chbDecreasePriceInLevel2)
+                        if (serverConfigView.IsDecreasePriceInLevel2.Value)
                         {
                             str1 = "[" + str7 + "]AT+ok";
                             str2 = "[" + str7 + "]AT+ok";

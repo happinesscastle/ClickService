@@ -62,6 +62,7 @@
     <Compile Include="GamesClass.cs" />
     <Compile Include="MainClass.cs" />
     <Compile Include="Models\Access_Point.cs" />
+    <Compile Include="Models\MyTCPClient.cs" />
     <Compile Include="Models\ServerConfigView.cs" />
     <Compile Include="Pattern.cs" />
     <Compile Include="ProductTemplateClass.cs" />

@@ -21,7 +21,7 @@ namespace ClickServerService.Improved
         /// </summary>
         ServerConfigView serverConfigView = new ServerConfigView();
 
-        public TcpClient ap_Client;
+        //public TcpClient ap_Client;
 
         MainClass objMain = new MainClass();
         SwiperClass objSwiper = new SwiperClass();
@@ -53,7 +53,7 @@ namespace ClickServerService.Improved
             while (true)
             {
                 //Task tsk = Task.Run(() => OnElapsedTime());
-                ap_Client = tcp;
+                //ap_Client = tcp;
                 OnElapsedTime();
                 Thread.Sleep(3000);
                 //  tsk.Wait(TimeSpan.FromSeconds(3));
@@ -185,7 +185,7 @@ namespace ClickServerService.Improved
                     byte[] bytes = Encoding.ASCII.GetBytes(Command);
                     stream.Write(bytes, 0, bytes.Length);
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine($"*R*+Send :> {IpAp} -> {Command}");
+                    Console.WriteLine($"*R*+Send :> {IpAp} -> {Command}   " + DateTime.Now.ToString("mm:ss:fff"));
                     Console.ForegroundColor = ConsoleColor.White;
                     return 1;
                 }
@@ -207,7 +207,7 @@ namespace ClickServerService.Improved
             {
                 try
                 {
-                    if ((Send_Main(serverConfigView.AP_IP, "check", ap_Client) == 1) && receiveThread.IsAlive)
+                    if ((Send_Main(serverConfigView.AP_IP, "check", Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient) == 1) && receiveThread.IsAlive)
                     {
                         objMain.ServerConfig_SetAp1Status(objMain.ID_GameCenter_Local_Get(), true, MultiRun_AP_ID);
                     }
@@ -287,13 +287,13 @@ namespace ClickServerService.Improved
                     // Thread.Sleep(1);
                     Console.WriteLine($"*R*clientAp{MultiRun_AP_ID}.Connect (IP : {serverConfigView.AP_IP} , Port: {port})");
                     NetworkStream stream = null;
-                    if (!ap_Client.Connected)
+                    if (!Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient.Connected)
                     {
-                        ap_Client.Close();
-                        ap_Client = new TcpClient();
-                        ap_Client.Connect(serverConfigView.AP_IP, 1000);
+                        Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient.Close();
+                        Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient = new TcpClient();
+                        Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient.Connect(serverConfigView.AP_IP, 1000);
                     }
-                    stream = ap_Client.GetStream();
+                    stream = Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient.GetStream();
                     try
                     {
                         int count;
@@ -304,7 +304,7 @@ namespace ClickServerService.Improved
                             try
                             {
                                 string str2 = Encoding.ASCII.GetString(numArray, 0, count).Replace("\n", "");
-                                Thread.Sleep(1);
+                                //Thread.Sleep(1);
                                 Console.ForegroundColor = ConsoleColor.Cyan;
                                 Console.WriteLine("*R*+Recive :<" + serverConfigView.AP_IP + " : <- " + str2);
                                 Console.ForegroundColor = ConsoleColor.White;

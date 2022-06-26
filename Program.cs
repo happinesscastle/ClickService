@@ -20,28 +20,36 @@ namespace ClickServerService
 {
     internal static class Program
     {
+        public static List<MyTCPClient> tCPClientList = new List<MyTCPClient>();
+
         private static void Main()
         {
+            Console.WriteLine("q");
             MainClass mainClass = new MainClass();
             List<Access_Point> accessPoints = mainClass.GetAccessPoints();
+            //accessPoints.Reverse();
+            Thread.Sleep(0);
             if (accessPoints.Any())
             {
                 foreach (var item in accessPoints)
                 {
                     //Task.Run(() => new ClsClickService(item.AP_ID));
-                    Thread.Sleep(1);
+                    // Thread.Sleep(1);
                     TcpClient tcp = new TcpClient();
-                    tcp.Connect(item.AP_IP, 1000);
+                    tCPClientList.Add(new MyTCPClient(item.AP_ID, tcp));
+                    tCPClientList.SingleOrDefault(i => i.AP_ID == item.AP_ID).TCPClient.Connect(item.AP_IP, 1000);
                     Thread.Sleep(1);
+
+                    // Thread.Sleep(1);
                     Task.Run(() => new ClsSender(item.AP_ID).Start(ref tcp));
-
                     Thread.Sleep(1);
+                    // Thread.Sleep(1);
                     Task.Run(() => new ClsReceiver(item.AP_ID).Start(ref tcp));
+                    //  Thread.Sleep(1);
                     Thread.Sleep(1);
-
 
                     Console.WriteLine("+accessPoints : " + item.AP_ID.ToString());
-                    Thread.Sleep(10);
+                    //Thread.Sleep(10);
                 }
 
 

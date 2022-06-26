@@ -25,7 +25,7 @@ namespace ClickServerService.Improved
         Pattern objPattern = new Pattern();
 
         //string ap_IP = "";// Copy -> serverConfigView.AP_IP
-        TcpClient ap_Client;// Copy
+        //TcpClient ap_Client;// Copy
 
 
         int MultiRun_AP_ID = 0;
@@ -74,10 +74,10 @@ namespace ClickServerService.Improved
         {
             while (true)
             {
-                ap_Client = tcp;
+                //ap_Client = tcp;
                 // Task tsk = Task.Run(() => Timer_SendData_Tick());
                 Timer_SendData_Tick();
-                Thread.Sleep(1000);
+                Thread.Sleep(300);
 
             }
         }
@@ -136,196 +136,196 @@ namespace ClickServerService.Improved
                         string Command1 = "[" + str3 + "]AT+TPRC=" + str4;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(serverConfigView.AP_IP, Command1, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command1, Program.tCPClientList.SingleOrDefault(i=>i.AP_ID == MultiRun_AP_ID).TCPClient);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command2 = "[" + str3 + "]AT+TTIK=" + str5;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(serverConfigView.AP_IP, Command2, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command2, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command3 = "[" + str3 + "]A1=" + str6;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(serverConfigView.AP_IP, Command3, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command3, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command4 = "[" + str3 + "]A2=" + str7;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(serverConfigView.AP_IP, Command4, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command4, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command5 = "[" + str3 + "]A3=" + str8;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(serverConfigView.AP_IP, Command5, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command5, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command6 = "[" + str3 + "]A4=" + str9;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(serverConfigView.AP_IP, Command6, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command6, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command7 = "[" + str3 + "]A5=" + str10;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(serverConfigView.AP_IP, Command7, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command7, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command8 = "[" + str3 + "]B1=" + str11;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(serverConfigView.AP_IP, Command8, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command8, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command9 = "[" + str3 + "]B2=" + str12;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(serverConfigView.AP_IP, Command9, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command9, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command10 = "[" + str3 + "]B3=" + str13;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(serverConfigView.AP_IP, Command10, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command10, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command11 = "[" + str3 + "]B4=" + str14;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(serverConfigView.AP_IP, Command11, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command11, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command12 = "[" + str3 + "]B5=" + str15;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(serverConfigView.AP_IP, Command12, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command12, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command13 = "[" + str3 + "]C1=" + str16;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(serverConfigView.AP_IP, Command13, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command13, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command14 = "[" + str3 + "]C2=" + str17;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(serverConfigView.AP_IP, Command14, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command14, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command15 = "[" + str3 + "]C3=" + str18;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(serverConfigView.AP_IP, Command15, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command15, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command16 = "[" + str3 + "]C4=" + str19;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(serverConfigView.AP_IP, Command16, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command16, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command17 = "[" + str3 + "]C5=" + str20;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(serverConfigView.AP_IP, Command17, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command17, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command18 = "[" + str3 + "]D1=" + str21;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(serverConfigView.AP_IP, Command18, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command18, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command19 = "[" + str3 + "]D2=" + str22;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(serverConfigView.AP_IP, Command19, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command19, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command20 = "[" + str3 + "]D3=" + str23;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(serverConfigView.AP_IP, Command20, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command20, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command21 = "[" + str3 + "]D4=" + str24;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(serverConfigView.AP_IP, Command21, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command21, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command22 = "[" + str3 + "]D5=" + str25;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(serverConfigView.AP_IP, Command22, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command22, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command23 = "[" + str3 + "]E1=" + str26;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(serverConfigView.AP_IP, Command23, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command23, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command24 = "[" + str3 + "]E2=" + str27;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(serverConfigView.AP_IP, Command24, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command24, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command25 = "[" + str3 + "]E3=" + str28;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(serverConfigView.AP_IP, Command25, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command25, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command26 = "[" + str3 + "]E4=" + str29;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(serverConfigView.AP_IP, Command26, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command26, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command27 = "[" + str3 + "]E5=" + str30;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(serverConfigView.AP_IP, Command27, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command27, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
                         string Command28 = "[" + str3 + "]END-DATA";
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(serverConfigView.AP_IP, Command28, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command28, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                     }
@@ -335,7 +335,7 @@ namespace ClickServerService.Improved
                         {
                             //DispStringSendTime = DateTime.Now;
                             Send_DisplayText(str2, $"P{MultiRun_AP_ID}", t_SwiperName, t_CardmacAddress, DateTime.Now);
-                            Send_Main(serverConfigView.AP_IP, str2, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, str2, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
                             Thread.Sleep(10);
                         }
                     }
@@ -348,7 +348,7 @@ namespace ClickServerService.Improved
                         for (int index3 = 0; index3 < TCP_RepeatCount + 2; ++index3)
                         {
                             Send_DisplayText(str2, $"P{MultiRun_AP_ID}", "", "");
-                            Send_Main(serverConfigView.AP_IP, Command, ap_Client);
+                            Send_Main(serverConfigView.AP_IP, Command, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
                             Thread.Sleep(100);
                         }
                     }
@@ -370,14 +370,14 @@ namespace ClickServerService.Improved
                                     for (int index3 = 0; index3 < TCP_RepeatCount + 5; ++index3)
                                     {
                                         Send_DisplayText(str4, $"P{MultiRun_AP_ID}", "", "");
-                                        Send_Main(serverConfigView.AP_IP, str4, ap_Client);
+                                        Send_Main(serverConfigView.AP_IP, str4, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
                                         Thread.Sleep(70);
                                     }
                                     Thread.Sleep(100);
                                     for (int index3 = 0; index3 < TCP_RepeatCount + 5; ++index3)
                                     {
                                         Send_DisplayText(str5, $"P{MultiRun_AP_ID}", "", "");
-                                        Send_Main(serverConfigView.AP_IP, str5, ap_Client);
+                                        Send_Main(serverConfigView.AP_IP, str5, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
                                         Thread.Sleep(70);
                                     }
                                 }

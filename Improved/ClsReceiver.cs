@@ -57,6 +57,7 @@ namespace ClickServerService.Improved
         {// Copy 2
             try
             {
+                objMain.MyPrint("Receive - AppLoadMain", ConsoleColor.Blue);
                 flagConnectToSQL = false;
                 serverConfigView.ValidateReceivedData = 2;
                 serverConfigView.AP_IsEnable = false;
@@ -183,7 +184,7 @@ namespace ClickServerService.Improved
                         objMain.ServerConfig_SetAp1Status(objMain.ID_GameCenter_Local_Get(), false, MultiRun_AP_ID);
                         try
                         {
-                            objMain.MyPrint($"*R*TCp_IP_Thread_{MultiRun_AP_ID}.Abort()");
+                            objMain.MyPrint($"*R*TCp_IP_Thread_{MultiRun_AP_ID}.Abort()", ConsoleColor.DarkMagenta);
                             if (receiveThread != null)
                             {
                                 receiveThread.Interrupt();
@@ -253,7 +254,7 @@ namespace ClickServerService.Improved
 
                     //  ap_Client.Connect(serverConfigView.AP_IP, port);
                     // Thread.Sleep(1);
-                    objMain.MyPrint($"*R*clientAp{MultiRun_AP_ID}.Connect (IP : {serverConfigView.AP_IP} , Port: {port})");
+                    objMain.MyPrint($"*R*clientAp{MultiRun_AP_ID}.Connect (IP : {serverConfigView.AP_IP} , Port: {port})", ConsoleColor.Magenta);
                     NetworkStream stream = null;
                     if (!Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient.Connected)
                     {
@@ -462,13 +463,13 @@ namespace ClickServerService.Improved
                     return;
                 WriteToFile_SendRecive($"{tcpIpName}-{reciveTimeStr}-{reciveData}", 2, reciveTime);
                 txtRecive += $"{tcpIpName}-{reciveTimeStr}-{reciveData}";
-                objMain.MyPrint($"*R*{tcpIpName}-{reciveTimeStr}-{reciveData}", dt: reciveTime);
+                //objMain.MyPrint($"*R*{tcpIpName}-{reciveTimeStr}-{reciveData}", dt: reciveTime);
             }
             else
             {
                 WriteToFile_SendRecive($"{tcpIpName}-{reciveTimeStr}-{reciveData}", 2, reciveTime);
                 txtRecive += $"{tcpIpName}-{reciveTimeStr}-{reciveData}";
-                objMain.MyPrint($"*R*{tcpIpName}-{reciveTimeStr}-{reciveData}", dt: reciveTime);
+                //objMain.MyPrint($"*R*{tcpIpName}-{reciveTimeStr}-{reciveData}", dt: reciveTime);
             }
         }
 

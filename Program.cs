@@ -17,6 +17,7 @@ namespace ClickServerService
 
         private static void Main()
         {
+            Console.Title = "Click Server Service";
             MainClass objMain = new MainClass();
             List<Access_Point> accessPoints = objMain.GetAccessPoints();
             //accessPoints.Reverse();
@@ -41,13 +42,14 @@ namespace ClickServerService
                     }
                     Thread.Sleep(1);
 
-                    Task.Run(() => new ClsSender(item.AP_ID).Start());
-                    Thread.Sleep(0);
+                    //Task.Run(() => new ClsSender(item.AP_ID).Start());
+                    //Thread.Sleep(0);
                     Task.Run(() => new ClsReceiver(item.AP_ID).Start());
                     Thread.Sleep(0);
 
                     objMain.MyPrint("+accessPoints : " + item.AP_ID.ToString(), ConsoleColor.White);
                 }
+                Task.Run(() => new ClsSender().Start());
             }
             var a = Task.Run(() => ForBeConteneud());
             a.Wait();

@@ -19,6 +19,7 @@ using System;
 using ClickServerService.Models;
 using Dapper;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ClickServerService
 {
@@ -1107,15 +1108,17 @@ namespace ClickServerService
             }
         }
 
-        public List<ServerConfigView> ServerConfig_GetByGameCenterID(int id_GameCenter, int multiRun_AP_ID)
+        public List<ServerConfigView> ServerConfig_GetByGameCenterID(int id_GameCenter, int? multiRun_AP_ID = null)
         {
             try
             {
                 using (SqlConnection connection = new SqlConnection(DBPath()))
                 {
-                    string query = @"Select * From ServerConfigView Where ID_GameCenter = @ID_GameCenter And AP_ID = @MultiRun_AP_ID;
+                    string query = @"Select * From ServerConfigView Where ID_GameCenter = @ID_GameCenter ;
                                      Update ServerConfig set IsRestart = 0  Where ID_GameCenter = @ID_GameCenter";
-                    var temp = (List<ServerConfigView>)connection.Query<ServerConfigView>(query, new { ID_GameCenter = id_GameCenter, MultiRun_AP_ID = multiRun_AP_ID });
+                    List<ServerConfigView> temp = (List<ServerConfigView>)connection.Query<ServerConfigView>(query, new { ID_GameCenter = id_GameCenter });
+                    if (multiRun_AP_ID != null)
+                        temp = temp.Where(i => i.AP_ID == multiRun_AP_ID).ToList();
                     return temp;
                 }
             }
@@ -1350,7 +1353,7 @@ namespace ClickServerService
                 //using (SqlConnection connection = new SqlConnection(DBPath()))
                 using (SqlConnection connection = new SqlConnection(@"Data Source=SEM\SEM;Initial Catalog=GameCenter;Integrated Security=True"))
                 {
-                    string query = @"Select * From Access_Point Where ID_GameCenter = @ID_GameCenter";
+                    string query = @"Select * From Access_Point Where AP_IsEnable = 1 And ID_GameCenter = @ID_GameCenter";
                     var temp = (List<Access_Point>)connection.Query<Access_Point>(query, new { ID_GameCenter = ID_GameCenter_Local_Get() });
                     return temp;
                 }
@@ -1363,6 +1366,9 @@ namespace ClickServerService
 
         public void MyPrint(string text, ConsoleColor color = ConsoleColor.Gray, DateTime? dt = null)
         {
+            //if (text.Contains("check"))
+                //return;
+
             if (dt == null)
                 dt = DateTime.Now;
             Console.ForegroundColor = color;

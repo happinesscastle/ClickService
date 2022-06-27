@@ -191,8 +191,11 @@ namespace ClickServerService
                     flagConnectToSQL = true;
                     try
                     {
-                        receiveThread.Interrupt();
-                        receiveThread.Abort();
+                        if (receiveThread != null)
+                        {
+                            receiveThread.Interrupt();
+                            receiveThread.Abort();
+                        }
                     }
                     catch (Exception ex)
                     {

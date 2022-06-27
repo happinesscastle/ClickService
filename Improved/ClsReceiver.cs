@@ -41,23 +41,15 @@ namespace ClickServerService.Improved
         public ClsReceiver(int apID)
         {
             MultiRun_AP_ID = apID;
-
             AppLoadMain();
-            //Thread.Sleep(10);
-
         }
 
-        public void Start(ref TcpClient tcp)
+        public void Start()
         {
-
             while (true)
             {
-                //Task tsk = Task.Run(() => OnElapsedTime());
-                //ap_Client = tcp;
                 OnElapsedTime();
                 Thread.Sleep(3000);
-                //  tsk.Wait(TimeSpan.FromSeconds(3));
-
             }
         }
 
@@ -66,26 +58,12 @@ namespace ClickServerService.Improved
             try
             {
                 flagConnectToSQL = false;
-
-                //cblValidateReceivedData = 2;
                 serverConfigView.ValidateReceivedData = 2;
-
-                //chbAP1 = false;
                 serverConfigView.AP_IsEnable = false;
-
-                //txtAp1_IP = "0.0.0.0";
-                //   serverConfigView.AP_IP = "0.0.0.0";
-
-                //txtServerIp = "0.0.0.0";
                 serverConfigView.ServerIP = "0.0.0.0";
-
-                //cblRepeatConfig = 2;
                 serverConfigView.RepeatConfig = 2;
-
                 chbShowAllRecive = true;
                 txtRecive = "";
-
-
                 objMain.Decript_Connection_String();
                 MainClass.key_Value_List = objMain.Key_Value_Get();
                 objSwiper.Swiper_Update_Config_StateAll(0, objMain.ID_GameCenter_Local_Get());
@@ -108,17 +86,8 @@ namespace ClickServerService.Improved
                     if (byGameCenter.Any())
                     {
                         serverConfigView = byGameCenter.FirstOrDefault();
-                        //txtServerIp = byGameCenter.Rows[0]["ServerIP"].ToString();
-                        //chbAP1 = Convert.ToBoolean(byGameCenter.Rows[0]["AP_IsEnable"].ToString());
-                        //Console.WriteLine($"chbAP{MultiRun_AP_ID} Fill : " + chbAP1.ToString());
-                        //txtAp1_IP = byGameCenter.Rows[0]["AP_IP"].ToString();
-                        //cblRepeatConfig = int.Parse(byGameCenter.Rows[0]["RepeatConfig"].ToString());
-                        //cblValidateReceivedData = int.Parse(byGameCenter.Rows[0]["ValidateReceivedData"].ToString());
-                        //chbDecreasePriceInLevel2 = Convert.ToBoolean(byGameCenter.Rows[0]["IsDecreasePriceInLevel2"].ToString());
-                        //chbShowAllRecive = Convert.ToBoolean(byGameCenter.Rows[0]["IsShowAllRecive"].ToString());
-                        //_checkBoxShowAll = Convert.ToBoolean(byGameCenter.Rows[0]["IsShowAllRecive"].ToString());
-                        //chbShowAllSend = Convert.ToBoolean(byGameCenter.Rows[0]["IsShowAllSend"].ToString());
-                        //WriteToFile("txtServerIp:" + txtServerIp + $",chbAP{MultiRun_AP_ID}:" + chbAP1.ToString() + $",txtAp{MultiRun_AP_ID}_IP:" + txtAp1_IP + ",cblRepeatConfig:" + (object)cblRepeatConfig + "cblValidateReceivedData:" + (object)cblValidateReceivedData + ",chbDecreasePriceInLevel2:" + chbDecreasePriceInLevel2.ToString() + ",chbShowAllRecive:" + chbShowAllRecive.ToString() + ",chbShowAllSend:" + chbShowAllSend.ToString());
+                        chbShowAllRecive = serverConfigView.IsShowAllRecive.Value;
+                        _checkBoxShowAll = serverConfigView.IsShowAllRecive.Value;
                         WriteToFile("txtServerIp:" + serverConfigView.ServerIP + $",chbAP{MultiRun_AP_ID}:" + serverConfigView.AP_IsEnable.ToString() + $",txtAp{MultiRun_AP_ID}_IP:" + serverConfigView.AP_IP + ",cblRepeatConfig:" + (object)serverConfigView.RepeatConfig + "cblValidateReceivedData:" + (object)serverConfigView.ValidateReceivedData + ",chbDecreasePriceInLevel2:" + serverConfigView.IsDecreasePriceInLevel2.ToString() + ",chbShowAllRecive:" + chbShowAllRecive.ToString() + ",chbShowAllSend:" + serverConfigView.IsShowAllSend.ToString());
                     }
                     else
@@ -147,8 +116,7 @@ namespace ClickServerService.Improved
                         //txtServerIp = "";
                         serverConfigView.ServerIP = "";
                     }
-                    //TCP_RepeatCount = cblRepeatConfig;
-                    //TCP_RepeatCount = serverConfigView.RepeatConfig;
+
 
                     //TCP_CountValidateReceivedData = cblValidateReceivedData;
                     objSwiper.Swiper_Update_Config_StateByGameCenterID(objMain.ID_GameCenter_Local_Get(), 0);
@@ -184,9 +152,7 @@ namespace ClickServerService.Improved
                     NetworkStream stream = client.GetStream();
                     byte[] bytes = Encoding.ASCII.GetBytes(Command);
                     stream.Write(bytes, 0, bytes.Length);
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine($"*R*+Send :> {IpAp} -> {Command}   " + DateTime.Now.ToString("mm:ss:fff"));
-                    Console.ForegroundColor = ConsoleColor.White;
+                    objMain.MyPrint($"*R*+Send :> {IpAp} -> {Command}", ConsoleColor.Yellow, DateTime.Now);
                     return 1;
                 }
                 else
@@ -217,14 +183,16 @@ namespace ClickServerService.Improved
                         objMain.ServerConfig_SetAp1Status(objMain.ID_GameCenter_Local_Get(), false, MultiRun_AP_ID);
                         try
                         {
-                            Console.WriteLine($"*R*TCp_IP_Thread_{MultiRun_AP_ID}.Abort()");
-                            receiveThread.Interrupt();
-                            receiveThread.Abort();
-
+                            objMain.MyPrint($"*R*TCp_IP_Thread_{MultiRun_AP_ID}.Abort()");
+                            if (receiveThread != null)
+                            {
+                                receiveThread.Interrupt();
+                                receiveThread.Abort();
+                            }
                         }
                         catch (Exception ex)
                         {
-                            WriteToFile($"Ap{MultiRun_AP_ID} NoStart :" + (object)ex);
+                            objMain.MyPrint($"Ap{MultiRun_AP_ID} NoStart :" + ex, ConsoleColor.Red);
                         }
                         try
                         {
@@ -236,7 +204,7 @@ namespace ClickServerService.Improved
                         }
                         //ap_IP = txtAp1_IP;
                         ////ap_IP = serverConfigView.AP_IP;
-                        Console.WriteLine($"*R*Start TCp_IP_Thread_{MultiRun_AP_ID}");
+                        objMain.MyPrint($"*R*Start TCp_IP_Thread_{MultiRun_AP_ID}");
                         receiveThread = new Thread(new ThreadStart(Receive_TCP));
                         receiveThread.Start();
                     }
@@ -285,7 +253,7 @@ namespace ClickServerService.Improved
 
                     //  ap_Client.Connect(serverConfigView.AP_IP, port);
                     // Thread.Sleep(1);
-                    Console.WriteLine($"*R*clientAp{MultiRun_AP_ID}.Connect (IP : {serverConfigView.AP_IP} , Port: {port})");
+                    objMain.MyPrint($"*R*clientAp{MultiRun_AP_ID}.Connect (IP : {serverConfigView.AP_IP} , Port: {port})");
                     NetworkStream stream = null;
                     if (!Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient.Connected)
                     {
@@ -305,9 +273,9 @@ namespace ClickServerService.Improved
                             {
                                 string str2 = Encoding.ASCII.GetString(numArray, 0, count).Replace("\n", "");
                                 //Thread.Sleep(1);
-                                Console.ForegroundColor = ConsoleColor.Cyan;
-                                Console.WriteLine("*R*+Recive :<" + serverConfigView.AP_IP + " : <- " + str2);
-                                Console.ForegroundColor = ConsoleColor.White;
+
+                                objMain.MyPrint("*R*+Recive :<" + serverConfigView.AP_IP + " : <- " + str2, ConsoleColor.Cyan, DateTime.Now);
+
 
                                 DispStringRecive += str2;
                                 try
@@ -494,13 +462,13 @@ namespace ClickServerService.Improved
                     return;
                 WriteToFile_SendRecive($"{tcpIpName}-{reciveTimeStr}-{reciveData}", 2, reciveTime);
                 txtRecive += $"{tcpIpName}-{reciveTimeStr}-{reciveData}";
-                Console.WriteLine($"*R*{tcpIpName}-{reciveTimeStr}-{reciveData}", 2, reciveTime);
+                objMain.MyPrint($"*R*{tcpIpName}-{reciveTimeStr}-{reciveData}", dt: reciveTime);
             }
             else
             {
                 WriteToFile_SendRecive($"{tcpIpName}-{reciveTimeStr}-{reciveData}", 2, reciveTime);
                 txtRecive += $"{tcpIpName}-{reciveTimeStr}-{reciveData}";
-                Console.WriteLine($"*R*{tcpIpName}-{reciveTimeStr}-{reciveData}", 2, reciveTime);
+                objMain.MyPrint($"*R*{tcpIpName}-{reciveTimeStr}-{reciveData}", dt: reciveTime);
             }
         }
 
@@ -536,9 +504,7 @@ namespace ClickServerService.Improved
         {
             try
             {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("*R*WriteToFile : " + message);
-                Console.ForegroundColor = ConsoleColor.White;
+                objMain.MyPrint("*R*WriteToFile : " + message, ConsoleColor.Green);
 
                 string pathFileLog = AppDomain.CurrentDomain.BaseDirectory + "\\ServiceLogs";
                 if (!Directory.Exists(pathFileLog))

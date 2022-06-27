@@ -1,20 +1,13 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: ClickServerService.Program
-// Assembly: ClickServerService, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-// MVID: 6BDFD2F8-7BA8-4B8A-8EC1-401DFA893333
-// Assembly location: C:\Users\Win10\Desktop\ClickServerService.exe
-
-using ClickServerService.Improved;
-using ClickServerService.Models;
-using System;
+﻿using ClickServerService.Improved;
 using System.Collections.Generic;
+using ClickServerService.Models;
+using System.Threading.Tasks;
+using System.ServiceProcess;
+using System.Net.Sockets;
+using System.Threading;
 using System.Data;
 using System.Linq;
-using System.Net.Sockets;
-using System.ServiceProcess;
-using System.Threading;
-using System.Threading.Tasks;
-
+using System;
 
 namespace ClickServerService
 {
@@ -24,54 +17,40 @@ namespace ClickServerService
 
         private static void Main()
         {
-            Console.WriteLine("q");
-            MainClass mainClass = new MainClass();
-            List<Access_Point> accessPoints = mainClass.GetAccessPoints();
+            MainClass objMain = new MainClass();
+            List<Access_Point> accessPoints = objMain.GetAccessPoints();
             //accessPoints.Reverse();
             Thread.Sleep(0);
+
             if (accessPoints.Any())
             {
                 foreach (var item in accessPoints)
                 {
                     //Task.Run(() => new ClsClickService(item.AP_ID));
-                    // Thread.Sleep(1);
+                    //Thread.Sleep(1);
+
                     TcpClient tcp = new TcpClient();
                     tCPClientList.Add(new MyTCPClient(item.AP_ID, tcp));
-                    tCPClientList.SingleOrDefault(i => i.AP_ID == item.AP_ID).TCPClient.Connect(item.AP_IP, 1000);
+                    try
+                    {
+                        tCPClientList.SingleOrDefault(i => i.AP_ID == item.AP_ID).TCPClient.Connect(item.AP_IP, 1000);
+                    }
+                    catch
+                    {
+                        objMain.MyPrint("Not Connect " + item.AP_IP, ConsoleColor.Red);
+                    }
                     Thread.Sleep(1);
 
-                    // Thread.Sleep(1);
-                    Task.Run(() => new ClsSender(item.AP_ID).Start(ref tcp));
-                    Thread.Sleep(1);
-                    // Thread.Sleep(1);
-                    Task.Run(() => new ClsReceiver(item.AP_ID).Start(ref tcp));
-                    //  Thread.Sleep(1);
-                    Thread.Sleep(1);
+                    Task.Run(() => new ClsSender(item.AP_ID).Start());
+                    Thread.Sleep(0);
+                    Task.Run(() => new ClsReceiver(item.AP_ID).Start());
+                    Thread.Sleep(0);
 
-                    Console.WriteLine("+accessPoints : " + item.AP_ID.ToString());
-                    //Thread.Sleep(10);
+                    objMain.MyPrint("+accessPoints : " + item.AP_ID.ToString(), ConsoleColor.White);
                 }
-
-
-                //for (int i = 0; i < accessPoints.Count(); i++)
-                //{
-
-                //    Thread.Sleep(10);
-                //    //Task.Run(() => new Improved.ClsReceiver(Convert.ToInt32(accessPoints.Rows[i]["AP_ID"].ToString())));
-
-                //   // new Improved.ClsReceiver(Convert.ToInt32(accessPoints.Rows[i]["AP_ID"].ToString()));
-
-                //    Task.Run(() => new ClsClickService(Convert.ToInt32(accessPoints.Rows[i]["AP_ID"].ToString())));
-                //    Thread.Sleep(10);
-                //    Console.WriteLine("+accessPoints : " + accessPoints.Rows[i]["AP_ID"].ToString());
-                //    Thread.Sleep(10);
-                //}
             }
             var a = Task.Run(() => ForBeConteneud());
             a.Wait();
-
-            // cls.Start();
-            //ServiceBase.Run(new ServiceBase[1] { (ServiceBase)new ClickService() });
         }
 
         static void ForBeConteneud()
@@ -85,6 +64,8 @@ namespace ClickServerService
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine(" -_-> " + r.Key);
                 Console.ForegroundColor = ConsoleColor.White;
+                if (r.Key == ConsoleKey.C)
+                    Console.Clear();
             }
         }
     }

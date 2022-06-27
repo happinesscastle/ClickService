@@ -1361,13 +1361,15 @@ namespace ClickServerService
             }
         }
 
-        #endregion
-
-        public class Retm
+        public void MyPrint(string text, ConsoleColor color = ConsoleColor.Gray, DateTime? dt = null)
         {
-            private int state;
-            private int ContOk;
-            private int notOk;
+            if (dt == null)
+                dt = DateTime.Now;
+            Console.ForegroundColor = color;
+            Console.WriteLine(text + "   " + dt.Value.ToString("mm:ss:fff"));
+            Console.ForegroundColor = ConsoleColor.White;
         }
+
+        #endregion
     }
 }

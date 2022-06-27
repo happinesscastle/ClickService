@@ -45,7 +45,7 @@ namespace ClickServerService.Improved
 
         public void AppLoadMain()
         {
-            Console.WriteLine("AppLoadMain");
+            objMain.MyPrint("AppLoadMain");
             txtRecive = "";
             txtSend = "";
             int port = 1000;
@@ -58,27 +58,24 @@ namespace ClickServerService.Improved
             Main_ID_GameCenter = objMain.ID_GameCenter_Local_Get();
 
             List<ServerConfigView> byGameCenter = objMain.ServerConfig_GetByGameCenterID(objMain.ID_GameCenter_Local_Get(), MultiRun_AP_ID);
-            Console.WriteLine("byGameCenter.Count : " + byGameCenter.Count);
             if (byGameCenter.Any())
             {
                 serverConfigView = byGameCenter.FirstOrDefault();
-                ////chbShowAllSend = Convert.ToBoolean(byGameCenter.Rows[0]["IsShowAllSend"].ToString());
+                TCP_RepeatCount = serverConfigView.RepeatConfig.Value;
+
                 //ap_Client = new TcpClient(serverConfigView.AP_IP, port);
-                Console.WriteLine(" ip : " + serverConfigView.AP_IP);
+                objMain.MyPrint(" ip : " + serverConfigView.AP_IP);
             }
             else
-                Console.WriteLine("Not find service config. Please config server service");
+                objMain.MyPrint("Not find service config. Please config server service", ConsoleColor.DarkRed);
         }
 
-        public void Start(ref TcpClient tcp)
+        public void Start()
         {
             while (true)
             {
-                //ap_Client = tcp;
-                // Task tsk = Task.Run(() => Timer_SendData_Tick());
                 Timer_SendData_Tick();
                 Thread.Sleep(300);
-
             }
         }
 
@@ -96,6 +93,13 @@ namespace ClickServerService.Improved
                     str1.Split('!')[1].ToString();
                     string t_SwiperName = str1.Split('!')[2].ToString();
                     string t_CardmacAddress = str1.Split('!')[3].ToString();
+
+                    //int ms = DateTime.Now.Millisecond;
+                    //if (ms <= 500)
+                    //    Thread.Sleep(500 - ms);
+                    //else
+                    //    Thread.Sleep((1000 - ms) + 500);
+
                     objMain.ReceiveStorage_UpdateIsProcess(storageGetForSend.Rows[index1]["ReciveText"].ToString());
                     int tcpRepeatCount = TCP_RepeatCount;
                     if (str2.Contains("AT+PRC"))
@@ -136,7 +140,7 @@ namespace ClickServerService.Improved
                         string Command1 = "[" + str3 + "]AT+TPRC=" + str4;
                         for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                         {
-                            Send_Main(serverConfigView.AP_IP, Command1, Program.tCPClientList.SingleOrDefault(i=>i.AP_ID == MultiRun_AP_ID).TCPClient);
+                            Send_Main(serverConfigView.AP_IP, Command1, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
                             Thread.Sleep(millisecondsTimeout2);
                         }
                         Thread.Sleep(millisecondsTimeout1);
@@ -425,17 +429,15 @@ namespace ClickServerService.Improved
                     NetworkStream stream = client.GetStream();
                     byte[] bytes = Encoding.ASCII.GetBytes(Command);
                     stream.Write(bytes, 0, bytes.Length);
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Thread.Sleep(1);
-                    Console.WriteLine($"*S*+Send :> {IpAp} -> {Command}");
-                    Thread.Sleep(1);
-                    Console.ForegroundColor = ConsoleColor.White;
+
+                    objMain.MyPrint($"*S*+Send :> {IpAp} -> {Command}", ConsoleColor.DarkYellow, DateTime.Now);
+
                     return 1;
                 }
                 else
                     return -1;
             }
-            catch (Exception ex)
+            catch
             {
                 return -1;
             }

@@ -1,16 +1,16 @@
-﻿using ClickServerService.Models;
-using System;
+﻿using System.Text.RegularExpressions;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Sockets;
-using System.Text;
-using System.Text.RegularExpressions;
+using ClickServerService.Models;
 using System.Threading.Tasks;
-using Dapper;
 using System.Data.SqlClient;
+using System.Net.Sockets;
 using System.Threading;
+using System.Text;
+using System.Linq;
 using System.Net;
+using System.IO;
+using Dapper;
+using System;
 
 namespace ClickServerService.Improved
 {
@@ -21,40 +21,49 @@ namespace ClickServerService.Improved
         /// </summary>
         ServerConfigView serverConfigView = new ServerConfigView();
 
-        //public TcpClient ap_Client;
-
-        MainClass objMain = new MainClass();
-        SwiperClass objSwiper = new SwiperClass();
+        readonly MainClass objMain = new MainClass();
+        readonly SwiperClass objSwiper = new SwiperClass();
 
         Thread receiveThread;
 
         bool _checkBoxShowAll = false;
         bool chbShowAllRecive = false;
         bool flagConnectToSQL = false;
+        readonly int multiRun_AP_ID = 0;
 
-        int MultiRun_AP_ID = 0;
-        int Main_ID_GameCenter = 1;
-
-        string DispStringRecive = "", DispStringSplit = "";
-        string txtRecive = "";
+        string dispStringRecive = "", dispStringSplit = "", txtRecive = "";
 
         public ClsReceiver(int apID)
         {
-            MultiRun_AP_ID = apID;
-            AppLoadMain();
+            try
+            {
+                multiRun_AP_ID = apID;
+                AppLoadMain();
+            }
+            catch (Exception ex)
+            {
+                objMain.ErrorLog(ex);
+            }
         }
 
         public void Start()
         {
-            while (true)
+            try
             {
-                OnElapsedTime();
-                Thread.Sleep(3000);
+                while (true)
+                {
+                    OnElapsedTime();
+                    Thread.Sleep(3000);
+                }
+            }
+            catch (Exception ex)
+            {
+                objMain.ErrorLog(ex);
             }
         }
 
         public void AppLoadMain()
-        {// Copy 2
+        {
             try
             {
                 objMain.MyPrint("Receive - AppLoadMain", ConsoleColor.Blue);
@@ -65,36 +74,29 @@ namespace ClickServerService.Improved
                 serverConfigView.RepeatConfig = 2;
                 chbShowAllRecive = true;
                 txtRecive = "";
-                objMain.Decript_Connection_String();
-                MainClass.key_Value_List = objMain.Key_Value_Get();
+                //MainClass.key_Value_List = objMain.Key_Value_Get();
                 objSwiper.Swiper_Update_Config_StateAll(0, objMain.ID_GameCenter_Local_Get());
 
                 if (!objMain.licence_Check())
                 {
                     WriteToFile(DateTime.Now.ToString() + ":1:Licence ERROR ");
-                    //  timer.Enabled = false;
-                    //  Timer_SendData.Enabled = false;
                     //Dispose();
                 }
                 else
                 {
-                    //   timer.Enabled = true;
-                    //   Timer_SendData.Enabled = true;
                     objMain.LoadGameCenterID();
-                    Main_ID_GameCenter = objMain.ID_GameCenter_Local_Get();
 
-                    List<ServerConfigView> byGameCenter = objMain.ServerConfig_GetByGameCenterID(objMain.ID_GameCenter_Local_Get(), MultiRun_AP_ID);
+                    List<ServerConfigView> byGameCenter = objMain.ServerConfig_GetByGameCenterID(objMain.ID_GameCenter_Local_Get(), multiRun_AP_ID);
                     if (byGameCenter.Any())
                     {
                         serverConfigView = byGameCenter.FirstOrDefault();
                         chbShowAllRecive = serverConfigView.IsShowAllRecive.Value;
                         _checkBoxShowAll = serverConfigView.IsShowAllRecive.Value;
-                        WriteToFile("txtServerIp:" + serverConfigView.ServerIP + $",chbAP{MultiRun_AP_ID}:" + serverConfigView.AP_IsEnable.ToString() + $",txtAp{MultiRun_AP_ID}_IP:" + serverConfigView.AP_IP + ",cblRepeatConfig:" + (object)serverConfigView.RepeatConfig + "cblValidateReceivedData:" + (object)serverConfigView.ValidateReceivedData + ",chbDecreasePriceInLevel2:" + serverConfigView.IsDecreasePriceInLevel2.ToString() + ",chbShowAllRecive:" + chbShowAllRecive.ToString() + ",chbShowAllSend:" + serverConfigView.IsShowAllSend.ToString());
+                        WriteToFile("txtServerIp:" + serverConfigView.ServerIP + $",chbAP{multiRun_AP_ID}:" + serverConfigView.AP_IsEnable.ToString() + $",txtAp{multiRun_AP_ID}_IP:" + serverConfigView.AP_IP + ",cblRepeatConfig:" + (object)serverConfigView.RepeatConfig + "cblValidateReceivedData:" + (object)serverConfigView.ValidateReceivedData + ",chbDecreasePriceInLevel2:" + serverConfigView.IsDecreasePriceInLevel2.ToString() + ",chbShowAllRecive:" + chbShowAllRecive.ToString() + ",chbShowAllSend:" + serverConfigView.IsShowAllSend.ToString());
                     }
                     else
                         WriteToFile("Not find service config. Please config server service");
 
-                    //  timerChargeRate.Enabled = MainClass.key_Value_List.Select("KeyName ='Enable_Charge_Rate'")[0]["Value"].ToString().ToLower() == "true";
                     flagConnectToSQL = true;
                     try
                     {
@@ -104,37 +106,24 @@ namespace ClickServerService.Improved
                             receiveThread.Abort();
                         }
                     }
-                    catch (Exception ex)
-                    {
-                    }
+                    catch { }
                     try
                     {
                         serverConfigView.ServerIP = GetLocalIPAddress();
-                        //txtServerIp = GetLocalIPAddress();
                     }
                     catch
                     {
-                        //txtServerIp = "";
                         serverConfigView.ServerIP = "";
                     }
-
-
-                    //TCP_CountValidateReceivedData = cblValidateReceivedData;
                     objSwiper.Swiper_Update_Config_StateByGameCenterID(objMain.ID_GameCenter_Local_Get(), 0);
-                    //TCP_CountValidateReceivedData = cblValidateReceivedData;
-                    //if (chbAP1)
                     if (serverConfigView.AP_IsEnable.Value)
                     {
                         try
                         {
-                            //ap_IP = txtAp1_IP;
-                            ////ap_IP = serverConfigView.AP_IP;
                             receiveThread = new Thread(new ThreadStart(Receive_TCP));
                             receiveThread.Start();
                         }
-                        catch
-                        {
-                        }
+                        catch { }
                     }
                 }
             }
@@ -144,16 +133,16 @@ namespace ClickServerService.Improved
             }
         }
 
-        public int Send_Main(string IpAp, string Command, TcpClient client)
+        public int Send_Main(string ipAp, string command, TcpClient client)
         {
             try
             {
                 if (client != null && client.Connected)
                 {
                     NetworkStream stream = client.GetStream();
-                    byte[] bytes = Encoding.ASCII.GetBytes(Command);
+                    byte[] bytes = Encoding.ASCII.GetBytes(command);
                     stream.Write(bytes, 0, bytes.Length);
-                    objMain.MyPrint($"*R*+Send :> {IpAp} -> {Command}", ConsoleColor.Yellow, DateTime.Now);
+                    objMain.MyPrint($"*R*+Send :> {ipAp} -> {command}", ConsoleColor.Yellow, DateTime.Now);
                     return 1;
                 }
                 else
@@ -161,30 +150,28 @@ namespace ClickServerService.Improved
             }
             catch (Exception ex)
             {
+                objMain.ErrorLog(ex);
                 return -1;
             }
         }
 
-
-        //private void OnElapsedTime(object source, ElapsedEventArgs e)
         private void OnElapsedTime()
-        {// Copy
-            //if (chbAP1)
+        {
             if (serverConfigView.AP_IsEnable.Value)
             {
                 try
                 {
-                    if ((Send_Main(serverConfigView.AP_IP, "check", Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient) == 1) && receiveThread.IsAlive)
+                    if ((Send_Main(serverConfigView.AP_IP, "check", Program.tCPClientList.SingleOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient) == 1) && receiveThread.IsAlive)
                     {
-                        objMain.ServerConfig_SetAp1Status(objMain.ID_GameCenter_Local_Get(), true, MultiRun_AP_ID);
+                        objMain.ServerConfig_SetAp1Status(objMain.ID_GameCenter_Local_Get(), true, multiRun_AP_ID);
                     }
                     else
                     {
-                        WriteToFile(DateTime.Now.ToString() + $": Ap{MultiRun_AP_ID} is Disconnect.");
-                        objMain.ServerConfig_SetAp1Status(objMain.ID_GameCenter_Local_Get(), false, MultiRun_AP_ID);
+                        WriteToFile(DateTime.Now.ToString() + $": Ap{multiRun_AP_ID} is Disconnect.");
+                        objMain.ServerConfig_SetAp1Status(objMain.ID_GameCenter_Local_Get(), false, multiRun_AP_ID);
                         try
                         {
-                            objMain.MyPrint($"*R*TCp_IP_Thread_{MultiRun_AP_ID}.Abort()", ConsoleColor.DarkMagenta);
+                            objMain.MyPrint($"*R*TCp_IP_Thread_{multiRun_AP_ID}.Abort()", ConsoleColor.DarkMagenta);
                             if (receiveThread != null)
                             {
                                 receiveThread.Interrupt();
@@ -193,26 +180,18 @@ namespace ClickServerService.Improved
                         }
                         catch (Exception ex)
                         {
-                            objMain.MyPrint($"Ap{MultiRun_AP_ID} NoStart :" + ex, ConsoleColor.Red);
+                            objMain.MyPrint($"Ap{multiRun_AP_ID} NoStart :" + ex, ConsoleColor.Red);
+                            objMain.ErrorLog(ex);
                         }
-                        try
-                        {
-                            // ap_Client.Close();
-                        }
-                        catch (Exception ex)
-                        {
-                            WriteToFile(DateTime.Now.ToString() + $":Ap{MultiRun_AP_ID} Close -" + ex.Message);
-                        }
-                        //ap_IP = txtAp1_IP;
-                        ////ap_IP = serverConfigView.AP_IP;
-                        objMain.MyPrint($"*R*Start TCp_IP_Thread_{MultiRun_AP_ID}");
+                        objMain.MyPrint($"*R*Start TCp_IP_Thread_{multiRun_AP_ID}");
                         receiveThread = new Thread(new ThreadStart(Receive_TCP));
                         receiveThread.Start();
                     }
                 }
                 catch (Exception ex)
                 {
-                    WriteToFile(DateTime.Now.ToString() + $": Ap{MultiRun_AP_ID} :" + ex.Message);
+                    WriteToFile(DateTime.Now.ToString() + $": Ap{multiRun_AP_ID} :" + ex.Message);
+                    objMain.ErrorLog(ex);
                 }
             }
             if (!flagConnectToSQL)
@@ -222,7 +201,7 @@ namespace ClickServerService.Improved
             }
             try
             {
-                List<ServerConfigView> byGameCenter = objMain.ServerConfig_GetByGameCenterID(objMain.ID_GameCenter_Local_Get(), MultiRun_AP_ID);
+                List<ServerConfigView> byGameCenter = objMain.ServerConfig_GetByGameCenterID(objMain.ID_GameCenter_Local_Get(), multiRun_AP_ID);
                 if (byGameCenter.Any() && byGameCenter.FirstOrDefault().IsRestart.Value)
                     AppLoadMain();
             }
@@ -234,65 +213,52 @@ namespace ClickServerService.Improved
 
         public void Receive_TCP()
         {// Copy
-            DispStringRecive = "";
-            DispStringSplit = "";
+            dispStringRecive = "";
+            dispStringSplit = "";
             try
             {
                 int port = 1000;
                 byte[] numArray = new byte[256];
                 while (true)
                 {
-                    try
-                    {
-                        //   ap_Client = new TcpClient();
-                    }
-                    catch
-                    {
-                        WriteToFile($"Co_StartTcpIp_{MultiRun_AP_ID}");
-                        //   ap_Client.Close();
-                    }
 
-                    //  ap_Client.Connect(serverConfigView.AP_IP, port);
-                    // Thread.Sleep(1);
-                    objMain.MyPrint($"*R*clientAp{MultiRun_AP_ID}.Connect (IP : {serverConfigView.AP_IP} , Port: {port})", ConsoleColor.Magenta);
+                    objMain.MyPrint($"*R*clientAp{multiRun_AP_ID}.Connect (IP : {serverConfigView.AP_IP} , Port: {port})", ConsoleColor.Magenta);
                     NetworkStream stream = null;
-                    if (!Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient.Connected)
+                    if (!Program.tCPClientList.SingleOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient.Connected)
                     {
-                        Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient.Close();
-                        Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient = new TcpClient();
-                        Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient.Connect(serverConfigView.AP_IP, 1000);
+                        Program.tCPClientList.SingleOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient.Close();
+                        Program.tCPClientList.SingleOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient = new TcpClient();
+                        Program.tCPClientList.SingleOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient.Connect(serverConfigView.AP_IP, 1000);
                     }
-                    stream = Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient.GetStream();
+                    stream = Program.tCPClientList.SingleOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient.GetStream();
                     try
                     {
                         int count;
                         while ((count = stream.Read(numArray, 0, numArray.Length)) > 0)
                         {
-                            DispStringRecive = "";
-                            DispStringSplit = "";
+                            dispStringRecive = "";
+                            dispStringSplit = "";
                             try
                             {
                                 string str2 = Encoding.ASCII.GetString(numArray, 0, count).Replace("\n", "");
-                                //Thread.Sleep(1);
 
                                 objMain.MyPrint("*R*+Recive :<" + serverConfigView.AP_IP + " : <- " + str2, ConsoleColor.Cyan, DateTime.Now);
 
-
-                                DispStringRecive += str2;
+                                dispStringRecive += str2;
                                 try
                                 {
-                                    string[] strArray = DispStringRecive.Split('[');
+                                    string[] strArray = dispStringRecive.Split('[');
                                     for (int index = 0; index < strArray.Length; ++index)
                                     {
-                                        DispStringSplit = strArray[index].Trim();
-                                        if (DispStringSplit.Length > 0)
+                                        dispStringSplit = strArray[index].Trim();
+                                        if (dispStringSplit.Length > 0)
                                         {
-                                            DispStringSplit = "[" + strArray[index].Trim();
+                                            dispStringSplit = "[" + strArray[index].Trim();
                                             DateTime tempReciveTime = DateTime.Now;
-                                            if (Recive_ProcessData(DispStringSplit, MultiRun_AP_ID) == "true")
-                                                Recive_DisplayText(DispStringSplit, $"P{MultiRun_AP_ID}", tempReciveTime);
+                                            if (Recive_ProcessData(dispStringSplit, multiRun_AP_ID) == "true")
+                                                Recive_DisplayText(dispStringSplit, $"P{multiRun_AP_ID}", tempReciveTime);
                                             else if (_checkBoxShowAll)
-                                                Recive_DisplayText(DispStringSplit, $"P{MultiRun_AP_ID}", tempReciveTime);
+                                                Recive_DisplayText(dispStringSplit, $"P{multiRun_AP_ID}", tempReciveTime);
                                         }
                                     }
                                 }
@@ -303,14 +269,20 @@ namespace ClickServerService.Improved
                             }
                             catch (Exception ex)
                             {
+                                objMain.ErrorLog(ex);
                             }
                         }
                     }
-                    catch (Exception ex) { }
-
+                    catch (Exception ex)
+                    {
+                        objMain.ErrorLog(ex);
+                    }
                 }
             }
-            catch (SocketException ex) { }
+            catch (SocketException ex)
+            {
+                objMain.ErrorLog(ex);
+            }
         }
 
         public string Recive_ProcessData(string ReciveText, int P)
@@ -327,7 +299,6 @@ namespace ClickServerService.Improved
                         {
                             ReceiveStorage_Insert(ReciveText, P);
                             flag = true;
-
                         }
                     }
                 }
@@ -453,23 +424,28 @@ namespace ClickServerService.Improved
 
         private void Recive_DisplayText(string reciveData, string tcpIpName, DateTime reciveTime)
         {
-            if (txtRecive.Length > 10000)
-                txtRecive = "";
+            try
+            {
+                if (txtRecive.Length > 10000)
+                    txtRecive = "";
 
-            string reciveTimeStr = reciveTime.ToString("hh:mm:ss:fff");
-            if (!chbShowAllRecive)
-            {
-                if (txtRecive.Contains(reciveData))
-                    return;
-                WriteToFile_SendRecive($"{tcpIpName}-{reciveTimeStr}-{reciveData}", 2, reciveTime);
-                txtRecive += $"{tcpIpName}-{reciveTimeStr}-{reciveData}";
-                //objMain.MyPrint($"*R*{tcpIpName}-{reciveTimeStr}-{reciveData}", dt: reciveTime);
+                string reciveTimeStr = reciveTime.ToString("hh:mm:ss:fff");
+                if (!chbShowAllRecive)
+                {
+                    if (txtRecive.Contains(reciveData))
+                        return;
+                    WriteToFile_SendRecive($"{tcpIpName}-{reciveTimeStr}-{reciveData}", 2, reciveTime);
+                    txtRecive += $"{tcpIpName}-{reciveTimeStr}-{reciveData}";
+                }
+                else
+                {
+                    WriteToFile_SendRecive($"{tcpIpName}-{reciveTimeStr}-{reciveData}", 2, reciveTime);
+                    txtRecive += $"{tcpIpName}-{reciveTimeStr}-{reciveData}";
+                }
             }
-            else
+            catch (Exception ex)
             {
-                WriteToFile_SendRecive($"{tcpIpName}-{reciveTimeStr}-{reciveData}", 2, reciveTime);
-                txtRecive += $"{tcpIpName}-{reciveTimeStr}-{reciveData}";
-                //objMain.MyPrint($"*R*{tcpIpName}-{reciveTimeStr}-{reciveData}", dt: reciveTime);
+                objMain.ErrorLog(ex);
             }
         }
 
@@ -523,7 +499,10 @@ namespace ClickServerService.Improved
                         text.WriteLine(message);
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                objMain.ErrorLog(ex);
+            }
         }
 
         /// <summary>
@@ -568,7 +547,10 @@ namespace ClickServerService.Improved
                         text.WriteLine(message);
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                objMain.ErrorLog(ex);
+            }
         }
 
         #endregion

@@ -150,7 +150,7 @@ namespace ClickServerService
                 chbShowAllSend = true;
                 txtSend = "";
                 chbDecreasePriceInLevel2 = false;
-                objMain.Decript_Connection_String();
+                //objMain.Decript_Connection_String();
                 MainClass.key_Value_List = objMain.Key_Value_Get();
                 objSwiper.Swiper_Update_Config_StateAll(0, objMain.ID_GameCenter_Local_Get());
 

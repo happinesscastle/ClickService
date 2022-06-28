@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace ClickServerService.Models
 {
@@ -11,5 +12,7 @@ namespace ClickServerService.Models
         public bool? AP_IsEnable { get; set; }
         public bool? AP_Status { get; set; }
         public int? ID_GameCenter { get; set; }
+        public string Swiper_Segment_IDs { get; set; }
+        public List<string> ListSwiperSegmentIDs { get; set; }
     }
 }

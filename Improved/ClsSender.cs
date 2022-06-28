@@ -8,6 +8,8 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System;
+using System.Data.SqlClient;
+using Dapper;
 
 namespace ClickServerService.Improved
 {
@@ -17,535 +19,544 @@ namespace ClickServerService.Improved
         /// Global Variables
         /// </summary>
         List<ServerConfigView> serverConfigView = new List<ServerConfigView>();
+        readonly MainClass objMain = new MainClass();
+        readonly SwiperClass objSwiper = new SwiperClass();
+        readonly CardClass objcard = new CardClass();
+        readonly UsersClass objUser = new UsersClass();
+        readonly Pattern objPattern = new Pattern();
 
-        MainClass objMain = new MainClass();
-        SwiperClass objSwiper = new SwiperClass();
-        CardClass objcard = new CardClass();
-        UsersClass objUser = new UsersClass();
-        Pattern objPattern = new Pattern();
-
-        //string ap_IP = "";// Copy -> serverConfigView.AP_IP
-        //TcpClient ap_Client;// Copy
-
-
-        //int MultiRun_AP_ID = 0;
         int Main_ID_GameCenter = 1;
         int TCP_RepeatCount = 1;
 
-        //bool chbDecreasePriceInLevel2 = false; -> serverConfigView.IsDecreasePriceInLevel2.Value
-
         string DispStringRecive;
-        string txtRecive = "", txtSend = "";
+        string txtSend = "";
 
         public ClsSender()
         {
-            //MultiRun_AP_ID = 1;
-            AppLoadMain();
+            try
+            {
+                AppLoadMain();
+            }
+            catch (Exception ex)
+            {
+                objMain.ErrorLog(ex);
+            }
         }
 
         public void AppLoadMain()
         {
-            objMain.MyPrint("Send - AppLoadMain" , ConsoleColor.Blue);
-            txtRecive = "";
-            txtSend = "";
-            int port = 1000;
-
-            objMain.Decript_Connection_String();
-            MainClass.key_Value_List = objMain.Key_Value_Get();
-            objSwiper.Swiper_Update_Config_StateAll(0, objMain.ID_GameCenter_Local_Get());
-
-            objMain.LoadGameCenterID();
-            Main_ID_GameCenter = objMain.ID_GameCenter_Local_Get();
-
-            List<ServerConfigView> byGameCenter = objMain.ServerConfig_GetByGameCenterID(objMain.ID_GameCenter_Local_Get());
-            if (byGameCenter.Any())
+            try
             {
-                serverConfigView = byGameCenter;
-                TCP_RepeatCount = serverConfigView.FirstOrDefault().RepeatConfig.Value;
+                objMain.MyPrint("Send - AppLoadMain", ConsoleColor.Blue);
+                txtSend = "";
 
-                //ap_Client = new TcpClient(serverConfigView.AP_IP, port);
+                MainClass.key_Value_List = objMain.Key_Value_Get();
+                objSwiper.Swiper_Update_Config_StateAll(0, objMain.ID_GameCenter_Local_Get());
 
-                foreach (var item in serverConfigView)
+                objMain.LoadGameCenterID();
+                Main_ID_GameCenter = objMain.ID_GameCenter_Local_Get();
+
+                List<ServerConfigView> byGameCenter = objMain.ServerConfig_GetByGameCenterID(objMain.ID_GameCenter_Local_Get());
+                if (byGameCenter.Any())
                 {
-                    objMain.MyPrint(" ip : " + item.AP_IP);
+                    serverConfigView = byGameCenter;
+                    TCP_RepeatCount = serverConfigView.FirstOrDefault().RepeatConfig.Value;
+
+                    foreach (var item in serverConfigView)
+                    {
+                        objMain.MyPrint(" ip : " + item.AP_IP);
+                    }
                 }
+                else
+                    objMain.MyPrint("Not find service config. Please config server service", ConsoleColor.DarkRed);
+
             }
-            else
-                objMain.MyPrint("Not find service config. Please config server service", ConsoleColor.DarkRed);
+            catch (Exception ex)
+            {
+                objMain.ErrorLog(ex);
+            }
         }
 
         public void Start()
         {
             while (true)
             {
-                Timer_SendData_Tick();
-                Thread.Sleep(300);
+                try
+                {
+                    Timer_SendData_Tick();
+                    Thread.Sleep(300);
+                }
+                catch (Exception ex)
+                {
+                    objMain.ErrorLog(ex);
+                }
             }
         }
 
         private void Timer_SendData_Tick()
         {
-            DataTable storageGetForSend = objMain.ReceiveStorage_GetForSend();
-            for (int index1 = 0; index1 < storageGetForSend.Rows.Count; ++index1)
+            try
             {
-                string str1 = Send_Process_Main(storageGetForSend.Rows[index1]["ReciveText"].ToString());
-                DispStringRecive = str1;
-                if (!string.IsNullOrWhiteSpace(str1))
+                DataTable storageGetForSend = objMain.ReceiveStorage_GetForSend();
+                for (int index1 = 0; index1 < storageGetForSend.Rows.Count; ++index1)
                 {
-                    string str2 = str1.Split('!')[0].ToString();
-                    str1.Split('!')[1].ToString();
-                    string t_SwiperName = str1.Split('!')[2].ToString();
-                    string t_CardmacAddress = str1.Split('!')[3].ToString();
+                    string str1 = Send_Process_Main(storageGetForSend.Rows[index1]["ReciveText"].ToString());
+                    DispStringRecive = str1;
+                    if (!string.IsNullOrWhiteSpace(str1))
+                    {
+                        string str2 = str1.Split('!')[0].ToString();
+                        str1.Split('!')[1].ToString();
+                        string t_SwiperName = str1.Split('!')[2].ToString();
+                        string t_CardmacAddress = str1.Split('!')[3].ToString();
 
-                    objMain.ReceiveStorage_UpdateIsProcess(storageGetForSend.Rows[index1]["ReciveText"].ToString());
-                    int tcpRepeatCount = TCP_RepeatCount;
-                    if (str2.Contains("AT+PRC"))
-                        tcpRepeatCount *= 2;
-                    if (str2.Contains("HIDShow$"))
-                    {
-                        string[] strArray = str2.Split('$');
-                        string str3 = strArray[1].ToString();
-                        string str4 = strArray[2].ToString();
-                        string str5 = strArray[3].ToString();
-                        string str6 = strArray[4].ToString();
-                        string str7 = strArray[5].ToString();
-                        string str8 = strArray[6].ToString();
-                        string str9 = strArray[7].ToString();
-                        string str10 = strArray[8].ToString();
-                        string str11 = strArray[9].ToString();
-                        string str12 = strArray[10].ToString();
-                        string str13 = strArray[11].ToString();
-                        string str14 = strArray[12].ToString();
-                        string str15 = strArray[13].ToString();
-                        string str16 = strArray[14].ToString();
-                        string str17 = strArray[15].ToString();
-                        string str18 = strArray[16].ToString();
-                        string str19 = strArray[17].ToString();
-                        string str20 = strArray[18].ToString();
-                        string str21 = strArray[19].ToString();
-                        string str22 = strArray[20].ToString();
-                        string str23 = strArray[21].ToString();
-                        string str24 = strArray[22].ToString();
-                        string str25 = strArray[23].ToString();
-                        string str26 = strArray[24].ToString();
-                        string str27 = strArray[25].ToString();
-                        string str28 = strArray[26].ToString();
-                        string str29 = strArray[27].ToString();
-                        string str30 = strArray[28].ToString();
-                        int millisecondsTimeout1 = 25;
-                        int millisecondsTimeout2 = 15;
-                        string Command1 = "[" + str3 + "]AT+TPRC=" + str4;
-                        for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
+                        objMain.ReceiveStorage_UpdateIsProcess(storageGetForSend.Rows[index1]["ReciveText"].ToString());
+                        int tcpRepeatCount = TCP_RepeatCount;
+                        if (str2.Contains("AT+PRC"))
+                            tcpRepeatCount *= 2;
+                        if (str2.Contains("HIDShow$"))
                         {
-                            //Send_Main(serverConfigView.AP_IP, Command1, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
-                            Send_Main(Command1);
-                            Thread.Sleep(millisecondsTimeout2);
-                        }
-                        Thread.Sleep(millisecondsTimeout1);
-                        string Command2 = "[" + str3 + "]AT+TTIK=" + str5;
-                        for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
-                        {
-                            //Send_Main(serverConfigView.AP_IP, Command2, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
-                            Send_Main(Command2);
-                            Thread.Sleep(millisecondsTimeout2);
-                        }
-                        Thread.Sleep(millisecondsTimeout1);
-                        string Command3 = "[" + str3 + "]A1=" + str6;
-                        for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
-                        {
-                            //Send_Main(serverConfigView.AP_IP, Command3, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
-                            Send_Main(Command3);
-                            Thread.Sleep(millisecondsTimeout2);
-                        }
-                        Thread.Sleep(millisecondsTimeout1);
-                        string Command4 = "[" + str3 + "]A2=" + str7;
-                        for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
-                        {
-                            //Send_Main(serverConfigView.AP_IP, Command4, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
-                            Send_Main(Command4);
-                            Thread.Sleep(millisecondsTimeout2);
-                        }
-                        Thread.Sleep(millisecondsTimeout1);
-                        string Command5 = "[" + str3 + "]A3=" + str8;
-                        for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
-                        {
-                            //Send_Main(serverConfigView.AP_IP, Command5, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
-                            Send_Main(Command5);
-                            Thread.Sleep(millisecondsTimeout2);
-                        }
-                        Thread.Sleep(millisecondsTimeout1);
-                        string Command6 = "[" + str3 + "]A4=" + str9;
-                        for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
-                        {
-                            //Send_Main(serverConfigView.AP_IP, Command6, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
-                            Send_Main(Command6);
-                            Thread.Sleep(millisecondsTimeout2);
-                        }
-                        Thread.Sleep(millisecondsTimeout1);
-                        string Command7 = "[" + str3 + "]A5=" + str10;
-                        for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
-                        {
-                            //Send_Main(serverConfigView.AP_IP, Command7, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
-                            Send_Main(Command7);
-                            Thread.Sleep(millisecondsTimeout2);
-                        }
-                        Thread.Sleep(millisecondsTimeout1);
-                        string Command8 = "[" + str3 + "]B1=" + str11;
-                        for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
-                        {
-                            //Send_Main(serverConfigView.AP_IP, Command8, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
-                            Send_Main(Command8);
-                            Thread.Sleep(millisecondsTimeout2);
-                        }
-                        Thread.Sleep(millisecondsTimeout1);
-                        string Command9 = "[" + str3 + "]B2=" + str12;
-                        for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
-                        {
-                            //Send_Main(serverConfigView.AP_IP, Command9, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
-                            Send_Main(Command9);
-                            Thread.Sleep(millisecondsTimeout2);
-                        }
-                        Thread.Sleep(millisecondsTimeout1);
-                        string Command10 = "[" + str3 + "]B3=" + str13;
-                        for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
-                        {
-                            //Send_Main(serverConfigView.AP_IP, Command10, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
-                            Send_Main(Command10);
-                            Thread.Sleep(millisecondsTimeout2);
-                        }
-                        Thread.Sleep(millisecondsTimeout1);
-                        string Command11 = "[" + str3 + "]B4=" + str14;
-                        for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
-                        {
-                            //Send_Main(serverConfigView.AP_IP, Command11, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
-                            Send_Main(Command11);
-                            Thread.Sleep(millisecondsTimeout2);
-                        }
-                        Thread.Sleep(millisecondsTimeout1);
-                        string Command12 = "[" + str3 + "]B5=" + str15;
-                        for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
-                        {
-                            //Send_Main(serverConfigView.AP_IP, Command12, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
-                            Send_Main(Command12);
-                            Thread.Sleep(millisecondsTimeout2);
-                        }
-                        Thread.Sleep(millisecondsTimeout1);
-                        string Command13 = "[" + str3 + "]C1=" + str16;
-                        for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
-                        {
-                            //Send_Main(serverConfigView.AP_IP, Command13, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
-                            Send_Main(Command13);
-                            Thread.Sleep(millisecondsTimeout2);
-                        }
-                        Thread.Sleep(millisecondsTimeout1);
-                        string Command14 = "[" + str3 + "]C2=" + str17;
-                        for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
-                        {
-                            //Send_Main(serverConfigView.AP_IP, Command14, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
-                            Send_Main(Command14);
-                            Thread.Sleep(millisecondsTimeout2);
-                        }
-                        Thread.Sleep(millisecondsTimeout1);
-                        string Command15 = "[" + str3 + "]C3=" + str18;
-                        for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
-                        {
-                            //Send_Main(serverConfigView.AP_IP, Command15, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
-                            Send_Main(Command15);
-                            Thread.Sleep(millisecondsTimeout2);
-                        }
-                        Thread.Sleep(millisecondsTimeout1);
-                        string Command16 = "[" + str3 + "]C4=" + str19;
-                        for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
-                        {
-                            //Send_Main(serverConfigView.AP_IP, Command16, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
-                            Send_Main(Command16);
-                            Thread.Sleep(millisecondsTimeout2);
-                        }
-                        Thread.Sleep(millisecondsTimeout1);
-                        string Command17 = "[" + str3 + "]C5=" + str20;
-                        for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
-                        {
-                            //Send_Main(serverConfigView.AP_IP, Command17, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
-                            Send_Main(Command17);
-                            Thread.Sleep(millisecondsTimeout2);
-                        }
-                        Thread.Sleep(millisecondsTimeout1);
-                        string Command18 = "[" + str3 + "]D1=" + str21;
-                        for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
-                        {
-                            //Send_Main(serverConfigView.AP_IP, Command18, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
-                            Send_Main(Command18);
-                            Thread.Sleep(millisecondsTimeout2);
-                        }
-                        Thread.Sleep(millisecondsTimeout1);
-                        string Command19 = "[" + str3 + "]D2=" + str22;
-                        for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
-                        {
-                            //Send_Main(serverConfigView.AP_IP, Command19, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
-                            Send_Main(Command19);
-                            Thread.Sleep(millisecondsTimeout2);
-                        }
-                        Thread.Sleep(millisecondsTimeout1);
-                        string Command20 = "[" + str3 + "]D3=" + str23;
-                        for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
-                        {
-                            //Send_Main(serverConfigView.AP_IP, Command20, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
-                            Send_Main(Command20);
-                            Thread.Sleep(millisecondsTimeout2);
-                        }
-                        Thread.Sleep(millisecondsTimeout1);
-                        string Command21 = "[" + str3 + "]D4=" + str24;
-                        for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
-                        {
-                            //Send_Main(serverConfigView.AP_IP, Command21, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
-                            Send_Main(Command21);
-                            Thread.Sleep(millisecondsTimeout2);
-                        }
-                        Thread.Sleep(millisecondsTimeout1);
-                        string Command22 = "[" + str3 + "]D5=" + str25;
-                        for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
-                        {
-                            //Send_Main(serverConfigView.AP_IP, Command22, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
-                            Send_Main(Command22);
-                            Thread.Sleep(millisecondsTimeout2);
-                        }
-                        Thread.Sleep(millisecondsTimeout1);
-                        string Command23 = "[" + str3 + "]E1=" + str26;
-                        for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
-                        {
-                            //Send_Main(serverConfigView.AP_IP, Command23, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
-                            Send_Main(Command23);
-                            Thread.Sleep(millisecondsTimeout2);
-                        }
-                        Thread.Sleep(millisecondsTimeout1);
-                        string Command24 = "[" + str3 + "]E2=" + str27;
-                        for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
-                        {
-                            //Send_Main(serverConfigView.AP_IP, Command24, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
-                            Send_Main(Command24);
-                            Thread.Sleep(millisecondsTimeout2);
-                        }
-                        Thread.Sleep(millisecondsTimeout1);
-                        string Command25 = "[" + str3 + "]E3=" + str28;
-                        for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
-                        {
-                            //Send_Main(serverConfigView.AP_IP, Command25, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
-                            Send_Main(Command25);
-                            Thread.Sleep(millisecondsTimeout2);
-                        }
-                        Thread.Sleep(millisecondsTimeout1);
-                        string Command26 = "[" + str3 + "]E4=" + str29;
-                        for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
-                        {
-                            //Send_Main(serverConfigView.AP_IP, Command26, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
-                            Send_Main(Command26);
-                            Thread.Sleep(millisecondsTimeout2);
-                        }
-                        Thread.Sleep(millisecondsTimeout1);
-                        string Command27 = "[" + str3 + "]E5=" + str30;
-                        for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
-                        {
-                            //Send_Main(serverConfigView.AP_IP, Command27, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
-                            Send_Main(Command27);
-                            Thread.Sleep(millisecondsTimeout2);
-                        }
-                        Thread.Sleep(millisecondsTimeout1);
-                        string Command28 = "[" + str3 + "]END-DATA";
-                        for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
-                        {
-                            //Send_Main(serverConfigView.AP_IP, Command28, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
-                            Send_Main(Command28);
-                            Thread.Sleep(millisecondsTimeout2);
-                        }
-                    }
-                    else
-                    {
-                        for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
-                        {
-                            //Send_DisplayText(str2, $"P{MultiRun_AP_ID}", t_SwiperName, t_CardmacAddress, DateTime.Now);
-                            foreach (var item in serverConfigView)
+                            string[] strArray = str2.Split('$');
+                            string str3 = strArray[1].ToString();
+                            string str4 = strArray[2].ToString();
+                            string str5 = strArray[3].ToString();
+                            string str6 = strArray[4].ToString();
+                            string str7 = strArray[5].ToString();
+                            string str8 = strArray[6].ToString();
+                            string str9 = strArray[7].ToString();
+                            string str10 = strArray[8].ToString();
+                            string str11 = strArray[9].ToString();
+                            string str12 = strArray[10].ToString();
+                            string str13 = strArray[11].ToString();
+                            string str14 = strArray[12].ToString();
+                            string str15 = strArray[13].ToString();
+                            string str16 = strArray[14].ToString();
+                            string str17 = strArray[15].ToString();
+                            string str18 = strArray[16].ToString();
+                            string str19 = strArray[17].ToString();
+                            string str20 = strArray[18].ToString();
+                            string str21 = strArray[19].ToString();
+                            string str22 = strArray[20].ToString();
+                            string str23 = strArray[21].ToString();
+                            string str24 = strArray[22].ToString();
+                            string str25 = strArray[23].ToString();
+                            string str26 = strArray[24].ToString();
+                            string str27 = strArray[25].ToString();
+                            string str28 = strArray[26].ToString();
+                            string str29 = strArray[27].ToString();
+                            string str30 = strArray[28].ToString();
+                            int millisecondsTimeout1 = 25;
+                            int millisecondsTimeout2 = 15;
+                            string Command1 = "[" + str3 + "]AT+TPRC=" + str4;
+                            for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                             {
-                                Send_DisplayText(str2, $"P{item.AP_ID}", t_SwiperName, t_CardmacAddress, DateTime.Now);
-                                Send_Main(item.AP_IP, str2, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == item.AP_ID).TCPClient);
+                                Send_Main(Command1);
+                                Thread.Sleep(millisecondsTimeout2);
                             }
-
-                            Thread.Sleep(10);
-                        }
-                    }
-                    DataTable byState = objSwiper.Swiper_GetByState();
-                    for (int index2 = 0; index2 < byState.Rows.Count; ++index2)
-                    {
-                        string str3 = ((int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds).ToString();
-                        string str4 = str3.Substring(str3.Length - 5, 4);
-                        string Command = "[" + MacAndTimeStamp_Create(byState.Rows[index2]["MacAddress"].ToString().ToLower()) + "]AT+CFG1=" + str4;
-                        for (int index3 = 0; index3 < TCP_RepeatCount + 2; ++index3)
-                        {
-                            foreach (var item in serverConfigView)
+                            Thread.Sleep(millisecondsTimeout1);
+                            string Command2 = "[" + str3 + "]AT+TTIK=" + str5;
+                            for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                             {
-                                Send_DisplayText(str2, $"P{item.AP_ID}", "", "");
-                                Send_Main(item.AP_IP, Command, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == item.AP_ID).TCPClient);
+                                Send_Main(Command2);
+                                Thread.Sleep(millisecondsTimeout2);
                             }
-
-                            //Send_DisplayText(str2, $"P{MultiRun_AP_ID}", "", "");
-                            //Send_Main(serverConfigView.AP_IP, Command, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
-
-                            Thread.Sleep(100);
-                        }
-                    }
-                    try
-                    {
-                        if (DispStringRecive.ToUpper().Contains("[KA=") || DispStringRecive.ToLower().Contains("selftest"))
-                        {
-                            DataTable stateForChangePrice = objSwiper.Swiper_GetByState_ForChangePrice();
-                            for (int index2 = 0; index2 < stateForChangePrice.Rows.Count; ++index2)
+                            Thread.Sleep(millisecondsTimeout1);
+                            string Command3 = "[" + str3 + "]A1=" + str6;
+                            for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
                             {
-                                string lower = stateForChangePrice.Rows[index2]["MacAddress"].ToString().ToLower();
-                                string str3 = MacAndTimeStamp_Create(lower);
-                                DataTable addressByChargeRate = objSwiper.Swiper_GetByMacAddressByChargeRate(lower.ToUpper());
-                                if (addressByChargeRate.Rows.Count > 0)
+                                Send_Main(Command3);
+                                Thread.Sleep(millisecondsTimeout2);
+                            }
+                            Thread.Sleep(millisecondsTimeout1);
+                            string Command4 = "[" + str3 + "]A2=" + str7;
+                            for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
+                            {
+                                Send_Main(Command4);
+                                Thread.Sleep(millisecondsTimeout2);
+                            }
+                            Thread.Sleep(millisecondsTimeout1);
+                            string Command5 = "[" + str3 + "]A3=" + str8;
+                            for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
+                            {
+                                Send_Main(Command5);
+                                Thread.Sleep(millisecondsTimeout2);
+                            }
+                            Thread.Sleep(millisecondsTimeout1);
+                            string Command6 = "[" + str3 + "]A4=" + str9;
+                            for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
+                            {
+                                Send_Main(Command6);
+                                Thread.Sleep(millisecondsTimeout2);
+                            }
+                            Thread.Sleep(millisecondsTimeout1);
+                            string Command7 = "[" + str3 + "]A5=" + str10;
+                            for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
+                            {
+                                Send_Main(Command7);
+                                Thread.Sleep(millisecondsTimeout2);
+                            }
+                            Thread.Sleep(millisecondsTimeout1);
+                            string Command8 = "[" + str3 + "]B1=" + str11;
+                            for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
+                            {
+                                Send_Main(Command8);
+                                Thread.Sleep(millisecondsTimeout2);
+                            }
+                            Thread.Sleep(millisecondsTimeout1);
+                            string Command9 = "[" + str3 + "]B2=" + str12;
+                            for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
+                            {
+                                Send_Main(Command9);
+                                Thread.Sleep(millisecondsTimeout2);
+                            }
+                            Thread.Sleep(millisecondsTimeout1);
+                            string Command10 = "[" + str3 + "]B3=" + str13;
+                            for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
+                            {
+                                Send_Main(Command10);
+                                Thread.Sleep(millisecondsTimeout2);
+                            }
+                            Thread.Sleep(millisecondsTimeout1);
+                            string Command11 = "[" + str3 + "]B4=" + str14;
+                            for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
+                            {
+                                Send_Main(Command11);
+                                Thread.Sleep(millisecondsTimeout2);
+                            }
+                            Thread.Sleep(millisecondsTimeout1);
+                            string Command12 = "[" + str3 + "]B5=" + str15;
+                            for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
+                            {
+                                Send_Main(Command12);
+                                Thread.Sleep(millisecondsTimeout2);
+                            }
+                            Thread.Sleep(millisecondsTimeout1);
+                            string Command13 = "[" + str3 + "]C1=" + str16;
+                            for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
+                            {
+                                Send_Main(Command13);
+                                Thread.Sleep(millisecondsTimeout2);
+                            }
+                            Thread.Sleep(millisecondsTimeout1);
+                            string Command14 = "[" + str3 + "]C2=" + str17;
+                            for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
+                            {
+                                Send_Main(Command14);
+                                Thread.Sleep(millisecondsTimeout2);
+                            }
+                            Thread.Sleep(millisecondsTimeout1);
+                            string Command15 = "[" + str3 + "]C3=" + str18;
+                            for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
+                            {
+                                Send_Main(Command15);
+                                Thread.Sleep(millisecondsTimeout2);
+                            }
+                            Thread.Sleep(millisecondsTimeout1);
+                            string Command16 = "[" + str3 + "]C4=" + str19;
+                            for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
+                            {
+                                Send_Main(Command16);
+                                Thread.Sleep(millisecondsTimeout2);
+                            }
+                            Thread.Sleep(millisecondsTimeout1);
+                            string Command17 = "[" + str3 + "]C5=" + str20;
+                            for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
+                            {
+                                Send_Main(Command17);
+                                Thread.Sleep(millisecondsTimeout2);
+                            }
+                            Thread.Sleep(millisecondsTimeout1);
+                            string Command18 = "[" + str3 + "]D1=" + str21;
+                            for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
+                            {
+                                Send_Main(Command18);
+                                Thread.Sleep(millisecondsTimeout2);
+                            }
+                            Thread.Sleep(millisecondsTimeout1);
+                            string Command19 = "[" + str3 + "]D2=" + str22;
+                            for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
+                            {
+                                Send_Main(Command19);
+                                Thread.Sleep(millisecondsTimeout2);
+                            }
+                            Thread.Sleep(millisecondsTimeout1);
+                            string Command20 = "[" + str3 + "]D3=" + str23;
+                            for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
+                            {
+                                Send_Main(Command20);
+                                Thread.Sleep(millisecondsTimeout2);
+                            }
+                            Thread.Sleep(millisecondsTimeout1);
+                            string Command21 = "[" + str3 + "]D4=" + str24;
+                            for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
+                            {
+                                Send_Main(Command21);
+                                Thread.Sleep(millisecondsTimeout2);
+                            }
+                            Thread.Sleep(millisecondsTimeout1);
+                            string Command22 = "[" + str3 + "]D5=" + str25;
+                            for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
+                            {
+                                Send_Main(Command22);
+                                Thread.Sleep(millisecondsTimeout2);
+                            }
+                            Thread.Sleep(millisecondsTimeout1);
+                            string Command23 = "[" + str3 + "]E1=" + str26;
+                            for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
+                            {
+                                Send_Main(Command23);
+                                Thread.Sleep(millisecondsTimeout2);
+                            }
+                            Thread.Sleep(millisecondsTimeout1);
+                            string Command24 = "[" + str3 + "]E2=" + str27;
+                            for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
+                            {
+                                Send_Main(Command24);
+                                Thread.Sleep(millisecondsTimeout2);
+                            }
+                            Thread.Sleep(millisecondsTimeout1);
+                            string Command25 = "[" + str3 + "]E3=" + str28;
+                            for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
+                            {
+                                Send_Main(Command25);
+                                Thread.Sleep(millisecondsTimeout2);
+                            }
+                            Thread.Sleep(millisecondsTimeout1);
+                            string Command26 = "[" + str3 + "]E4=" + str29;
+                            for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
+                            {
+                                Send_Main(Command26);
+                                Thread.Sleep(millisecondsTimeout2);
+                            }
+                            Thread.Sleep(millisecondsTimeout1);
+                            string Command27 = "[" + str3 + "]E5=" + str30;
+                            for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
+                            {
+                                Send_Main(Command27);
+                                Thread.Sleep(millisecondsTimeout2);
+                            }
+                            Thread.Sleep(millisecondsTimeout1);
+                            string Command28 = "[" + str3 + "]END-DATA";
+                            for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
+                            {
+                                Send_Main(Command28);
+                                Thread.Sleep(millisecondsTimeout2);
+                            }
+                        }
+                        else
+                        {
+                            for (int index2 = 0; index2 < tcpRepeatCount; ++index2)
+                            {
+                                foreach (var item in serverConfigView)
                                 {
-                                    objSwiper.Swiper_UpdateStateByMacAddress(lower.ToUpper(), -3);
-                                    string str4 = "[" + str3 + "]AT+CFG3=" + objMain.comma(addressByChargeRate.Rows[0]["PriceAdi"].ToString());
-                                    string str5 = "[" + str3 + "]AT+CFG4=" + objMain.comma(addressByChargeRate.Rows[0]["PriceVije"].ToString());
-                                    for (int index3 = 0; index3 < TCP_RepeatCount + 5; ++index3)
-                                    {
-                                        foreach (var item in serverConfigView)
-                                        {
-                                            Send_DisplayText(str4, $"P{item.AP_ID}", "", "");
-                                            Send_Main(item.AP_IP, str4, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == item.AP_ID).TCPClient);
-                                        }
-                                        //Send_DisplayText(str4, $"P{MultiRun_AP_ID}", "", "");
-                                        //Send_Main(serverConfigView.AP_IP, str4, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
+                                    Send_DisplayText(str2, $"P{item.AP_ID}", t_SwiperName, t_CardmacAddress, DateTime.Now);
+                                    Send_Main(item.AP_IP, str2, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == item.AP_ID).TCPClient);
+                                }
 
-                                        Thread.Sleep(70);
-                                    }
-                                    Thread.Sleep(100);
-                                    for (int index3 = 0; index3 < TCP_RepeatCount + 5; ++index3)
+                                Thread.Sleep(10);
+                            }
+                        }
+                        DataTable byState = objSwiper.Swiper_GetByState();
+                        for (int index2 = 0; index2 < byState.Rows.Count; ++index2)
+                        {
+                            string str3 = ((int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds).ToString();
+                            string str4 = str3.Substring(str3.Length - 5, 4);
+                            string Command = "[" + MacAndTimeStamp_Create(byState.Rows[index2]["MacAddress"].ToString().ToLower()) + "]AT+CFG1=" + str4;
+                            for (int index3 = 0; index3 < TCP_RepeatCount + 2; ++index3)
+                            {
+                                foreach (var item in serverConfigView)
+                                {
+                                    Send_DisplayText(str2, $"P{item.AP_ID}", "", "");
+                                    Send_Main(item.AP_IP, Command, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == item.AP_ID).TCPClient);
+                                }
+                                Thread.Sleep(100);
+                            }
+                        }
+                        try
+                        {
+                            if (DispStringRecive.ToUpper().Contains("[KA=") || DispStringRecive.ToLower().Contains("selftest"))
+                            {
+                                DataTable stateForChangePrice = objSwiper.Swiper_GetByState_ForChangePrice();
+                                for (int index2 = 0; index2 < stateForChangePrice.Rows.Count; ++index2)
+                                {
+                                    string lower = stateForChangePrice.Rows[index2]["MacAddress"].ToString().ToLower();
+                                    string str3 = MacAndTimeStamp_Create(lower);
+                                    DataTable addressByChargeRate = objSwiper.Swiper_GetByMacAddressByChargeRate(lower.ToUpper());
+                                    if (addressByChargeRate.Rows.Count > 0)
                                     {
-                                        //Send_DisplayText(str5, $"P{MultiRun_AP_ID}", "", "");
-                                        //Send_Main(serverConfigView.AP_IP, str5, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == MultiRun_AP_ID).TCPClient);
-                                        foreach (var item in serverConfigView)
+                                        objSwiper.Swiper_UpdateStateByMacAddress(lower.ToUpper(), -3);
+                                        string str4 = "[" + str3 + "]AT+CFG3=" + objMain.comma(addressByChargeRate.Rows[0]["PriceAdi"].ToString());
+                                        string str5 = "[" + str3 + "]AT+CFG4=" + objMain.comma(addressByChargeRate.Rows[0]["PriceVije"].ToString());
+                                        for (int index3 = 0; index3 < TCP_RepeatCount + 5; ++index3)
                                         {
-                                            Send_DisplayText(str5, $"P{item.AP_ID}", "", "");
-                                            Send_Main(item.AP_IP, str5, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == item.AP_ID).TCPClient);
+                                            foreach (var item in serverConfigView)
+                                            {
+                                                Send_DisplayText(str4, $"P{item.AP_ID}", "", "");
+                                                Send_Main(item.AP_IP, str4, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == item.AP_ID).TCPClient);
+                                            }
+                                            Thread.Sleep(70);
                                         }
-                                        Thread.Sleep(70);
+                                        Thread.Sleep(100);
+                                        for (int index3 = 0; index3 < TCP_RepeatCount + 5; ++index3)
+                                        {
+                                            foreach (var item in serverConfigView)
+                                            {
+                                                Send_DisplayText(str5, $"P{item.AP_ID}", "", "");
+                                                Send_Main(item.AP_IP, str5, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == item.AP_ID).TCPClient);
+                                            }
+                                            Thread.Sleep(70);
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        objMain.ErrorLog(ex);
+                        catch (Exception ex)
+                        {
+                            objMain.ErrorLog(ex);
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                objMain.ErrorLog(ex);
             }
         }
 
         private void Send_DisplayText(string SendData, string TcpIPName, string t_SwiperName, string t_CardmacAddress, DateTime? sendTime = null)
-        {// Copy
-            if (txtRecive.Length > 10000)
+        {
+            try
             {
-                txtRecive = "";
-                txtSend = "";
+                if (txtSend.Length > 10000)
+                {
+                    txtSend = "";
+                }
+                if (sendTime == null)
+                    sendTime = DateTime.Now;
+                string sendTimeString = sendTime.Value.ToString("hh:mm:ss:fff");
+                if (!serverConfigView.FirstOrDefault().IsShowAllSend.Value)
+                {
+                    if (SendData.Length <= 0 || txtSend.Contains(TcpIPName + "-" + SendData))
+                        return;
+                    WriteToFile_SendRecive(TcpIPName + "-" + sendTimeString + "-" + SendData + "-" + t_SwiperName + "-" + t_CardmacAddress, 1, sendTime.Value);
+                    txtSend += TcpIPName + "-" + SendData + sendTimeString + "-" + t_SwiperName + t_CardmacAddress;
+                }
+                else if (SendData.Length > 0)
+                {
+                    WriteToFile_SendRecive(TcpIPName + "-" + sendTimeString + "-" + SendData + "-" + t_SwiperName + "-" + t_CardmacAddress, 1, sendTime.Value);
+                    txtSend += TcpIPName + "-" + SendData + sendTimeString + "-" + t_SwiperName + t_CardmacAddress;
+                }
             }
-            if (sendTime == null)
-                sendTime = DateTime.Now;
-            string sendTimeString = sendTime.Value.ToString("hh:mm:ss:fff");
-            if (!serverConfigView.FirstOrDefault().IsShowAllSend.Value)
+            catch (Exception ex)
             {
-                if (SendData.Length <= 0 || txtSend.Contains(TcpIPName + "-" + SendData))
-                    return;
-                WriteToFile_SendRecive(TcpIPName + "-" + sendTimeString + "-" + SendData + "-" + t_SwiperName + "-" + t_CardmacAddress, 1, sendTime.Value);
-                txtSend = txtSend + TcpIPName + "-" + SendData + sendTimeString + "-" + t_SwiperName + t_CardmacAddress;
-            }
-            else if (SendData.Length > 0)
-            {
-                WriteToFile_SendRecive(TcpIPName + "-" + sendTimeString + "-" + SendData + "-" + t_SwiperName + "-" + t_CardmacAddress, 1, sendTime.Value);
-                txtSend = txtSend + TcpIPName + "-" + SendData + sendTimeString + "-" + t_SwiperName + t_CardmacAddress;
+                objMain.ErrorLog(ex);
             }
         }
 
         public int Send_Main(string command)
-        {// Copy 2
+        {
             try
             {
                 foreach (var item in Program.tCPClientList)
                 {
-                    if (item.TCPClient.Connected)
+
+                    string swiperSegment = objSwiper.GetSwiperSegmentByMac(objSwiper.GetMacSwiper(command), Main_ID_GameCenter);
+                    bool isAllowedToSend = Program.accessPoints.Where(ap => ap.AP_ID == item.AP_ID).SingleOrDefault().ListSwiperSegmentIDs.Contains(swiperSegment);
+                    if (isAllowedToSend)
                     {
-                        NetworkStream stream = item.TCPClient.GetStream();
-                        byte[] bytes = Encoding.ASCII.GetBytes(command);
-                        stream.Write(bytes, 0, bytes.Length);
 
-                        objMain.MyPrint($"*S*+Send :> {item.TCPClient.Client.RemoteEndPoint} -> {command}", ConsoleColor.DarkYellow, DateTime.Now);
+                        if (item.TCPClient.Connected)
+                        {
 
+                            NetworkStream stream = item.TCPClient.GetStream();
+                            byte[] bytes = Encoding.ASCII.GetBytes(command);
+                            stream.Write(bytes, 0, bytes.Length);
+
+                            objMain.MyPrint($"*S*+Send :> {item.TCPClient.Client.RemoteEndPoint} -> {command}", ConsoleColor.DarkYellow, DateTime.Now);
+
+                        }
+                        else
+                            return -1;
                     }
-                    else
-                        return -1;
                 }
                 return 1;
 
             }
-            catch
+            catch (Exception ex)
             {
+                objMain.ErrorLog(ex);
                 return -1;
             }
         }
 
 
-        public int Send_Main(string IpAp, string Command, TcpClient client)
+        public int Send_Main(string ipAp, string command, TcpClient client)
         {// Copy 2
             try
             {
-                if (client.Connected)
+                string swiperSegment = objSwiper.GetSwiperSegmentByMac(objSwiper.GetMacSwiper(command), Main_ID_GameCenter);
+                int id_ap = Program.accessPoints.Where(i => i.AP_IP == ipAp).FirstOrDefault().AP_ID;
+                bool isAllowedToSend = Program.accessPoints.Where(ap => ap.AP_ID == id_ap).SingleOrDefault().ListSwiperSegmentIDs.Contains(swiperSegment);
+                if (isAllowedToSend)
                 {
-                    NetworkStream stream = client.GetStream();
-                    byte[] bytes = Encoding.ASCII.GetBytes(Command);
-                    stream.Write(bytes, 0, bytes.Length);
+                    if (client.Connected)
+                    {
+                        NetworkStream stream = client.GetStream();
+                        byte[] bytes = Encoding.ASCII.GetBytes(command);
+                        stream.Write(bytes, 0, bytes.Length);
 
-                    objMain.MyPrint($"*S*+Send :> {IpAp} -> {Command}", ConsoleColor.DarkYellow, DateTime.Now);
+                        objMain.MyPrint($"*S*+Send :> {ipAp} -> {command}", ConsoleColor.DarkYellow, DateTime.Now);
 
-                    return 1;
+                        return 1;
+                    }
+                    else
+                        return -1;
                 }
                 else
                     return -1;
             }
-            catch
+            catch (Exception ex)
             {
+                objMain.ErrorLog(ex);
                 return -1;
             }
         }
 
         public string MacAndTimeStamp_Create(string MacAddress)
         {
-            string str1 = ((int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds).ToString();
-            string str2 = str1.Substring(str1.Length - 5, 4);
-            char ch1 = MacAddress[0];
-            string str3 = ch1.ToString();
-            ch1 = MacAddress[1];
-            string str4 = ch1.ToString();
-            string str5 = str3 + str4 + str2[0].ToString();
-            char ch2 = MacAddress[2];
-            string str6 = ch2.ToString();
-            ch2 = MacAddress[3];
-            string str7 = ch2.ToString();
-            string str8 = str5 + str6 + str7 + str2[1].ToString();
-            char ch3 = MacAddress[4];
-            string str9 = ch3.ToString();
-            ch3 = MacAddress[5];
-            string str10 = ch3.ToString();
-            string str11 = str8 + str9 + str10 + str2[2].ToString();
-            char ch4 = MacAddress[6];
-            string str12 = ch4.ToString();
-            ch4 = MacAddress[7];
-            string str13 = ch4.ToString();
-            return str11 + str12 + str13 + str2[3].ToString();
+            try
+            {
+                string str1 = ((int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds).ToString();
+                string str2 = str1.Substring(str1.Length - 5, 4);
+                char ch1 = MacAddress[0];
+                string str3 = ch1.ToString();
+                ch1 = MacAddress[1];
+                string str4 = ch1.ToString();
+                string str5 = str3 + str4 + str2[0].ToString();
+                char ch2 = MacAddress[2];
+                string str6 = ch2.ToString();
+                ch2 = MacAddress[3];
+                string str7 = ch2.ToString();
+                string str8 = str5 + str6 + str7 + str2[1].ToString();
+                char ch3 = MacAddress[4];
+                string str9 = ch3.ToString();
+                ch3 = MacAddress[5];
+                string str10 = ch3.ToString();
+                string str11 = str8 + str9 + str10 + str2[2].ToString();
+                char ch4 = MacAddress[6];
+                string str12 = ch4.ToString();
+                ch4 = MacAddress[7];
+                string str13 = ch4.ToString();
+                return str11 + str12 + str13 + str2[3].ToString();
+            }
+            catch (Exception ex)
+            {
+                objMain.ErrorLog(ex);
+                return "";
+            }
         }
 
         public string Send_Process_Main(string ReciveText)
-        {// Copy
+        {
             try
             {
                 ReciveText = ReciveText.Trim();
@@ -597,9 +608,7 @@ namespace ClickServerService.Improved
                             {
                                 str3_Title = addressByChargeRate.Rows[0]["Title"].ToString();
                             }
-                            catch
-                            {
-                            }
+                            catch { }
                             int num = 0;
                             num = !(addressByChargeRate.Rows[0]["Config_State"].ToString() == "") && addressByChargeRate.Rows[0]["Config_State"] != null ? int.Parse(addressByChargeRate.Rows[0]["Config_State"].ToString()) : 0;
                             if (true)
@@ -630,9 +639,7 @@ namespace ClickServerService.Improved
                             {
                                 str3_Title = addressByChargeRate.Rows[0]["Title"].ToString();
                             }
-                            catch
-                            {
-                            }
+                            catch { }
                             int num1 = int.Parse(addressByChargeRate.Rows[0]["Config_State"].ToString());
                             if (ReciveText.Contains("OKCFG1"))
                             {
@@ -748,9 +755,7 @@ namespace ClickServerService.Improved
                                     flag3 = Convert.ToBoolean(addressByChargeRate.Rows[0]["GroupsStatus"].ToString());
                                     flag4 = Convert.ToBoolean(addressByChargeRate.Rows[0]["SegmentStatus"].ToString());
                                 }
-                                catch
-                                {
-                                }
+                                catch { }
                                 string str9 = "0";
                                 if (flag1 & flag2 & flag3 & flag4)
                                     str9 = str7;
@@ -824,9 +829,7 @@ namespace ClickServerService.Improved
                             {
                                 str3_Title = addressByChargeRate.Rows[0]["Title"].ToString();
                             }
-                            catch
-                            {
-                            }
+                            catch { }
                             int num1 = int.Parse(addressByChargeRate.Rows[0]["ID_Games"].ToString());
                             int.Parse(addressByChargeRate.Rows[0]["ID_Games_Class"].ToString() == "" ? "-100" : addressByChargeRate.Rows[0]["ID_Games_Class"].ToString());
                             int ID_Swiper = int.Parse(addressByChargeRate.Rows[0]["ID"].ToString());
@@ -1373,9 +1376,7 @@ namespace ClickServerService.Improved
                                 ID_Swiper = int.Parse(addressByChargeRate.Rows[0]["ID"].ToString());
                                 str9 = addressByChargeRate.Rows[0]["Version"].ToString();
                             }
-                            catch
-                            {
-                            }
+                            catch { }
                         }
                         if (ReciveText.Contains("SendOk"))
                         {
@@ -1396,9 +1397,7 @@ namespace ClickServerService.Improved
                                 Count = int.Parse(str10.Split(',')[1].ToString());
                                 str11 = str10.Split(',')[2].ToString();
                             }
-                            catch
-                            {
-                            }
+                            catch { }
                             if (byMacAddrress.Rows.Count > 0)
                             {
                                 bool flag2 = bool.Parse(byMacAddrress.Rows[0]["IsNonTicket"].ToString());
@@ -1519,7 +1518,6 @@ namespace ClickServerService.Improved
                     {
                         string str5 = ReciveText.Substring(1, 12);
                         string str6 = str5.Substring(0, 2) + str5.Substring(3, 2) + str5.Substring(6, 2) + str5.Substring(9, 2);
-                        //string timeStamp = TimeStamp;
                         string MacAddress = str6;
                         string str7 = MacAndTimeStamp_Create(MacAddress);
                         DataTable addressByChargeRate = objSwiper.Swiper_GetByMacAddressByChargeRate(MacAddress.ToUpper());
@@ -1529,11 +1527,7 @@ namespace ClickServerService.Improved
                             {
                                 str3_Title = addressByChargeRate.Rows[0]["Title"].ToString();
                             }
-                            catch
-                            {
-                            }
-                            // str1 = "[" + str7 + "]AT+CFG1=" + timeStamp;
-                            // str2 = "[" + str7 + "]AT+CFG1=" + timeStamp;
+                            catch { }
                             str1 = str2 = "[" + str7 + "]AT+CFG1=";
                             objSwiper.Swiper_Update_Config_State(0, MacAddress);
                         }
@@ -1551,7 +1545,6 @@ namespace ClickServerService.Improved
                     {
                         string str5 = ReciveText.Substring(1, 12);
                         string str6 = str5.Substring(0, 2) + str5.Substring(3, 2) + str5.Substring(6, 2) + str5.Substring(9, 2);
-                        //string timeStamp = TimeStamp;
                         string MacAddress = str6;
                         string str7 = MacAndTimeStamp_Create(MacAddress);
                         DataTable addressByChargeRate = objSwiper.Swiper_GetByMacAddressByChargeRate(MacAddress);
@@ -1623,9 +1616,7 @@ namespace ClickServerService.Improved
                                                     str12 = objMain.comma(dataTable.Rows[0]["Price"].ToString());
                                                     str13 = objMain.comma(dataTable.Rows[0]["PriceKol"].ToString());
                                                 }
-                                                catch
-                                                {
-                                                }
+                                                catch { }
                                             }
                                             if (dataTable.Rows.Count > 1)
                                             {
@@ -1639,9 +1630,7 @@ namespace ClickServerService.Improved
                                                     str17 = objMain.comma(dataTable.Rows[1]["Price"].ToString());
                                                     str18 = objMain.comma(dataTable.Rows[1]["PriceKol"].ToString());
                                                 }
-                                                catch
-                                                {
-                                                }
+                                                catch { }
                                             }
                                             if (dataTable.Rows.Count > 2)
                                             {
@@ -1655,9 +1644,7 @@ namespace ClickServerService.Improved
                                                     str22 = objMain.comma(dataTable.Rows[2]["Price"].ToString());
                                                     str23 = objMain.comma(dataTable.Rows[2]["PriceKol"].ToString());
                                                 }
-                                                catch
-                                                {
-                                                }
+                                                catch { }
                                             }
                                             if (dataTable.Rows.Count > 3)
                                             {
@@ -1671,9 +1658,7 @@ namespace ClickServerService.Improved
                                                     str28 = objMain.comma(dataTable.Rows[3]["Price"].ToString());
                                                     str29 = objMain.comma(dataTable.Rows[3]["PriceKol"].ToString());
                                                 }
-                                                catch
-                                                {
-                                                }
+                                                catch { }
                                             }
                                             if (dataTable.Rows.Count > 4)
                                             {
@@ -1687,9 +1672,7 @@ namespace ClickServerService.Improved
                                                     str33 = objMain.comma(dataTable.Rows[4]["Price"].ToString());
                                                     str34 = objMain.comma(dataTable.Rows[4]["PriceKol"].ToString());
                                                 }
-                                                catch
-                                                {
-                                                }
+                                                catch { }
                                             }
                                             string str36 = "HIDShow$" + str7 + "$" + (num3 + num4).ToString() + "$" + str8 + "$" + str9 + "$" + str10 + "$" + str11 + "$" + str12 + "$" + str13 + "$" + str14 + "$" + str15 + "$" + str16 + "$" + str17 + "$" + str18 + "$" + str19 + "$" + str20 + "$" + str21 + "$" + str22 + "$" + str23 + "$" + str24 + "$" + str25 + "$" + str26 + "$" + str28 + "$" + str29 + "$" + str30 + "$" + str31 + "$" + str32 + "$" + str33 + "$" + str34;
                                             str2 = str36;
@@ -1967,7 +1950,10 @@ namespace ClickServerService.Improved
                         text.WriteLine(message);
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                objMain.ErrorLog(ex);
+            }
         }
     }
 }

@@ -14,45 +14,45 @@ namespace ClickServerService
     internal static class Program
     {
         public static List<MyTCPClient> tCPClientList = new List<MyTCPClient>();
+        public static List<Access_Point> accessPoints = null;
 
         private static void Main()
         {
-            Console.Title = "Click Server Service";
             MainClass objMain = new MainClass();
-            List<Access_Point> accessPoints = objMain.GetAccessPoints();
-            //accessPoints.Reverse();
-            Thread.Sleep(0);
-
-            if (accessPoints.Any())
+            try
             {
-                foreach (var item in accessPoints)
+                Console.Title = "Click Server Service";
+                accessPoints = objMain.GetAccessPoints();
+                Thread.Sleep(0);
+                if (accessPoints.Any())
                 {
-                    //Task.Run(() => new ClsClickService(item.AP_ID));
-                    //Thread.Sleep(1);
-
-                    TcpClient tcp = new TcpClient();
-                    tCPClientList.Add(new MyTCPClient(item.AP_ID, tcp));
-                    try
+                    foreach (var item in accessPoints)
                     {
-                        tCPClientList.SingleOrDefault(i => i.AP_ID == item.AP_ID).TCPClient.Connect(item.AP_IP, 1000);
+                        TcpClient tcp = new TcpClient();
+                        tCPClientList.Add(new MyTCPClient(item.AP_ID, tcp));
+                        try
+                        {
+                            tCPClientList.SingleOrDefault(i => i.AP_ID == item.AP_ID).TCPClient.Connect(item.AP_IP, 1000);
+                        }
+                        catch
+                        {
+                            objMain.MyPrint("Not Connect " + item.AP_IP, ConsoleColor.Red);
+                        }
+                        Thread.Sleep(0);
+                        Task.Run(() => new ClsReceiver(item.AP_ID).Start());
+                        Thread.Sleep(0);
+                        objMain.MyPrint("+accessPoints : " + item.AP_ID.ToString(), ConsoleColor.White);
                     }
-                    catch
-                    {
-                        objMain.MyPrint("Not Connect " + item.AP_IP, ConsoleColor.Red);
-                    }
-                    Thread.Sleep(1);
-
-                    //Task.Run(() => new ClsSender(item.AP_ID).Start());
-                    //Thread.Sleep(0);
-                    Task.Run(() => new ClsReceiver(item.AP_ID).Start());
-                    Thread.Sleep(0);
-
-                    objMain.MyPrint("+accessPoints : " + item.AP_ID.ToString(), ConsoleColor.White);
+                    Task.Run(() => new ClsSender().Start());
+                    Task.Run(() => new ClsStarter());
                 }
-                Task.Run(() => new ClsSender().Start());
+                Task a = Task.Run(() => ForBeConteneud());
+                a.Wait();
             }
-            var a = Task.Run(() => ForBeConteneud());
-            a.Wait();
+            catch (Exception ex)
+            {
+                objMain.ErrorLog(ex);
+            }
         }
 
         static void ForBeConteneud()

@@ -4,6 +4,7 @@
 // MVID: 6BDFD2F8-7BA8-4B8A-8EC1-401DFA893333
 // Assembly location: C:\Users\Win10\Desktop\ClickServerService.exe
 
+using Dapper;
 using System;
 using System.Data;
 using System.Data.SqlClient;
@@ -12,18 +13,18 @@ namespace ClickServerService
 {
     internal class SwiperClass
     {
-        private MainClass objmain = new MainClass();
+        private MainClass objMain = new MainClass();
 
         public int Swiper_Segment_insert(string Title, int ID_GameCenter)
         {
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(this.objMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand("INSERT INTO [dbo].[Swiper_Segment]\r\n           ([ID]\r\n           ,[ID_GameCenter]\r\n           ,[Title],[IsDeleted])\r\n           VALUES\r\n           (@ID\r\n           ,@ID_GameCenter\r\n           ,@Title,0)", connection);
-                    sqlCommand.Parameters.AddWithValue("@ID", (object)(this.objmain.Max_Tbl("Swiper_Segment", "ID") + 1));
+                    sqlCommand.Parameters.AddWithValue("@ID", (object)(this.objMain.Max_Tbl("Swiper_Segment", "ID") + 1));
                     sqlCommand.Parameters.AddWithValue("@ID_GameCenter ", (object)ID_GameCenter);
                     sqlCommand.Parameters.AddWithValue("@Title", (object)Title);
                     sqlCommand.ExecuteNonQuery();
@@ -32,7 +33,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                this.objmain.ErrorLog(ex);
+                this.objMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -42,7 +43,7 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(this.objMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand("update [Swiper_Segment] set \r\n           [Title]=@Title where  [ID]=@ID and  [ID_GameCenter]=@ID_GameCenter ", connection);
@@ -55,7 +56,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                this.objmain.ErrorLog(ex);
+                this.objMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -65,7 +66,7 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(this.objMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand selectCommand = new SqlCommand("select * from Swiper_Segment where  [ID_GameCenter]=@ID_GameCenter and IsDeleted=0 ", connection);
@@ -76,7 +77,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                this.objmain.ErrorLog(ex);
+                this.objMain.ErrorLog(ex);
                 return dataTable;
             }
         }
@@ -86,7 +87,7 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(this.objMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand selectCommand = new SqlCommand("select * from Swiper_Segment where [ID]=@ID and [ID_GameCenter]=@ID_GameCenter and IsDeleted=0 ", connection);
@@ -98,7 +99,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                this.objmain.ErrorLog(ex);
+                this.objMain.ErrorLog(ex);
                 return dataTable;
             }
         }
@@ -108,7 +109,7 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(this.objMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand("update  Swiper_Segment set IsDeleted=1 where [ID]=@ID and [ID_GameCenter]=@ID_GameCenter  ", connection);
@@ -120,7 +121,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                this.objmain.ErrorLog(ex);
+                this.objMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -141,11 +142,11 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(this.objMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand("Swiper_Insert", connection);
-                    sqlCommand.Parameters.AddWithValue("@ID", (object)(this.objmain.Max_Tbl("Swiper", "ID") + 1));
+                    sqlCommand.Parameters.AddWithValue("@ID", (object)(this.objMain.Max_Tbl("Swiper", "ID") + 1));
                     sqlCommand.Parameters.AddWithValue("@ID_GameCenter ", (object)ID_GameCenter);
                     sqlCommand.Parameters.AddWithValue("@Title", (object)Title);
                     sqlCommand.Parameters.AddWithValue("@MacAddress", (object)MacAddress);
@@ -164,7 +165,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                this.objmain.ErrorLog(ex);
+                this.objMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -186,7 +187,7 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(this.objMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand(nameof(Swiper_Update), connection);
@@ -209,7 +210,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                this.objmain.ErrorLog(ex);
+                this.objMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -219,7 +220,7 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(this.objMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand selectCommand = new SqlCommand(nameof(Swiper_GetAll), connection);
@@ -231,7 +232,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                this.objmain.ErrorLog(ex);
+                this.objMain.ErrorLog(ex);
                 return dataTable;
             }
         }
@@ -241,7 +242,7 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(this.objMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand selectCommand = new SqlCommand(nameof(Swiper_Get), connection);
@@ -254,7 +255,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                this.objmain.ErrorLog(ex);
+                this.objMain.ErrorLog(ex);
                 return dataTable;
             }
         }
@@ -264,7 +265,7 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(this.objMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand selectCommand = new SqlCommand("Swiper_Get_ByMacAddress", connection);
@@ -276,7 +277,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                this.objmain.ErrorLog(ex);
+                this.objMain.ErrorLog(ex);
                 return dataTable;
             }
         }
@@ -326,7 +327,7 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(this.objMain.DBPath()))
                 {
                     connection.Open();
                     new SqlDataAdapter(new SqlCommand("select * from [dbo].[Days_Special]\r\nwhere cast( [DaysDate] as date) = CAST((select GETDATE()) as Date)", connection)).Fill(dataTable);
@@ -352,7 +353,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                this.objmain.ErrorLog(ex);
+                this.objMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -362,16 +363,16 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(this.objMain.DBPath()))
                 {
                     connection.Open();
                     var x = RetDayOfWeek();
-                    var g = this.objmain.ID_GameCenter_Local_Get();
+                    var g = this.objMain.ID_GameCenter_Local_Get();
                     var d = DateTime.Now.ToString("HH:mm").Split(':')[0];
                     SqlCommand selectCommand = new SqlCommand("Swiper_Get_ByMacAddress_ByChargeRate_ByGameCenter", connection);
                     selectCommand.Parameters.AddWithValue("@MacAddress", (object)MacAddress);
                     selectCommand.Parameters.AddWithValue("@ID_Days", (object)this.RetDayOfWeek());
-                    selectCommand.Parameters.AddWithValue("@ID_GameCenter", (object)this.objmain.ID_GameCenter_Local_Get());
+                    selectCommand.Parameters.AddWithValue("@ID_GameCenter", (object)this.objMain.ID_GameCenter_Local_Get());
                     selectCommand.Parameters.AddWithValue("@hourTime", (object)DateTime.Now.ToString("HH:mm").Split(':')[0]);
                     selectCommand.CommandType = CommandType.StoredProcedure;
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
@@ -382,7 +383,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                this.objmain.ErrorLog(ex);
+                this.objMain.ErrorLog(ex);
                 return dataTable;
             }
         }
@@ -392,12 +393,12 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(this.objMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand("update Swiper set Config_State=@ConfigState where  Swiper.MacAddress=@MacAddress and Swiper.ID_GameCenter=@ID_GameCenter", connection);
                     sqlCommand.Parameters.AddWithValue("@MacAddress", (object)MacAddress);
-                    sqlCommand.Parameters.AddWithValue("@ID_GameCenter", (object)this.objmain.ID_GameCenter_Local_Get());
+                    sqlCommand.Parameters.AddWithValue("@ID_GameCenter", (object)this.objMain.ID_GameCenter_Local_Get());
                     sqlCommand.Parameters.AddWithValue("@ConfigState", (object)ConfigState);
                     sqlCommand.ExecuteNonQuery();
                     connection.Close();
@@ -407,7 +408,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                this.objmain.ErrorLog(ex);
+                this.objMain.ErrorLog(ex);
                 return dataTable;
             }
         }
@@ -417,11 +418,11 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(this.objMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand selectCommand = new SqlCommand("SELECT        TOP (1) Swiper.ID, Swiper.ID_GameCenter, Swiper.Title, Swiper.MacAddress, Swiper.ID_Games, Swiper.State, Swiper.Dec, Swiper.DateStart, Swiper.Price1, Swiper.Price2, Swiper.Delay1, Swiper.Delay2, Swiper.Pulse, \r\n                         Swiper.Config_State, Swiper.RepeatCount, Swiper.IsDeleted, Swiper.PulseType, Swiper.Start_Count_Voltage, Swiper.Version, Swiper.TicketErrorStop, Swiper.PullUp, Swiper.ID_Swiper_Segment, Games.IsRetired\r\n                    FROM            Swiper INNER JOIN\r\n                         Games ON Swiper.ID_Games = Games.ID\r\n                    WHERE(Swiper.ID_GameCenter = @ID_GameCenter)\r\n                    AND(Swiper.IsDeleted = 0) AND(Swiper.Config_State = -1) and(Games.IsRetired = 0)\r\n                    ORDER BY Swiper.ID", connection);
-                    selectCommand.Parameters.AddWithValue("@ID_GameCenter", (object)this.objmain.ID_GameCenter_Local_Get());
+                    selectCommand.Parameters.AddWithValue("@ID_GameCenter", (object)this.objMain.ID_GameCenter_Local_Get());
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                     if (dataTable.Rows.Count > 0)
                         this.Swiper_GetByStateUpdate(int.Parse(dataTable.Rows[0]["ID"].ToString()), int.Parse(dataTable.Rows[0]["ID_GameCenter"].ToString()));
@@ -430,7 +431,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                this.objmain.ErrorLog(ex);
+                this.objMain.ErrorLog(ex);
                 return dataTable;
             }
         }
@@ -440,18 +441,18 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(this.objMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand selectCommand = new SqlCommand("SELECT        TOP (1) Swiper.ID, Swiper.ID_GameCenter, Swiper.Title, Swiper.MacAddress, Swiper.ID_Games, Swiper.State, Swiper.Dec, Swiper.DateStart, Swiper.Price1, Swiper.Price2, Swiper.Delay1, Swiper.Delay2, Swiper.Pulse, \r\n                         Swiper.Config_State, Swiper.RepeatCount, Swiper.IsDeleted, Swiper.PulseType, Swiper.Start_Count_Voltage, Swiper.Version, Swiper.TicketErrorStop, Swiper.PullUp, Swiper.ID_Swiper_Segment, Games.IsRetired\r\n                    FROM            Swiper INNER JOIN\r\n                         Games ON Swiper.ID_Games = Games.ID\r\n                    WHERE(Swiper.ID_GameCenter = @ID_GameCenter)\r\n                    AND(Swiper.IsDeleted = 0) AND(Swiper.Config_State = -2) and(Games.IsRetired = 0) and (Swiper.MacAddress<>'')\r\n                    ORDER BY Swiper.ID", connection);
-                    selectCommand.Parameters.AddWithValue("@ID_GameCenter", (object)this.objmain.ID_GameCenter_Local_Get());
+                    selectCommand.Parameters.AddWithValue("@ID_GameCenter", (object)this.objMain.ID_GameCenter_Local_Get());
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
                 return dataTable;
             }
             catch (Exception ex)
             {
-                this.objmain.ErrorLog(ex);
+                this.objMain.ErrorLog(ex);
                 return dataTable;
             }
         }
@@ -461,7 +462,7 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(this.objMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand("update  Swiper set  Config_State=0 where ID_GameCenter=@ID_GameCenter and ID=@ID and Config_State=-1", connection);
@@ -473,7 +474,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                this.objmain.ErrorLog(ex);
+                this.objMain.ErrorLog(ex);
                 return dataTable;
             }
         }
@@ -483,18 +484,18 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(this.objMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand("update  Swiper set  Config_State=-2 where ID_GameCenter=@ID_GameCenter   and Config_State=-3", connection);
-                    sqlCommand.Parameters.AddWithValue("@ID_GameCenter", (object)this.objmain.ID_GameCenter_Local_Get());
+                    sqlCommand.Parameters.AddWithValue("@ID_GameCenter", (object)this.objMain.ID_GameCenter_Local_Get());
                     sqlCommand.ExecuteNonQuery();
                 }
                 return dataTable;
             }
             catch (Exception ex)
             {
-                this.objmain.ErrorLog(ex);
+                this.objMain.ErrorLog(ex);
                 return dataTable;
             }
         }
@@ -504,7 +505,7 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(this.objMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand("update Swiper set Config_State=@Config_State where ID_GameCenter=@ID_GameCenter", connection);
@@ -516,7 +517,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                this.objmain.ErrorLog(ex);
+                this.objMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -526,7 +527,7 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(this.objMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand("update Swiper set Config_State=@Config_State where ID_GameCenter=@ID_GameCenter", connection);
@@ -538,7 +539,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                this.objmain.ErrorLog(ex);
+                this.objMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -548,7 +549,7 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(this.objMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand(nameof(Swiper_Update_Config_State), connection);
@@ -561,7 +562,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                this.objmain.ErrorLog(ex);
+                this.objMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -571,7 +572,7 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(this.objMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand(nameof(Swiper_Delete), connection);
@@ -584,9 +585,47 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                this.objmain.ErrorLog(ex);
+                this.objMain.ErrorLog(ex);
                 return -1;
             }
         }
+
+        #region ' S.E.M '
+
+        public string GetMacSwiper(string command)
+        {
+            try
+            {
+                string mac = command.Substring(1, 12);
+                mac = mac.Substring(0, 2) + mac.Substring(3, 2) + mac.Substring(6, 2) + mac.Substring(9, 2);
+                return mac;
+            }
+            catch (Exception ex)
+            {
+                objMain.ErrorLog(ex);
+                return "";
+            }
+        }
+
+        public string GetSwiperSegmentByMac(string mac, int gameCenterID)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                {
+                    string query = $"select ID_Swiper_Segment From Swiper Where ID_GameCenter = {gameCenterID} And MacAddress = N'{mac}'";
+                    var temp = connection.ExecuteScalar(query);
+                    return temp.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                objMain.ErrorLog(ex);
+                return "";
+            }
+        }
+
+        #endregion
+
     }
 }

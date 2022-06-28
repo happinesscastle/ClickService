@@ -44,6 +44,11 @@ namespace ClickServerService
         public static string licence_TimingPlaceCount = "0";
         public static string licence_CashDeskCount = "0";
 
+        public MainClass()
+        {
+            Decript_Connection_String();
+        }
+
         public string Encrypt(string plainText)
         {
             byte[] bytes1 = Encoding.UTF8.GetBytes(plainText);
@@ -1344,36 +1349,47 @@ namespace ClickServerService
         #region SEM
 
         /// <summary>
-        /// Get All AccessPoints in Table(Access_Point) Where ID_GameCenter
+        /// Get All Enable AccessPoints in Table(Access_Point) Where ID_GameCenter
         /// </summary>
         public List<Access_Point> GetAccessPoints()
         {
             try
             {
-                //using (SqlConnection connection = new SqlConnection(DBPath()))
-                using (SqlConnection connection = new SqlConnection(@"Data Source=SEM\SEM;Initial Catalog=GameCenter;Integrated Security=True"))
+                using (SqlConnection connection = new SqlConnection(DBPath()))
                 {
                     string query = @"Select * From Access_Point Where AP_IsEnable = 1 And ID_GameCenter = @ID_GameCenter";
                     var temp = (List<Access_Point>)connection.Query<Access_Point>(query, new { ID_GameCenter = ID_GameCenter_Local_Get() });
+                    foreach (var item in temp)
+                    {
+                        item.ListSwiperSegmentIDs = item.Swiper_Segment_IDs.Split(',').ToList();
+                    }
                     return temp;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                ErrorLog(ex);
                 return null;
             }
         }
 
         public void MyPrint(string text, ConsoleColor color = ConsoleColor.Gray, DateTime? dt = null)
         {
-            //if (text.Contains("check"))
+            try
+            {
+                //if (text.Contains("check"))
                 //return;
 
-            if (dt == null)
-                dt = DateTime.Now;
-            Console.ForegroundColor = color;
-            Console.WriteLine(text + "   " + dt.Value.ToString("mm:ss:fff"));
-            Console.ForegroundColor = ConsoleColor.White;
+                if (dt == null)
+                    dt = DateTime.Now;
+                Console.ForegroundColor = color;
+                Console.WriteLine(text + "   " + dt.Value.ToString("mm:ss:fff"));
+                Console.ForegroundColor = ConsoleColor.White;
+            }
+            catch (Exception ex)
+            {
+                ErrorLog(ex);
+            }
         }
 
         #endregion

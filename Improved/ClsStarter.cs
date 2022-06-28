@@ -1,11 +1,11 @@
 ﻿using ClickServerService.ClassCode;
-using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Threading;
+using System.Timers;
 using System.Linq;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Timers;
+using System;
 
 namespace ClickServerService.Improved
 {
@@ -14,6 +14,7 @@ namespace ClickServerService.Improved
         readonly MainClass objMain = new MainClass();
         readonly GamesClass objGames = new GamesClass();
         readonly SwiperClass objSwiper = new SwiperClass();
+        readonly ClsSender clsSender = new ClsSender();
 
         readonly System.Timers.Timer TimerChargeRate = new System.Timers.Timer();
         readonly System.Timers.Timer Timer_Create_Repair_CheckList = new System.Timers.Timer();
@@ -33,7 +34,7 @@ namespace ClickServerService.Improved
                 #region ' Timers '
 
                 TimerChargeRate.Elapsed += new ElapsedEventHandler(TimerChargeRate_Tick);
-                TimerChargeRate.Interval = 1000.0;
+                TimerChargeRate.Interval = 10000.0;
                 TimerChargeRate.Enabled = false;
 
                 TimerChargeRate_SetNonRecive.Elapsed += new ElapsedEventHandler(TimerChargeRate_SetNonRecive_Tick);
@@ -63,6 +64,7 @@ namespace ClickServerService.Improved
                 if (DateTime.Now.Minute != 0)
                     return;
                 objGames.Charge_Rate_GetAll(objMain.ID_GameCenter_Local_Get());
+                clsSender.ManualChargeRate();
                 TimerChargeRate.Interval = 60000.0;// 1 Min
             }
             catch (Exception ex)

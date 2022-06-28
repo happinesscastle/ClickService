@@ -436,7 +436,7 @@ namespace ClickServerService
             }
         }
 
-        public DataTable Swiper_GetByState_ForChangePrice()
+        public DataTable Swiper_GetByState_ForChangePrice(bool isTopOne = true)
         {
             DataTable dataTable = new DataTable();
             try
@@ -444,8 +444,11 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(this.objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand("SELECT        TOP (1) Swiper.ID, Swiper.ID_GameCenter, Swiper.Title, Swiper.MacAddress, Swiper.ID_Games, Swiper.State, Swiper.Dec, Swiper.DateStart, Swiper.Price1, Swiper.Price2, Swiper.Delay1, Swiper.Delay2, Swiper.Pulse, \r\n                         Swiper.Config_State, Swiper.RepeatCount, Swiper.IsDeleted, Swiper.PulseType, Swiper.Start_Count_Voltage, Swiper.Version, Swiper.TicketErrorStop, Swiper.PullUp, Swiper.ID_Swiper_Segment, Games.IsRetired\r\n                    FROM            Swiper INNER JOIN\r\n                         Games ON Swiper.ID_Games = Games.ID\r\n                    WHERE(Swiper.ID_GameCenter = @ID_GameCenter)\r\n                    AND(Swiper.IsDeleted = 0) AND(Swiper.Config_State = -2) and(Games.IsRetired = 0) and (Swiper.MacAddress<>'')\r\n                    ORDER BY Swiper.ID", connection);
-                    selectCommand.Parameters.AddWithValue("@ID_GameCenter", (object)this.objMain.ID_GameCenter_Local_Get());
+                    string topOne = "";
+                    if (isTopOne)
+                        topOne = " Top(1) ";
+                    SqlCommand selectCommand = new SqlCommand($"SELECT {topOne} Swiper.ID, Swiper.ID_GameCenter, Swiper.Title, Swiper.MacAddress, Swiper.ID_Games, Swiper.State, Swiper.Dec, Swiper.DateStart, Swiper.Price1, Swiper.Price2, Swiper.Delay1, Swiper.Delay2, Swiper.Pulse, Swiper.Config_State, Swiper.RepeatCount, Swiper.IsDeleted, Swiper.PulseType, Swiper.Start_Count_Voltage, Swiper.Version, Swiper.TicketErrorStop, Swiper.PullUp, Swiper.ID_Swiper_Segment, Games.IsRetired FROM Swiper INNER JOIN Games ON Swiper.ID_Games = Games.ID WHERE(Swiper.ID_GameCenter = @ID_GameCenter) AND(Swiper.IsDeleted = 0) AND(Swiper.Config_State = -2) and(Games.IsRetired = 0) and (Swiper.MacAddress<>'') ORDER BY Swiper.ID", connection);
+                    selectCommand.Parameters.AddWithValue("@ID_GameCenter", objMain.ID_GameCenter_Local_Get());
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
                 return dataTable;

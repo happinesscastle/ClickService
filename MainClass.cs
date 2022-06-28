@@ -1383,7 +1383,7 @@ namespace ClickServerService
                 if (dt == null)
                     dt = DateTime.Now;
                 Console.ForegroundColor = color;
-                Console.WriteLine(text + "   " + dt.Value.ToString("mm:ss:fff"));
+                Console.WriteLine(text + "   " + dt.Value.ToString("HH:mm:ss:fff"));
                 Console.ForegroundColor = ConsoleColor.White;
             }
             catch (Exception ex)

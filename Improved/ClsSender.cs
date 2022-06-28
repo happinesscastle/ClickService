@@ -432,7 +432,7 @@ namespace ClickServerService.Improved
                 }
                 if (sendTime == null)
                     sendTime = DateTime.Now;
-                string sendTimeString = sendTime.Value.ToString("hh:mm:ss:fff");
+                string sendTimeString = sendTime.Value.ToString("HH:mm:ss:fff");
                 if (!serverConfigView.FirstOrDefault().IsShowAllSend.Value)
                 {
                     if (SendData.Length <= 0 || txtSend.Contains(TcpIPName + "-" + SendData))
@@ -490,7 +490,7 @@ namespace ClickServerService.Improved
 
 
         public int Send_Main(string ipAp, string command, TcpClient client)
-        {// Copy 2
+        {
             try
             {
                 string swiperSegment = objSwiper.GetSwiperSegmentByMac(objSwiper.GetMacSwiper(command), Main_ID_GameCenter);
@@ -1905,6 +1905,49 @@ namespace ClickServerService.Improved
                 objMain.ErrorLog(ex);
                 objMain.ErrorLogTemp("error Process Main :" + ex.Message);
                 return "";
+            }
+        }
+
+        public void ManualChargeRate()
+        {
+            try
+            {
+                DataTable stateForChangePrice = objSwiper.Swiper_GetByState_ForChangePrice(false);
+                for (int index2 = 0; index2 < stateForChangePrice.Rows.Count; ++index2)
+                {
+                    string lower = stateForChangePrice.Rows[index2]["MacAddress"].ToString().ToLower();
+                    string str3 = MacAndTimeStamp_Create(lower);
+                    DataTable addressByChargeRate = objSwiper.Swiper_GetByMacAddressByChargeRate(lower.ToUpper());
+                    if (addressByChargeRate.Rows.Count > 0)
+                    {
+                        objSwiper.Swiper_UpdateStateByMacAddress(lower.ToUpper(), -3);
+                        string str4 = "[" + str3 + "]AT+CFG3=" + objMain.comma(addressByChargeRate.Rows[0]["PriceAdi"].ToString());
+                        string str5 = "[" + str3 + "]AT+CFG4=" + objMain.comma(addressByChargeRate.Rows[0]["PriceVije"].ToString());
+                        for (int index3 = 0; index3 < TCP_RepeatCount + 5; ++index3)
+                        {
+                            foreach (var item in serverConfigView)
+                            {
+                                Send_DisplayText(str4, $"P{item.AP_ID}", "", "");
+                                Send_Main(item.AP_IP, str4, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == item.AP_ID).TCPClient);
+                            }
+                            Thread.Sleep(70);
+                        }
+                        Thread.Sleep(100);
+                        for (int index3 = 0; index3 < TCP_RepeatCount + 5; ++index3)
+                        {
+                            foreach (var item in serverConfigView)
+                            {
+                                Send_DisplayText(str5, $"P{item.AP_ID}", "", "");
+                                Send_Main(item.AP_IP, str5, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == item.AP_ID).TCPClient);
+                            }
+                            Thread.Sleep(70);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                objMain.ErrorLog(ex);
             }
         }
 

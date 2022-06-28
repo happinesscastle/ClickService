@@ -429,7 +429,7 @@ namespace ClickServerService.Improved
                 if (txtRecive.Length > 10000)
                     txtRecive = "";
 
-                string reciveTimeStr = reciveTime.ToString("hh:mm:ss:fff");
+                string reciveTimeStr = reciveTime.ToString("HH:mm:ss:fff");
                 if (!chbShowAllRecive)
                 {
                     if (txtRecive.Contains(reciveData))

@@ -1097,7 +1097,10 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(DBPath()))
                 {
                     connection.Open();
-                    string query = @"Select * From ServerConfigView Where ID_GameCenter = @ID_GameCenter And AP_ID = @MultiRun_AP_ID;
+                    string query_ServerConfigView = @"SELECT dbo.Access_Point.AP_ID, dbo.ServerConfig.ID, dbo.Access_Point.ID_GameCenter, dbo.Access_Point.AP_Name, dbo.Access_Point.AP_IP, dbo.Access_Point.AP_IsEnable, dbo.Access_Point.AP_Status, dbo.ServerConfig.ValidateReceivedData, dbo.ServerConfig.ServerIP, dbo.ServerConfig.RepeatConfig, dbo.ServerConfig.IsShowAllRecive, dbo.ServerConfig.IsShowAllSend, dbo.ServerConfig.IsDecreasePriceInLevel2, dbo.ServerConfig.IsEnableTimerSync, dbo.ServerConfig.TimeSync, dbo.ServerConfig.IsRestart, dbo.ServerConfig.Ftp_UserName, dbo.ServerConfig.Ftp_Password
+                                                      FROM dbo.Access_Point INNER JOIN dbo.ServerConfig
+                                                      ON dbo.Access_Point.ID_GameCenter = dbo.ServerConfig.ID_GameCenter ";
+                    string query = $@"{query_ServerConfigView} Where dbo.Access_Point.ID_GameCenter = @ID_GameCenter And dbo.Access_Point.AP_ID = @MultiRun_AP_ID ;
                                      Update ServerConfig set IsRestart = 0  Where ID_GameCenter = @ID_GameCenter";
                     SqlCommand selectCommand = new SqlCommand(query, connection);
                     selectCommand.Parameters.AddWithValue("@ID_GameCenter", ID_GameCenter);
@@ -1119,7 +1122,10 @@ namespace ClickServerService
             {
                 using (SqlConnection connection = new SqlConnection(DBPath()))
                 {
-                    string query = @"Select * From ServerConfigView Where ID_GameCenter = @ID_GameCenter ;
+                    string query_ServerConfigView = @"SELECT dbo.Access_Point.AP_ID, dbo.ServerConfig.ID, dbo.Access_Point.ID_GameCenter, dbo.Access_Point.AP_Name, dbo.Access_Point.AP_IP, dbo.Access_Point.AP_IsEnable, dbo.Access_Point.AP_Status, dbo.ServerConfig.ValidateReceivedData, dbo.ServerConfig.ServerIP, dbo.ServerConfig.RepeatConfig, dbo.ServerConfig.IsShowAllRecive, dbo.ServerConfig.IsShowAllSend, dbo.ServerConfig.IsDecreasePriceInLevel2, dbo.ServerConfig.IsEnableTimerSync, dbo.ServerConfig.TimeSync, dbo.ServerConfig.IsRestart, dbo.ServerConfig.Ftp_UserName, dbo.ServerConfig.Ftp_Password
+                                                      FROM dbo.Access_Point INNER JOIN dbo.ServerConfig
+                                                      ON dbo.Access_Point.ID_GameCenter = dbo.ServerConfig.ID_GameCenter ";
+                    string query = $@"{query_ServerConfigView} Where dbo.Access_Point.ID_GameCenter = @ID_GameCenter ;
                                      Update ServerConfig set IsRestart = 0  Where ID_GameCenter = @ID_GameCenter";
                     List<ServerConfigView> temp = (List<ServerConfigView>)connection.Query<ServerConfigView>(query, new { ID_GameCenter = id_GameCenter });
                     if (multiRun_AP_ID != null)

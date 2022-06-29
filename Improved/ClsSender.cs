@@ -28,7 +28,7 @@ namespace ClickServerService.Improved
         int Main_ID_GameCenter = 1;
         int TCP_RepeatCount = 1;
 
-        string DispStringRecive;
+        //string DispStringRecive;
         string txtSend = "";
 
         public ClsSender()
@@ -101,7 +101,7 @@ namespace ClickServerService.Improved
                 for (int index1 = 0; index1 < storageGetForSend.Rows.Count; ++index1)
                 {
                     string str1 = Send_Process_Main(storageGetForSend.Rows[index1]["ReciveText"].ToString());
-                    DispStringRecive = str1;
+                    //DispStringRecive = str1;
                     if (!string.IsNullOrWhiteSpace(str1))
                     {
                         string str2 = str1.Split('!')[0].ToString();
@@ -371,48 +371,48 @@ namespace ClickServerService.Improved
                                 Thread.Sleep(100);
                             }
                         }
-                        try
-                        {
-                            if (DispStringRecive.ToUpper().Contains("[KA=") || DispStringRecive.ToLower().Contains("selftest"))
-                            {
-                                DataTable stateForChangePrice = objSwiper.Swiper_GetByState_ForChangePrice();
-                                for (int index2 = 0; index2 < stateForChangePrice.Rows.Count; ++index2)
-                                {
-                                    string lower = stateForChangePrice.Rows[index2]["MacAddress"].ToString().ToLower();
-                                    string str3 = MacAndTimeStamp_Create(lower);
-                                    DataTable addressByChargeRate = objSwiper.Swiper_GetByMacAddressByChargeRate(lower.ToUpper());
-                                    if (addressByChargeRate.Rows.Count > 0)
-                                    {
-                                        objSwiper.Swiper_UpdateStateByMacAddress(lower.ToUpper(), -3);
-                                        string str4 = "[" + str3 + "]AT+CFG3=" + objMain.comma(addressByChargeRate.Rows[0]["PriceAdi"].ToString());
-                                        string str5 = "[" + str3 + "]AT+CFG4=" + objMain.comma(addressByChargeRate.Rows[0]["PriceVije"].ToString());
-                                        for (int index3 = 0; index3 < TCP_RepeatCount + 5; ++index3)
-                                        {
-                                            foreach (var item in serverConfigView)
-                                            {
-                                                Send_DisplayText(str4, $"P{item.AP_ID}", "", "");
-                                                Send_Main(item.AP_IP, str4, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == item.AP_ID).TCPClient);
-                                            }
-                                            Thread.Sleep(70);
-                                        }
-                                        Thread.Sleep(100);
-                                        for (int index3 = 0; index3 < TCP_RepeatCount + 5; ++index3)
-                                        {
-                                            foreach (var item in serverConfigView)
-                                            {
-                                                Send_DisplayText(str5, $"P{item.AP_ID}", "", "");
-                                                Send_Main(item.AP_IP, str5, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == item.AP_ID).TCPClient);
-                                            }
-                                            Thread.Sleep(70);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            objMain.ErrorLog(ex);
-                        }
+                        //try
+                        //{
+                        //    if (DispStringRecive.ToUpper().Contains("[KA=") || DispStringRecive.ToLower().Contains("selftest"))
+                        //    {
+                        //        DataTable stateForChangePrice = objSwiper.Swiper_GetByState_ForChangePrice();
+                        //        for (int index2 = 0; index2 < stateForChangePrice.Rows.Count; ++index2)
+                        //        {
+                        //            string lower = stateForChangePrice.Rows[index2]["MacAddress"].ToString().ToLower();
+                        //            string str3 = MacAndTimeStamp_Create(lower);
+                        //            DataTable addressByChargeRate = objSwiper.Swiper_GetByMacAddressByChargeRate(lower.ToUpper());
+                        //            if (addressByChargeRate.Rows.Count > 0)
+                        //            {
+                        //                objSwiper.Swiper_UpdateStateByMacAddress(lower.ToUpper(), -3);
+                        //                string str4 = "[" + str3 + "]AT+CFG3=" + objMain.comma(addressByChargeRate.Rows[0]["PriceAdi"].ToString());
+                        //                string str5 = "[" + str3 + "]AT+CFG4=" + objMain.comma(addressByChargeRate.Rows[0]["PriceVije"].ToString());
+                        //                for (int index3 = 0; index3 < TCP_RepeatCount + 5; ++index3)
+                        //                {
+                        //                    foreach (var item in serverConfigView)
+                        //                    {
+                        //                        Send_DisplayText(str4, $"P{item.AP_ID}", "", "");
+                        //                        Send_Main(item.AP_IP, str4, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == item.AP_ID).TCPClient);
+                        //                    }
+                        //                    Thread.Sleep(70);
+                        //                }
+                        //                Thread.Sleep(100);
+                        //                for (int index3 = 0; index3 < TCP_RepeatCount + 5; ++index3)
+                        //                {
+                        //                    foreach (var item in serverConfigView)
+                        //                    {
+                        //                        Send_DisplayText(str5, $"P{item.AP_ID}", "", "");
+                        //                        Send_Main(item.AP_IP, str5, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == item.AP_ID).TCPClient);
+                        //                    }
+                        //                    Thread.Sleep(70);
+                        //                }
+                        //            }
+                        //        }
+                        //    }
+                        //}
+                        //catch (Exception ex)
+                        //{
+                        //    objMain.ErrorLog(ex);
+                        //}
                     }
                 }
             }

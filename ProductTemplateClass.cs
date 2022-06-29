@@ -1,390 +1,363 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: ClickServerService.ProductTemplateClass
-// Assembly: ClickServerService, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-// MVID: 6BDFD2F8-7BA8-4B8A-8EC1-401DFA893333
-// Assembly location: C:\Users\Win10\Desktop\ClickServerService.exe
-
-using System;
+﻿using System.Data.SqlClient;
 using System.Data;
-using System.Data.SqlClient;
+using System;
 
 namespace ClickServerService
 {
-  internal class ProductTemplateClass
-  {
-    private MainClass objmain = new MainClass();
-
-    public DataTable ProductTemplate_Group_Get()
+    internal class ProductTemplateClass
     {
-      DataTable dataTable = new DataTable();
-      try
-      {
-        using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
-        {
-          connection.Open();
-          new SqlDataAdapter(new SqlCommand("select * from ProductTemplate_Group where IsDeleted=0", connection)).Fill(dataTable);
-        }
-        return dataTable;
-      }
-      catch (Exception ex)
-      {
-        this.objmain.ErrorLog(ex);
-        return dataTable;
-      }
-    }
+        #region ' Useless '
 
-    public int ProductTemplate_Group_insert(string Title)
-    {
-      DataTable dataTable = new DataTable();
-      try
-      {
-        using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
-        {
-          connection.Open();
-          SqlCommand sqlCommand = new SqlCommand("INSERT INTO [dbo].[ProductTemplate_Group]\r\n           ([ID]\r\n           ,[Title]\r\n           ,[IsDeleted])\r\n     VALUES\r\n           (@ID\r\n           ,@Title\r\n           ,@IsDeleted)", connection);
-          sqlCommand.Parameters.AddWithValue("@ID", (object) (this.objmain.Max_Tbl("ProductTemplate_Group", "ID") + 1));
-          sqlCommand.Parameters.AddWithValue("@Title", (object) Title);
-          sqlCommand.Parameters.AddWithValue("@IsDeleted", (object) 0);
-          sqlCommand.ExecuteNonQuery();
-        }
-        return 1;
-      }
-      catch (Exception ex)
-      {
-        this.objmain.ErrorLog(ex);
-        return -1;
-      }
-    }
+        private readonly MainClass objMain = new MainClass();
 
-    public int ProductTemplate_Group_Update(int ID, string Title)
-    {
-      DataTable dataTable = new DataTable();
-      try
-      {
-        using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
+        public DataTable ProductTemplate_Group_Get()
         {
-          connection.Open();
-          SqlCommand sqlCommand = new SqlCommand("update [ProductTemplate_Group] set [Title]=@Title where [ID]=@ID ", connection);
-          sqlCommand.Parameters.AddWithValue("@ID", (object) ID);
-          sqlCommand.Parameters.AddWithValue("@Title", (object) Title);
-          sqlCommand.Parameters.AddWithValue("@IsDeleted", (object) 0);
-          sqlCommand.ExecuteNonQuery();
+            DataTable dataTable = new DataTable();
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                {
+                    connection.Open();
+                    new SqlDataAdapter(new SqlCommand("select * from ProductTemplate_Group where IsDeleted=0", connection)).Fill(dataTable);
+                }
+                return dataTable;
+            }
+            catch (Exception ex)
+            {
+                objMain.ErrorLog(ex);
+                return dataTable;
+            }
         }
-        return 1;
-      }
-      catch (Exception ex)
-      {
-        this.objmain.ErrorLog(ex);
-        return -1;
-      }
-    }
 
-    public DataTable ProductTemplate_Group_Get(int ID)
-    {
-      DataTable dataTable = new DataTable();
-      try
-      {
-        using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
+        public int ProductTemplate_Group_insert(string title)
         {
-          connection.Open();
-          SqlCommand selectCommand = new SqlCommand("select * from ProductTemplate_Group where IsDeleted=0 and ID=@ID", connection);
-          selectCommand.Parameters.AddWithValue("@ID", (object) ID);
-          new SqlDataAdapter(selectCommand).Fill(dataTable);
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                {
+                    connection.Open();
+                    SqlCommand sqlCommand = new SqlCommand("INSERT INTO [dbo].[ProductTemplate_Group] ([ID] ,[Title] ,[IsDeleted]) VALUES (@ID ,@Title ,@IsDeleted)", connection);
+                    sqlCommand.Parameters.AddWithValue("@ID", (objMain.Max_Tbl("ProductTemplate_Group", "ID") + 1));
+                    sqlCommand.Parameters.AddWithValue("@Title", title);
+                    sqlCommand.Parameters.AddWithValue("@IsDeleted", 0);
+                    sqlCommand.ExecuteNonQuery();
+                }
+                return 1;
+            }
+            catch (Exception ex)
+            {
+                objMain.ErrorLog(ex);
+                return -1;
+            }
         }
-        return dataTable;
-      }
-      catch (Exception ex)
-      {
-        this.objmain.ErrorLog(ex);
-        return dataTable;
-      }
-    }
 
-    public int ProductTemplate_Group_Delete(int ID)
-    {
-      DataTable dataTable = new DataTable();
-      try
-      {
-        using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
+        public int ProductTemplate_Group_Update(int id, string title)
         {
-          connection.Open();
-          SqlCommand sqlCommand = new SqlCommand("update ProductTemplate_Group set IsDeleted=1 where ID=@ID ", connection);
-          sqlCommand.Parameters.AddWithValue("@ID", (object) ID);
-          sqlCommand.ExecuteNonQuery();
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                {
+                    connection.Open();
+                    SqlCommand sqlCommand = new SqlCommand("update [ProductTemplate_Group] set [Title]=@Title where [ID]=@ID ", connection);
+                    sqlCommand.Parameters.AddWithValue("@ID", id);
+                    sqlCommand.Parameters.AddWithValue("@Title", title);
+                    sqlCommand.Parameters.AddWithValue("@IsDeleted", 0);
+                    sqlCommand.ExecuteNonQuery();
+                }
+                return 1;
+            }
+            catch (Exception ex)
+            {
+                objMain.ErrorLog(ex);
+                return -1;
+            }
         }
-        return 1;
-      }
-      catch (Exception ex)
-      {
-        this.objmain.ErrorLog(ex);
-        return -1;
-      }
-    }
 
-    public DataTable ProductTemplate_SubGroup_Get()
-    {
-      DataTable dataTable = new DataTable();
-      try
-      {
-        using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
+        public DataTable ProductTemplate_Group_Get(int id)
         {
-          connection.Open();
-          new SqlDataAdapter(new SqlCommand("select * from ProductTemplate_SubGroup where IsDeleted=0", connection)).Fill(dataTable);
+            DataTable dataTable = new DataTable();
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                {
+                    connection.Open();
+                    SqlCommand selectCommand = new SqlCommand("select * from ProductTemplate_Group where IsDeleted=0 and ID=@ID", connection);
+                    selectCommand.Parameters.AddWithValue("@ID", id);
+                    new SqlDataAdapter(selectCommand).Fill(dataTable);
+                }
+                return dataTable;
+            }
+            catch (Exception ex)
+            {
+                objMain.ErrorLog(ex);
+                return dataTable;
+            }
         }
-        return dataTable;
-      }
-      catch (Exception ex)
-      {
-        this.objmain.ErrorLog(ex);
-        return dataTable;
-      }
-    }
 
-    public int ProductTemplate_SubGroup_insert(string Title, int ID_ProductTemplate_Group)
-    {
-      DataTable dataTable = new DataTable();
-      try
-      {
-        using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
+        public int ProductTemplate_Group_Delete(int id)
         {
-          connection.Open();
-          SqlCommand sqlCommand = new SqlCommand("INSERT INTO [dbo].[ProductTemplate_SubGroup]\r\n           ([ID]\r\n           ,[Title]\r\n        ,[ID_ProductTemplate_Group]\r\n           ,[IsDeleted])\r\n     VALUES\r\n           (@ID\r\n           ,@Title\r\n            ,@ID_ProductTemplate_Group\r\n           ,@IsDeleted)", connection);
-          sqlCommand.Parameters.AddWithValue("@ID", (object) (this.objmain.Max_Tbl("ProductTemplate_SubGroup", "ID") + 1));
-          sqlCommand.Parameters.AddWithValue("@Title", (object) Title);
-          sqlCommand.Parameters.AddWithValue("@ID_ProductTemplate_Group", (object) ID_ProductTemplate_Group);
-          sqlCommand.Parameters.AddWithValue("@IsDeleted", (object) 0);
-          sqlCommand.ExecuteNonQuery();
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                {
+                    connection.Open();
+                    SqlCommand sqlCommand = new SqlCommand("update ProductTemplate_Group set IsDeleted=1 where ID=@ID ", connection);
+                    sqlCommand.Parameters.AddWithValue("@ID", id);
+                    sqlCommand.ExecuteNonQuery();
+                }
+                return 1;
+            }
+            catch (Exception ex)
+            {
+                objMain.ErrorLog(ex);
+                return -1;
+            }
         }
-        return 1;
-      }
-      catch (Exception ex)
-      {
-        this.objmain.ErrorLog(ex);
-        return -1;
-      }
-    }
 
-    public int ProductTemplate_SubGroup_Update(int ID, string Title, int ID_ProductTemplate_Group)
-    {
-      DataTable dataTable = new DataTable();
-      try
-      {
-        using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
+        public DataTable ProductTemplate_SubGroup_Get()
         {
-          connection.Open();
-          SqlCommand sqlCommand = new SqlCommand("update [ProductTemplate_SubGroup] set [Title]=@Title ,[ID_ProductTemplate_Group]=@ID_ProductTemplate_Group where [ID]=@ID ", connection);
-          sqlCommand.Parameters.AddWithValue("@ID", (object) ID);
-          sqlCommand.Parameters.AddWithValue("@Title", (object) Title);
-          sqlCommand.Parameters.AddWithValue("@ID_ProductTemplate_Group", (object) ID_ProductTemplate_Group);
-          sqlCommand.ExecuteNonQuery();
+            DataTable dataTable = new DataTable();
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                {
+                    connection.Open();
+                    new SqlDataAdapter(new SqlCommand("select * from ProductTemplate_SubGroup where IsDeleted=0", connection)).Fill(dataTable);
+                }
+                return dataTable;
+            }
+            catch (Exception ex)
+            {
+                objMain.ErrorLog(ex);
+                return dataTable;
+            }
         }
-        return 1;
-      }
-      catch (Exception ex)
-      {
-        this.objmain.ErrorLog(ex);
-        return -1;
-      }
-    }
 
-    public DataTable ProductTemplate_SubGroup_Get(int ID)
-    {
-      DataTable dataTable = new DataTable();
-      try
-      {
-        using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
+        public int ProductTemplate_SubGroup_insert(string title, int id_ProductTemplate_Group)
         {
-          connection.Open();
-          SqlCommand selectCommand = new SqlCommand("select * from ProductTemplate_SubGroup where IsDeleted=0 and ID=@ID", connection);
-          selectCommand.Parameters.AddWithValue("@ID", (object) ID);
-          new SqlDataAdapter(selectCommand).Fill(dataTable);
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                {
+                    connection.Open();
+                    SqlCommand sqlCommand = new SqlCommand("INSERT INTO [dbo].[ProductTemplate_SubGroup] ([ID] ,[Title] ,[ID_ProductTemplate_Group] ,[IsDeleted]) VALUES (@ID ,@Title ,@ID_ProductTemplate_Group ,@IsDeleted)", connection);
+                    sqlCommand.Parameters.AddWithValue("@ID", (objMain.Max_Tbl("ProductTemplate_SubGroup", "ID") + 1));
+                    sqlCommand.Parameters.AddWithValue("@Title", title);
+                    sqlCommand.Parameters.AddWithValue("@ID_ProductTemplate_Group", id_ProductTemplate_Group);
+                    sqlCommand.Parameters.AddWithValue("@IsDeleted", 0);
+                    sqlCommand.ExecuteNonQuery();
+                }
+                return 1;
+            }
+            catch (Exception ex)
+            {
+                objMain.ErrorLog(ex);
+                return -1;
+            }
         }
-        return dataTable;
-      }
-      catch (Exception ex)
-      {
-        this.objmain.ErrorLog(ex);
-        return dataTable;
-      }
-    }
 
-    public DataTable ProductTemplate_SubGroup_GetByGroup(int ID_ProductTemplate_Group)
-    {
-      DataTable dataTable = new DataTable();
-      try
-      {
-        using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
+        public int ProductTemplate_SubGroup_Update(int id, string title, int id_ProductTemplate_Group)
         {
-          connection.Open();
-          SqlCommand selectCommand = new SqlCommand("select * from ProductTemplate_SubGroup where IsDeleted=0 and ID_ProductTemplate_Group=@ID_ProductTemplate_Group", connection);
-          selectCommand.Parameters.AddWithValue("@ID_ProductTemplate_Group", (object) ID_ProductTemplate_Group);
-          new SqlDataAdapter(selectCommand).Fill(dataTable);
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                {
+                    connection.Open();
+                    SqlCommand sqlCommand = new SqlCommand("update [ProductTemplate_SubGroup] set [Title]=@Title ,[ID_ProductTemplate_Group]=@ID_ProductTemplate_Group where [ID]=@ID ", connection);
+                    sqlCommand.Parameters.AddWithValue("@ID", id);
+                    sqlCommand.Parameters.AddWithValue("@Title", title);
+                    sqlCommand.Parameters.AddWithValue("@ID_ProductTemplate_Group", id_ProductTemplate_Group);
+                    sqlCommand.ExecuteNonQuery();
+                }
+                return 1;
+            }
+            catch (Exception ex)
+            {
+                objMain.ErrorLog(ex);
+                return -1;
+            }
         }
-        return dataTable;
-      }
-      catch (Exception ex)
-      {
-        this.objmain.ErrorLog(ex);
-        return dataTable;
-      }
-    }
 
-    public int ProductTemplate_SubGroup_Delete(int ID)
-    {
-      DataTable dataTable = new DataTable();
-      try
-      {
-        using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
+        public DataTable ProductTemplate_SubGroup_Get(int id)
         {
-          connection.Open();
-          SqlCommand sqlCommand = new SqlCommand("update ProductTemplate_SubGroup set IsDeleted=1 where ID=@ID ", connection);
-          sqlCommand.Parameters.AddWithValue("@ID", (object) ID);
-          sqlCommand.ExecuteNonQuery();
+            DataTable dataTable = new DataTable();
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                {
+                    connection.Open();
+                    SqlCommand selectCommand = new SqlCommand("select * from ProductTemplate_SubGroup where IsDeleted=0 and ID=@ID", connection);
+                    selectCommand.Parameters.AddWithValue("@ID", id);
+                    new SqlDataAdapter(selectCommand).Fill(dataTable);
+                }
+                return dataTable;
+            }
+            catch (Exception ex)
+            {
+                objMain.ErrorLog(ex);
+                return dataTable;
+            }
         }
-        return 1;
-      }
-      catch (Exception ex)
-      {
-        this.objmain.ErrorLog(ex);
-        return -1;
-      }
-    }
 
-    public DataTable ProductTemplate_Get()
-    {
-      DataTable dataTable = new DataTable();
-      try
-      {
-        using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
+        public DataTable ProductTemplate_SubGroup_GetByGroup(int ID_ProductTemplate_Group)
         {
-          connection.Open();
-          new SqlDataAdapter(new SqlCommand("select * from ProductTemplate where IsDeleted=0", connection)).Fill(dataTable);
+            DataTable dataTable = new DataTable();
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                {
+                    connection.Open();
+                    SqlCommand selectCommand = new SqlCommand("select * from ProductTemplate_SubGroup where IsDeleted=0 and ID_ProductTemplate_Group=@ID_ProductTemplate_Group", connection);
+                    selectCommand.Parameters.AddWithValue("@ID_ProductTemplate_Group", ID_ProductTemplate_Group);
+                    new SqlDataAdapter(selectCommand).Fill(dataTable);
+                }
+                return dataTable;
+            }
+            catch (Exception ex)
+            {
+                objMain.ErrorLog(ex);
+                return dataTable;
+            }
         }
-        return dataTable;
-      }
-      catch (Exception ex)
-      {
-        this.objmain.ErrorLog(ex);
-        return dataTable;
-      }
-    }
 
-    public int ProductTemplate_insert(
-      string Title,
-      string TextColor,
-      string BackColor,
-      int ProductType,
-      string ProductBarcode,
-      int ProductID,
-      string Priority,
-      int ID_ProductTemplate_SubGroup)
-    {
-      DataTable dataTable = new DataTable();
-      try
-      {
-        using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
+        public int ProductTemplate_SubGroup_Delete(int ID)
         {
-          connection.Open();
-          SqlCommand sqlCommand = new SqlCommand("INSERT INTO  [ProductTemplate]\r\n           ([ID]\r\n           ,[Title]\r\n           ,[TextColor]\r\n           ,[BackColor]\r\n           ,[ProductType]\r\n           ,[ProductBarcode]\r\n           ,[ProductID]\r\n           ,[Priority]\r\n           ,[ID_ProductTemplate_SubGroup]\r\n           ,[IsDeleted])\r\n     VALUES\r\n           (@ID\r\n           ,@Title\r\n           ,@TextColor\r\n           ,@BackColor\r\n           ,@ProductType\r\n           ,@ProductBarcode\r\n           ,@ProductID\r\n           ,@Priority\r\n           ,@ID_ProductTemplate_SubGroup\r\n           ,@IsDeleted)", connection);
-          sqlCommand.Parameters.AddWithValue("@ID", (object) (this.objmain.Max_Tbl("ProductTemplate", "ID") + 1));
-          sqlCommand.Parameters.AddWithValue("@Title", (object) Title);
-          sqlCommand.Parameters.AddWithValue("@TextColor", (object) TextColor);
-          sqlCommand.Parameters.AddWithValue("@BackColor", (object) BackColor);
-          sqlCommand.Parameters.AddWithValue("@ProductType", (object) ProductType);
-          sqlCommand.Parameters.AddWithValue("@ProductBarcode", (object) ProductBarcode);
-          sqlCommand.Parameters.AddWithValue("@ProductID", (object) ProductID);
-          sqlCommand.Parameters.AddWithValue("@Priority", (object) Priority);
-          sqlCommand.Parameters.AddWithValue("@ID_ProductTemplate_SubGroup", (object) ID_ProductTemplate_SubGroup);
-          sqlCommand.Parameters.AddWithValue("@IsDeleted", (object) 0);
-          sqlCommand.ExecuteNonQuery();
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                {
+                    connection.Open();
+                    SqlCommand sqlCommand = new SqlCommand("update ProductTemplate_SubGroup set IsDeleted=1 where ID=@ID ", connection);
+                    sqlCommand.Parameters.AddWithValue("@ID", ID);
+                    sqlCommand.ExecuteNonQuery();
+                }
+                return 1;
+            }
+            catch (Exception ex)
+            {
+                objMain.ErrorLog(ex);
+                return -1;
+            }
         }
-        return 1;
-      }
-      catch (Exception ex)
-      {
-        this.objmain.ErrorLog(ex);
-        return -1;
-      }
-    }
 
-    public int ProductTemplate_Update(
-      int ID,
-      string Title,
-      string TextColor,
-      string BackColor,
-      int ProductType,
-      string ProductBarcode,
-      int ProductID,
-      string Priority,
-      int ID_ProductTemplate_SubGroup)
-    {
-      DataTable dataTable = new DataTable();
-      try
-      {
-        using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
+        public DataTable ProductTemplate_Get()
         {
-          connection.Open();
-          SqlCommand sqlCommand = new SqlCommand("update [ProductTemplate] set \r\n           [Title]=@Title\r\n           ,[TextColor]=@TextColor\r\n           ,[BackColor]=@BackColor\r\n           ,[ProductType]=@ProductType\r\n           ,[ProductBarcode]=@ProductBarcode\r\n           ,[ProductID]=@ProductID\r\n           ,[Priority]=@Priority\r\n           ,[ID_ProductTemplate_SubGroup]=@ID_ProductTemplate_SubGroup\r\n             where [ID]=@ID ", connection);
-          sqlCommand.Parameters.AddWithValue("@ID", (object) ID);
-          sqlCommand.Parameters.AddWithValue("@Title", (object) Title);
-          sqlCommand.Parameters.AddWithValue("@TextColor", (object) TextColor);
-          sqlCommand.Parameters.AddWithValue("@BackColor", (object) BackColor);
-          sqlCommand.Parameters.AddWithValue("@ProductType", (object) ProductType);
-          sqlCommand.Parameters.AddWithValue("@ProductBarcode", (object) ProductBarcode);
-          sqlCommand.Parameters.AddWithValue("@ProductID", (object) ProductID);
-          sqlCommand.Parameters.AddWithValue("@Priority", (object) Priority);
-          sqlCommand.Parameters.AddWithValue("@ID_ProductTemplate_SubGroup", (object) ID_ProductTemplate_SubGroup);
-          sqlCommand.ExecuteNonQuery();
+            DataTable dataTable = new DataTable();
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                {
+                    connection.Open();
+                    new SqlDataAdapter(new SqlCommand("select * from ProductTemplate where IsDeleted=0", connection)).Fill(dataTable);
+                }
+                return dataTable;
+            }
+            catch (Exception ex)
+            {
+                objMain.ErrorLog(ex);
+                return dataTable;
+            }
         }
-        return 1;
-      }
-      catch (Exception ex)
-      {
-        this.objmain.ErrorLog(ex);
-        return -1;
-      }
-    }
 
-    public DataTable ProductTemplate_Get(int ID)
-    {
-      DataTable dataTable = new DataTable();
-      try
-      {
-        using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
+        public int ProductTemplate_insert(string Title, string TextColor, string BackColor, int ProductType, string ProductBarcode, int ProductID, string Priority, int ID_ProductTemplate_SubGroup)
         {
-          connection.Open();
-          SqlCommand selectCommand = new SqlCommand("select * from ProductTemplate where IsDeleted=0 and [ID]=@ID", connection);
-          selectCommand.Parameters.AddWithValue("@ID", (object) ID);
-          new SqlDataAdapter(selectCommand).Fill(dataTable);
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                {
+                    connection.Open();
+                    SqlCommand sqlCommand = new SqlCommand("INSERT INTO  [ProductTemplate] ([ID] ,[Title] ,[TextColor] ,[BackColor] ,[ProductType] ,[ProductBarcode] ,[ProductID] ,[Priority] ,[ID_ProductTemplate_SubGroup] ,[IsDeleted]) VALUES (@ID ,@Title ,@TextColor ,@BackColor ,@ProductType ,@ProductBarcode ,@ProductID ,@Priority ,@ID_ProductTemplate_SubGroup ,@IsDeleted)", connection);
+                    sqlCommand.Parameters.AddWithValue("@ID", (objMain.Max_Tbl("ProductTemplate", "ID") + 1));
+                    sqlCommand.Parameters.AddWithValue("@Title", Title);
+                    sqlCommand.Parameters.AddWithValue("@TextColor", TextColor);
+                    sqlCommand.Parameters.AddWithValue("@BackColor", BackColor);
+                    sqlCommand.Parameters.AddWithValue("@ProductType", ProductType);
+                    sqlCommand.Parameters.AddWithValue("@ProductBarcode", ProductBarcode);
+                    sqlCommand.Parameters.AddWithValue("@ProductID", ProductID);
+                    sqlCommand.Parameters.AddWithValue("@Priority", Priority);
+                    sqlCommand.Parameters.AddWithValue("@ID_ProductTemplate_SubGroup", ID_ProductTemplate_SubGroup);
+                    sqlCommand.Parameters.AddWithValue("@IsDeleted", 0);
+                    sqlCommand.ExecuteNonQuery();
+                }
+                return 1;
+            }
+            catch (Exception ex)
+            {
+                objMain.ErrorLog(ex);
+                return -1;
+            }
         }
-        return dataTable;
-      }
-      catch (Exception ex)
-      {
-        this.objmain.ErrorLog(ex);
-        return dataTable;
-      }
-    }
 
-    public DataTable ProductTemplate_GetBySubGroup(int ID_ProductTemplate_SubGroup)
-    {
-      DataTable dataTable = new DataTable();
-      try
-      {
-        using (SqlConnection connection = new SqlConnection(this.objmain.DBPath()))
+        public int ProductTemplate_Update(int ID, string Title, string TextColor, string BackColor, int ProductType, string ProductBarcode, int ProductID, string Priority, int ID_ProductTemplate_SubGroup)
         {
-          connection.Open();
-          SqlCommand selectCommand = new SqlCommand("select * from ProductTemplate where IsDeleted=0 and [ID_ProductTemplate_SubGroup]=@ID_ProductTemplate_SubGroup", connection);
-          selectCommand.Parameters.AddWithValue("@ID_ProductTemplate_SubGroup", (object) ID_ProductTemplate_SubGroup);
-          new SqlDataAdapter(selectCommand).Fill(dataTable);
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                {
+                    connection.Open();
+                    SqlCommand sqlCommand = new SqlCommand("update [ProductTemplate] set [Title]=@Title ,[TextColor]=@TextColor ,[BackColor]=@BackColor ,[ProductType]=@ProductType ,[ProductBarcode]=@ProductBarcode ,[ProductID]=@ProductID ,[Priority]=@Priority ,[ID_ProductTemplate_SubGroup]=@ID_ProductTemplate_SubGroup where [ID]=@ID ", connection);
+                    sqlCommand.Parameters.AddWithValue("@ID", ID);
+                    sqlCommand.Parameters.AddWithValue("@Title", Title);
+                    sqlCommand.Parameters.AddWithValue("@TextColor", TextColor);
+                    sqlCommand.Parameters.AddWithValue("@BackColor", BackColor);
+                    sqlCommand.Parameters.AddWithValue("@ProductType", ProductType);
+                    sqlCommand.Parameters.AddWithValue("@ProductBarcode", ProductBarcode);
+                    sqlCommand.Parameters.AddWithValue("@ProductID", ProductID);
+                    sqlCommand.Parameters.AddWithValue("@Priority", Priority);
+                    sqlCommand.Parameters.AddWithValue("@ID_ProductTemplate_SubGroup", ID_ProductTemplate_SubGroup);
+                    sqlCommand.ExecuteNonQuery();
+                }
+                return 1;
+            }
+            catch (Exception ex)
+            {
+                objMain.ErrorLog(ex);
+                return -1;
+            }
         }
-        return dataTable;
-      }
-      catch (Exception ex)
-      {
-        this.objmain.ErrorLog(ex);
-        return dataTable;
-      }
+
+        public DataTable ProductTemplate_Get(int ID)
+        {
+            DataTable dataTable = new DataTable();
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                {
+                    connection.Open();
+                    SqlCommand selectCommand = new SqlCommand("select * from ProductTemplate where IsDeleted=0 and [ID]=@ID", connection);
+                    selectCommand.Parameters.AddWithValue("@ID", ID);
+                    new SqlDataAdapter(selectCommand).Fill(dataTable);
+                }
+                return dataTable;
+            }
+            catch (Exception ex)
+            {
+                objMain.ErrorLog(ex);
+                return dataTable;
+            }
+        }
+
+        public DataTable ProductTemplate_GetBySubGroup(int ID_ProductTemplate_SubGroup)
+        {
+            DataTable dataTable = new DataTable();
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                {
+                    connection.Open();
+                    SqlCommand selectCommand = new SqlCommand("select * from ProductTemplate where IsDeleted=0 and [ID_ProductTemplate_SubGroup]=@ID_ProductTemplate_SubGroup", connection);
+                    selectCommand.Parameters.AddWithValue("@ID_ProductTemplate_SubGroup", ID_ProductTemplate_SubGroup);
+                    new SqlDataAdapter(selectCommand).Fill(dataTable);
+                }
+                return dataTable;
+            }
+            catch (Exception ex)
+            {
+                objMain.ErrorLog(ex);
+                return dataTable;
+            }
+        }
+
+        #endregion
     }
-  }
 }

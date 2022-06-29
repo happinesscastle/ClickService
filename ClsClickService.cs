@@ -29,7 +29,7 @@ namespace ClickServerService
         public int SwiperID;
         public int GameCenterID;
 
-        private string TimeStamp;
+        //private string TimeStamp;
         private DataTable TempP1_DT = new DataTable();
         public SerialPort spTX;
         public SerialPort spRX;
@@ -102,7 +102,7 @@ namespace ClickServerService
             Timer_SendData.Interval = 1000.0;
             Timer_SendData.Enabled = true;
 
-            objMain._pbNCStatus();
+            objMain.PbNCStatus();
             AppLoadMain();
 
 
@@ -154,7 +154,7 @@ namespace ClickServerService
                 MainClass.key_Value_List = objMain.Key_Value_Get();
                 objSwiper.Swiper_Update_Config_StateAll(0, objMain.ID_GameCenter_Local_Get());
 
-                if (!objMain.licence_Check())
+                if (!objMain.Licence_Check())
                 {
                     WriteToFile(DateTime.Now.ToString() + ":1:Licence ERROR ");
                     timer.Enabled = false;
@@ -941,8 +941,8 @@ namespace ClickServerService
                                 if (addressByChargeRate.Rows.Count > 0)
                                 {
                                     objSwiper.Swiper_UpdateStateByMacAddress(lower.ToUpper(), -3);
-                                    string str4 = "[" + str3 + "]AT+CFG3=" + objMain.comma(addressByChargeRate.Rows[0]["PriceAdi"].ToString());
-                                    string str5 = "[" + str3 + "]AT+CFG4=" + objMain.comma(addressByChargeRate.Rows[0]["PriceVije"].ToString());
+                                    string str4 = "[" + str3 + "]AT+CFG3=" + objMain.Comma(addressByChargeRate.Rows[0]["PriceAdi"].ToString());
+                                    string str5 = "[" + str3 + "]AT+CFG4=" + objMain.Comma(addressByChargeRate.Rows[0]["PriceVije"].ToString());
                                     for (int index3 = 0; index3 < TCP_RepeatCount + 5; ++index3)
                                     {
                                         Send_DisplayText(str4, $"P{MultiRun_AP_ID}", "", "");
@@ -1070,13 +1070,13 @@ namespace ClickServerService
                                 objSwiper.Swiper_Update_Config_State(2, MacAddress);
                                 if (MainClass.key_Value_List.Select("KeyName ='Enable_Charge_Rate'")[0]["Value"].ToString().ToLower() == "true")
                                 {
-                                    str1 = "[" + str6 + "]AT+CFG3=" + objMain.comma(addressByChargeRate.Rows[0]["PriceAdi"].ToString());
-                                    str2 = "[" + str6 + "]AT+CFG3=" + objMain.comma(addressByChargeRate.Rows[0]["PriceAdi"].ToString());
+                                    str1 = "[" + str6 + "]AT+CFG3=" + objMain.Comma(addressByChargeRate.Rows[0]["PriceAdi"].ToString());
+                                    str2 = "[" + str6 + "]AT+CFG3=" + objMain.Comma(addressByChargeRate.Rows[0]["PriceAdi"].ToString());
                                 }
                                 else
                                 {
-                                    str1 = "[" + str6 + "]AT+CFG3=" + objMain.comma(addressByChargeRate.Rows[0]["Price1"].ToString());
-                                    str2 = "[" + str6 + "]AT+CFG3=" + objMain.comma(addressByChargeRate.Rows[0]["Price1"].ToString());
+                                    str1 = "[" + str6 + "]AT+CFG3=" + objMain.Comma(addressByChargeRate.Rows[0]["Price1"].ToString());
+                                    str2 = "[" + str6 + "]AT+CFG3=" + objMain.Comma(addressByChargeRate.Rows[0]["Price1"].ToString());
                                 }
                             }
                             if (ReciveText.Contains("OKCFG3"))
@@ -1086,13 +1086,13 @@ namespace ClickServerService
                                     objSwiper.Swiper_Update_Config_State(3, MacAddress);
                                     if (MainClass.key_Value_List.Select("KeyName ='Enable_Charge_Rate'")[0]["Value"].ToString().ToLower() == "true")
                                     {
-                                        str1 = "[" + str6 + "]AT+CFG4=" + objMain.comma(addressByChargeRate.Rows[0]["PriceVije"].ToString());
-                                        str2 = "[" + str6 + "]AT+CFG4=" + objMain.comma(addressByChargeRate.Rows[0]["PriceVije"].ToString());
+                                        str1 = "[" + str6 + "]AT+CFG4=" + objMain.Comma(addressByChargeRate.Rows[0]["PriceVije"].ToString());
+                                        str2 = "[" + str6 + "]AT+CFG4=" + objMain.Comma(addressByChargeRate.Rows[0]["PriceVije"].ToString());
                                     }
                                     else
                                     {
-                                        str1 = "[" + str6 + "]AT+CFG4=" + objMain.comma(addressByChargeRate.Rows[0]["Price2"].ToString());
-                                        str2 = "[" + str6 + "]AT+CFG4=" + objMain.comma(addressByChargeRate.Rows[0]["Price2"].ToString());
+                                        str1 = "[" + str6 + "]AT+CFG4=" + objMain.Comma(addressByChargeRate.Rows[0]["Price2"].ToString());
+                                        str2 = "[" + str6 + "]AT+CFG4=" + objMain.Comma(addressByChargeRate.Rows[0]["Price2"].ToString());
                                     }
                                 }
                                 else
@@ -1369,12 +1369,12 @@ namespace ClickServerService
                                                     {
                                                         str27 = "B1677";
                                                         flag4 = true;
-                                                        str2 = "[" + str7 + "]AT+PRC=" + this.objMain.comma((tuple.Item2 - num5).ToString());
+                                                        str2 = "[" + str7 + "]AT+PRC=" + this.objMain.Comma((tuple.Item2 - num5).ToString());
                                                         string str13 = str7;
                                                         MainClass objMain = this.objMain;
                                                         num7 = tuple.Item2 - num5;
                                                         string str14 = num7.ToString();
-                                                        string str15 = objMain.comma(str14);
+                                                        string str15 = objMain.Comma(str14);
                                                         str1 = "[" + str13 + "]AT+PRC=" + str15;
                                                         if (!chbDecreasePriceInLevel2)
                                                         {
@@ -1471,8 +1471,8 @@ namespace ClickServerService
                                                 if (num8 + num9 + Pay_GiftPortion + num6 >= num5)
                                                 {
                                                     int num10 = num8 + Pay_GiftPortion + num9 + num6 - num5;
-                                                    str2 = "[" + str7 + "]AT+PRC=" + objMain.comma(num10.ToString());
-                                                    string str10 = num10.ToString().Length > 7 ? num10.ToString() : objMain.comma(num10.ToString());
+                                                    str2 = "[" + str7 + "]AT+PRC=" + objMain.Comma(num10.ToString());
+                                                    string str10 = num10.ToString().Length > 7 ? num10.ToString() : objMain.Comma(num10.ToString());
                                                     str1 = "[" + str7 + "]AT+PRC=" + str10;
                                                     if (!chbDecreasePriceInLevel2)
                                                     {
@@ -1502,13 +1502,13 @@ namespace ClickServerService
                                                     MainClass objMain1 = this.objMain;
                                                     num7 = num8 + num9 + num6;
                                                     string str11 = num7.ToString();
-                                                    string str12 = objMain1.comma(str11);
+                                                    string str12 = objMain1.Comma(str11);
                                                     str2 = "[" + str10 + "]AT+NRC=" + str12;
                                                     string str13 = str7;
                                                     MainClass objMain2 = this.objMain;
                                                     num7 = num8 + num9 + num6;
                                                     string str14 = num7.ToString();
-                                                    string str15 = objMain2.comma(str14);
+                                                    string str15 = objMain2.Comma(str14);
                                                     str1 = "[" + str13 + "]AT+NRC=" + str15;
                                                 }
                                             }
@@ -1740,13 +1740,13 @@ namespace ClickServerService
                                                 MainClass objMain1 = this.objMain;
                                                 int num10 = num8 + num9 + num7;
                                                 string str11 = num10.ToString();
-                                                string str12 = objMain1.comma(str11);
+                                                string str12 = objMain1.Comma(str11);
                                                 str2 = "[" + str10 + "]AT+NRC=" + str12;
                                                 string str13 = str7;
                                                 MainClass objMain2 = this.objMain;
                                                 num10 = num8 + num9 + num7;
                                                 string str14 = num10.ToString();
-                                                string str15 = objMain2.comma(str14);
+                                                string str15 = objMain2.Comma(str14);
                                                 str1 = "[" + str13 + "]AT+NRC=" + str15;
                                             }
                                         }
@@ -1944,7 +1944,6 @@ namespace ClickServerService
                         string str5 = ReciveText.Substring(1, 12);
                         string str6 = str5.Substring(0, 2) + str5.Substring(3, 2) + str5.Substring(6, 2) + str5.Substring(9, 2);
                         Thread.Sleep(1);//SEM
-                        string timeStamp = TimeStamp;
                         string MacAddress = str6;
                         string str7 = MacAndTimeStamp_Create(MacAddress);
                         DataTable addressByChargeRate = objSwiper.Swiper_GetByMacAddressByChargeRate(MacAddress.ToUpper());
@@ -1958,9 +1957,9 @@ namespace ClickServerService
                             {
                             }
                             Thread.Sleep(1);//SEM
-                            str1 = "[" + str7 + "]AT+CFG1=" + timeStamp;
+                            str1 = "[" + str7 + "]AT+CFG1=";
                             Thread.Sleep(1);//SEM
-                            str2 = "[" + str7 + "]AT+CFG1=" + timeStamp;
+                            str2 = "[" + str7 + "]AT+CFG1=";
                             Thread.Sleep(1);//SEM
                             objSwiper.Swiper_Update_Config_State(0, MacAddress);
                         }
@@ -1978,7 +1977,6 @@ namespace ClickServerService
                     {
                         string str5 = ReciveText.Substring(1, 12);
                         string str6 = str5.Substring(0, 2) + str5.Substring(3, 2) + str5.Substring(6, 2) + str5.Substring(9, 2);
-                        string timeStamp = TimeStamp;
                         string MacAddress = str6;
                         string str7 = MacAndTimeStamp_Create(MacAddress);
                         DataTable addressByChargeRate = objSwiper.Swiper_GetByMacAddressByChargeRate(MacAddress);
@@ -2047,8 +2045,8 @@ namespace ClickServerService
                                                     str10 = dataTable.Rows[0]["Date"].ToString().Substring(2, 10);
                                                     DateTime dateTime = Convert.ToDateTime(dataTable.Rows[0]["MiladiDate"].ToString());
                                                     str11 = dateTime.Hour.ToString() + ":" + (object)dateTime.Minute;
-                                                    str12 = objMain.comma(dataTable.Rows[0]["Price"].ToString());
-                                                    str13 = objMain.comma(dataTable.Rows[0]["PriceKol"].ToString());
+                                                    str12 = objMain.Comma(dataTable.Rows[0]["Price"].ToString());
+                                                    str13 = objMain.Comma(dataTable.Rows[0]["PriceKol"].ToString());
                                                 }
                                                 catch
                                                 {
@@ -2063,8 +2061,8 @@ namespace ClickServerService
                                                     str15 = dataTable.Rows[1]["Date"].ToString().Substring(2, 10);
                                                     DateTime dateTime = Convert.ToDateTime(dataTable.Rows[1]["MiladiDate"].ToString());
                                                     str16 = dateTime.Hour.ToString() + ":" + (object)dateTime.Minute;
-                                                    str17 = objMain.comma(dataTable.Rows[1]["Price"].ToString());
-                                                    str18 = objMain.comma(dataTable.Rows[1]["PriceKol"].ToString());
+                                                    str17 = objMain.Comma(dataTable.Rows[1]["Price"].ToString());
+                                                    str18 = objMain.Comma(dataTable.Rows[1]["PriceKol"].ToString());
                                                 }
                                                 catch
                                                 {
@@ -2079,8 +2077,8 @@ namespace ClickServerService
                                                     str20 = dataTable.Rows[2]["Date"].ToString().Substring(2, 10);
                                                     DateTime dateTime = Convert.ToDateTime(dataTable.Rows[2]["MiladiDate"].ToString());
                                                     str21 = dateTime.Hour.ToString() + ":" + (object)dateTime.Minute;
-                                                    str22 = objMain.comma(dataTable.Rows[2]["Price"].ToString());
-                                                    str23 = objMain.comma(dataTable.Rows[2]["PriceKol"].ToString());
+                                                    str22 = objMain.Comma(dataTable.Rows[2]["Price"].ToString());
+                                                    str23 = objMain.Comma(dataTable.Rows[2]["PriceKol"].ToString());
                                                 }
                                                 catch
                                                 {
@@ -2095,8 +2093,8 @@ namespace ClickServerService
                                                     str25 = dataTable.Rows[3]["Date"].ToString().Substring(2, 10);
                                                     DateTime dateTime = Convert.ToDateTime(dataTable.Rows[3]["MiladiDate"].ToString());
                                                     str26 = dateTime.Hour.ToString() + ":" + (object)dateTime.Minute;
-                                                    str28 = objMain.comma(dataTable.Rows[3]["Price"].ToString());
-                                                    str29 = objMain.comma(dataTable.Rows[3]["PriceKol"].ToString());
+                                                    str28 = objMain.Comma(dataTable.Rows[3]["Price"].ToString());
+                                                    str29 = objMain.Comma(dataTable.Rows[3]["PriceKol"].ToString());
                                                 }
                                                 catch
                                                 {
@@ -2111,8 +2109,8 @@ namespace ClickServerService
                                                     str31 = dataTable.Rows[4]["Date"].ToString().Substring(2, 10);
                                                     DateTime dateTime = Convert.ToDateTime(dataTable.Rows[4]["MiladiDate"].ToString());
                                                     str32 = dateTime.Hour.ToString() + ":" + (object)dateTime.Minute;
-                                                    str33 = objMain.comma(dataTable.Rows[4]["Price"].ToString());
-                                                    str34 = objMain.comma(dataTable.Rows[4]["PriceKol"].ToString());
+                                                    str33 = objMain.Comma(dataTable.Rows[4]["Price"].ToString());
+                                                    str34 = objMain.Comma(dataTable.Rows[4]["PriceKol"].ToString());
                                                 }
                                                 catch
                                                 {

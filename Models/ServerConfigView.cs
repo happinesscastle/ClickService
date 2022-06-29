@@ -6,11 +6,12 @@ namespace ClickServerService.Models
     {
         public int AP_ID { get; set; }
         public int ID { get; set; }
-        public int? ID_GameCenter { get; set; }
+        public int ID_GameCenter { get; set; }
         public string AP_Name { get; set; }
         public string AP_IP { get; set; }
-        public bool? AP_IsEnable { get; set; }
-        public bool? AP_Status { get; set; }
+        public int AP_Port { get; set; }
+        public bool AP_IsEnable { get; set; }
+        public bool AP_Status { get; set; }
         public int? ValidateReceivedData { get; set; }
         public string ServerIP { get; set; }
         public int? RepeatConfig { get; set; }

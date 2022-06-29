@@ -74,10 +74,9 @@ namespace ClickServerService.Improved
                 serverConfigView.RepeatConfig = 2;
                 chbShowAllRecive = true;
                 txtRecive = "";
-                //MainClass.key_Value_List = objMain.Key_Value_Get();
                 objSwiper.Swiper_Update_Config_StateAll(0, objMain.ID_GameCenter_Local_Get());
 
-                if (!objMain.licence_Check())
+                if (!objMain.Licence_Check())
                 {
                     WriteToFile(DateTime.Now.ToString() + ":1:Licence ERROR ");
                     //Dispose();
@@ -116,7 +115,7 @@ namespace ClickServerService.Improved
                         serverConfigView.ServerIP = "";
                     }
                     objSwiper.Swiper_Update_Config_StateByGameCenterID(objMain.ID_GameCenter_Local_Get(), 0);
-                    if (serverConfigView.AP_IsEnable.Value)
+                    if (serverConfigView.AP_IsEnable)
                     {
                         try
                         {
@@ -157,7 +156,7 @@ namespace ClickServerService.Improved
 
         private void OnElapsedTime()
         {
-            if (serverConfigView.AP_IsEnable.Value)
+            if (serverConfigView.AP_IsEnable)
             {
                 try
                 {
@@ -212,23 +211,22 @@ namespace ClickServerService.Improved
         }
 
         public void Receive_TCP()
-        {// Copy
+        {
             dispStringRecive = "";
             dispStringSplit = "";
             try
             {
-                int port = 1000;
                 byte[] numArray = new byte[256];
                 while (true)
                 {
 
-                    objMain.MyPrint($"*R*clientAp{multiRun_AP_ID}.Connect (IP : {serverConfigView.AP_IP} , Port: {port})", ConsoleColor.Magenta);
+                    objMain.MyPrint($"*R*clientAp{multiRun_AP_ID}.Connect (IP : {serverConfigView.AP_IP} , Port: {serverConfigView.AP_Port})", ConsoleColor.Magenta);
                     NetworkStream stream = null;
                     if (!Program.tCPClientList.SingleOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient.Connected)
                     {
                         Program.tCPClientList.SingleOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient.Close();
                         Program.tCPClientList.SingleOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient = new TcpClient();
-                        Program.tCPClientList.SingleOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient.Connect(serverConfigView.AP_IP, 1000);
+                        Program.tCPClientList.SingleOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient.Connect(serverConfigView.AP_IP, serverConfigView.AP_Port);
                     }
                     stream = Program.tCPClientList.SingleOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient.GetStream();
                     try

@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using ClickServerService.Models;
-using System.Threading.Tasks;
-using System.Data.SqlClient;
 using System.Net.Sockets;
 using System.Threading;
 using System.Data;
@@ -9,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System;
-using Dapper;
 
 namespace ClickServerService.Improved
 {
@@ -347,7 +344,7 @@ namespace ClickServerService.Improved
                                 foreach (var item in serverConfigView)
                                 {
                                     Send_DisplayText(str2, $"P{item.AP_ID}", t_SwiperName, t_CardmacAddress, DateTime.Now);
-                                    Send_Main(item.AP_IP, str2, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == item.AP_ID).TCPClient);
+                                    Send_Main(item.AP_IP, str2, ClsStarter.tCPClientList.SingleOrDefault(i => i.AP_ID == item.AP_ID).TCPClient);
                                 }
 
                                 Thread.Sleep(10);
@@ -364,7 +361,7 @@ namespace ClickServerService.Improved
                                 foreach (var item in serverConfigView)
                                 {
                                     Send_DisplayText(str2, $"P{item.AP_ID}", "", "");
-                                    Send_Main(item.AP_IP, Command, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == item.AP_ID).TCPClient);
+                                    Send_Main(item.AP_IP, Command, ClsStarter.tCPClientList.SingleOrDefault(i => i.AP_ID == item.AP_ID).TCPClient);
                                 }
                                 Thread.Sleep(100);
                             }
@@ -412,11 +409,11 @@ namespace ClickServerService.Improved
         {
             try
             {
-                foreach (var item in Program.tCPClientList)
+                foreach (var item in ClsStarter.tCPClientList)
                 {
 
                     string swiperSegment = objSwiper.GetSwiperSegmentByMac(objSwiper.GetMacSwiper(command), Main_ID_GameCenter);
-                    bool isAllowedToSend = Program.accessPoints.Where(ap => ap.AP_ID == item.AP_ID).SingleOrDefault().ListSwiperSegmentIDs.Contains(swiperSegment);
+                    bool isAllowedToSend = ClsStarter.accessPoints.Where(ap => ap.AP_ID == item.AP_ID).SingleOrDefault().ListSwiperSegmentIDs.Contains(swiperSegment);
                     if (isAllowedToSend)
                     {
                         if (item.TCPClient.Connected)
@@ -444,8 +441,8 @@ namespace ClickServerService.Improved
             try
             {
                 string swiperSegment = objSwiper.GetSwiperSegmentByMac(objSwiper.GetMacSwiper(command), Main_ID_GameCenter);
-                int id_ap = Program.accessPoints.Where(i => i.AP_IP == ipAp).FirstOrDefault().AP_ID;
-                bool isAllowedToSend = Program.accessPoints.Where(ap => ap.AP_ID == id_ap).SingleOrDefault().ListSwiperSegmentIDs.Contains(swiperSegment);
+                int id_ap = ClsStarter.accessPoints.Where(i => i.AP_IP == ipAp).FirstOrDefault().AP_ID;
+                bool isAllowedToSend = ClsStarter.accessPoints.Where(ap => ap.AP_ID == id_ap).SingleOrDefault().ListSwiperSegmentIDs.Contains(swiperSegment);
                 if (isAllowedToSend)
                 {
                     if (client.Connected)
@@ -795,7 +792,7 @@ namespace ClickServerService.Improved
                                 {
                                     flag1 = bool.Parse(byMacAddrress.Rows[0]["IsNonTicket"].ToString());
                                 }
-                                catch  {   }
+                                catch { }
                                 str27 = "1548";
                                 bool.Parse(byMacAddrress.Rows[0]["AllowRegistration"].ToString());
                                 int num3 = 0;
@@ -803,7 +800,7 @@ namespace ClickServerService.Improved
                                 {
                                     num3 = int.Parse(byMacAddrress.Rows[0]["ID_Card_Promotional"].ToString());
                                 }
-                                catch  { }
+                                catch { }
                                 str27 = "1556";
                                 bool boolean = Convert.ToBoolean(byMacAddrress.Rows[0]["IsNonPlayGames"].ToString().ToLower() == "" ? "false" : byMacAddrress.Rows[0]["IsNonPlayGames"].ToString());
                                 str27 = "1558";
@@ -1872,7 +1869,7 @@ namespace ClickServerService.Improved
                             foreach (var item in serverConfigView)
                             {
                                 Send_DisplayText(str4, $"P{item.AP_ID}", "", "");
-                                Send_Main(item.AP_IP, str4, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == item.AP_ID).TCPClient);
+                                Send_Main(item.AP_IP, str4, ClsStarter.tCPClientList.SingleOrDefault(i => i.AP_ID == item.AP_ID).TCPClient);
                             }
                             Thread.Sleep(70);
                         }
@@ -1882,7 +1879,7 @@ namespace ClickServerService.Improved
                             foreach (var item in serverConfigView)
                             {
                                 Send_DisplayText(str5, $"P{item.AP_ID}", "", "");
-                                Send_Main(item.AP_IP, str5, Program.tCPClientList.SingleOrDefault(i => i.AP_ID == item.AP_ID).TCPClient);
+                                Send_Main(item.AP_IP, str5, ClsStarter.tCPClientList.SingleOrDefault(i => i.AP_ID == item.AP_ID).TCPClient);
                             }
                             Thread.Sleep(70);
                         }

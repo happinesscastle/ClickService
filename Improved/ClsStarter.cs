@@ -1,16 +1,20 @@
 ﻿using ClickServerService.ClassCode;
 using System.Collections.Generic;
+using ClickServerService.Models;
 using System.Threading.Tasks;
+using System.Net.Sockets;
 using System.Threading;
 using System.Timers;
 using System.Linq;
-using System.Text;
 using System;
 
 namespace ClickServerService.Improved
 {
     public class ClsStarter
     {
+        public static List<MyTCPClient> tCPClientList = new List<MyTCPClient>();
+        public static List<Access_Point> accessPoints = null;
+
         readonly MainClass objMain = new MainClass();
         readonly GamesClass objGames = new GamesClass();
         readonly SwiperClass objSwiper = new SwiperClass();
@@ -30,6 +34,30 @@ namespace ClickServerService.Improved
             try
             {
                 objMain.MyPrint("Starter - AppLoadMain", ConsoleColor.Blue);
+
+                accessPoints = objMain.GetAccessPoints();
+                Thread.Sleep(0);
+                if (accessPoints.Any())
+                {
+                    foreach (var item in accessPoints)
+                    {
+                        TcpClient tcp = new TcpClient();
+                        tCPClientList.Add(new MyTCPClient(item.AP_ID, tcp));
+                        try
+                        {
+                            tCPClientList.SingleOrDefault(i => i.AP_ID == item.AP_ID).TCPClient.Connect(item.AP_IP, item.AP_Port);
+                        }
+                        catch
+                        {
+                            objMain.MyPrint("Not Connect " + item.AP_IP, ConsoleColor.Red);
+                        }
+                        Thread.Sleep(0);
+                        Task.Run(() => new ClsReceiver(item.AP_ID).Start());
+                        Thread.Sleep(0);
+                        objMain.MyPrint("+accessPoints : " + item.AP_ID.ToString(), ConsoleColor.White);
+                    }
+                    Task.Run(() => new ClsSender().Start());
+                }
 
                 #region ' Timers '
 

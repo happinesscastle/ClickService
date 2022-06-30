@@ -48,7 +48,7 @@ namespace ClickServerService.ClassCode
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand com = new SqlCommand("update [Club_CheckIn] set [Date_End]=@Date   where  ID=@ID", connection);
+                    SqlCommand com = new SqlCommand("Update [Club_CheckIn] set [Date_End]=@Date where ID=@ID", connection);
                     com.Parameters.AddWithValue("@ID", ID);
                     com.Parameters.AddWithValue("@Date", DateTime.Now);
                     com.ExecuteNonQuery();
@@ -70,7 +70,7 @@ namespace ClickServerService.ClassCode
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand com = new SqlCommand("\r\ninsert into [dbo].[Club_CheckIn] (ID,Card_GUID,Date_Start,IsEnd,Points,ID_Club_Type,ID_User) values(@ID,@Card_GUID,@Date_Start,@IsEnd,@Points,@ID_Club_Type,@ID_User) ", connection);
+                    SqlCommand com = new SqlCommand("Insert into [dbo].[Club_CheckIn] (ID,Card_GUID,Date_Start,IsEnd,Points,ID_Club_Type,ID_User) values(@ID,@Card_GUID,@Date_Start,@IsEnd,@Points,@ID_Club_Type,@ID_User) ", connection);
                     com.Parameters.AddWithValue("@ID", Guid.NewGuid());
                     com.Parameters.AddWithValue("@Card_GUID", Card_GUID);
                     com.Parameters.AddWithValue("@Date_Start", DateTime.Now);
@@ -96,12 +96,7 @@ namespace ClickServerService.ClassCode
             {
                 SqlConnection sqlConnection = new SqlConnection(objMain.DBPath());
                 sqlConnection.Open();
-                SqlCommand com = new SqlCommand
-                {
-                    Connection = sqlConnection,
-                    CommandText = "Card_Update_Point",
-                    CommandType = CommandType.StoredProcedure
-                };
+                SqlCommand com = new SqlCommand("Card_Update_Point", sqlConnection) { CommandType = CommandType.StoredProcedure };
                 com.Parameters.Add("@Card_GUID", SqlDbType.UniqueIdentifier).Value = Guid.Parse(Card_GUID);
                 com.Parameters.Add("@Point", SqlDbType.Int).Value = Point;
                 com.Parameters.Add("@ID_Club_Member_Type", SqlDbType.Int).Value = ID_Club_Member_Type;
@@ -143,9 +138,7 @@ namespace ClickServerService.ClassCode
                     {
                         ID_Club_Member_Type = int.Parse(dataTable.Rows[0]["ID_Club_Member_Type"].ToString());
                     }
-                    catch
-                    {
-                    }
+                    catch { }
                     string ID_Club_Campaign = dataTable.Rows[0]["ID_Club_Campaign"].ToString();
                     Club_Point_History_Insert(objMain.ID_GameCenter_Local_Get(), ID_Club_Campaign, ID_Club_Member_Type, Card_GUID, Point, Point_Old, Description);
                     Club_Point_Process_UpdateCardPoint(Card_GUID, Point + Point_Old, ID_Club_Member_Type);
@@ -164,7 +157,7 @@ namespace ClickServerService.ClassCode
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand com = new SqlCommand("INSERT INTO [dbo].[Club_Point_History]\r\n           ([ID]\r\n           ,[ID_GameCenter]\r\n           ,[ID_Club_Campaign]\r\n           ,[ID_Club_Member_Type]\r\n           ,[Card_GUID]\r\n           ,[Date]\r\n           ,[Point]\r\n           ,[Point_Old]\r\n           ,[Description])\r\n     VALUES\r\n           (@ID\r\n           ,@ID_GameCenter\r\n           ,@ID_Club_Campaign\r\n           ,@ID_Club_Member_Type\r\n           ,@Card_GUID\r\n           ,@Date\r\n           ,@Point\r\n           ,@Point_Old\r\n           ,@Description)", connection);
+                    SqlCommand com = new SqlCommand("INSERT INTO [dbo].[Club_Point_History] ([ID] ,[ID_GameCenter] ,[ID_Club_Campaign] ,[ID_Club_Member_Type] ,[Card_GUID] ,[Date] ,[Point] ,[Point_Old] ,[Description]) VALUES (@ID ,@ID_GameCenter ,@ID_Club_Campaign ,@ID_Club_Member_Type ,@Card_GUID ,@Date ,@Point ,@Point_Old ,@Description)", connection);
                     com.Parameters.AddWithValue("@ID", Guid.NewGuid());
                     com.Parameters.AddWithValue("@ID_GameCenter", ID_GameCenter);
                     com.Parameters.AddWithValue("@ID_Club_Campaign", ID_Club_Campaign);
@@ -196,7 +189,7 @@ namespace ClickServerService.ClassCode
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand("SELECT        Club_Point_History.ID, Club_Point_History.ID_GameCenter, Club_Point_History.ID_Club_Campaign, Club_Point_History.ID_Club_Member_Type, Club_Point_History.Card_GUID, dbo.MiladiTOShamsi(Club_Point_History.Date) \r\n                         AS Date, Club_Point_History.Point, Club_Point_History.Point_Old, Club_Point_History.Description, Club_Campaign.Title AS CampaignTitle, Club_Member_Type.Title AS MemberTypeTitle, \r\n                         GameCenter.Title AS GameCenterTitle\r\nFROM            Club_Point_History INNER JOIN\r\n                         Club_Campaign ON Club_Point_History.ID_Club_Campaign = Club_Campaign.ID INNER JOIN\r\n                         GameCenter ON Club_Point_History.ID_GameCenter = GameCenter.ID LEFT OUTER JOIN\r\n                         Club_Member_Type ON Club_Point_History.ID_Club_Member_Type = Club_Member_Type.ID\r\nWHERE        (Club_Point_History.Card_GUID = @Card_GUID)\r\nORDER BY Date DESC", connection);
+                    SqlCommand selectCommand = new SqlCommand("SELECT Club_Point_History.ID, Club_Point_History.ID_GameCenter, Club_Point_History.ID_Club_Campaign, Club_Point_History.ID_Club_Member_Type, Club_Point_History.Card_GUID, dbo.MiladiTOShamsi(Club_Point_History.Date) AS Date, Club_Point_History.Point, Club_Point_History.Point_Old, Club_Point_History.Description, Club_Campaign.Title AS CampaignTitle, Club_Member_Type.Title AS MemberTypeTitle, GameCenter.Title AS GameCenterTitle FROM Club_Point_History INNER JOIN Club_Campaign ON Club_Point_History.ID_Club_Campaign = Club_Campaign.ID INNER JOIN GameCenter ON Club_Point_History.ID_GameCenter = GameCenter.ID LEFT OUTER JOIN Club_Member_Type ON Club_Point_History.ID_Club_Member_Type = Club_Member_Type.ID WHERE (Club_Point_History.Card_GUID = @Card_GUID) ORDER BY Date DESC", connection);
                     selectCommand.Parameters.AddWithValue("@Card_GUID", Card_GUID);
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }

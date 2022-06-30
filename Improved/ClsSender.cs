@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using ClickServerService.Models;
 using System.Threading.Tasks;
+using System.Data.SqlClient;
 using System.Net.Sockets;
 using System.Threading;
 using System.Data;
@@ -8,7 +9,6 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System;
-using System.Data.SqlClient;
 using Dapper;
 
 namespace ClickServerService.Improved
@@ -21,7 +21,7 @@ namespace ClickServerService.Improved
         List<ServerConfigView> serverConfigView = new List<ServerConfigView>();
         readonly MainClass objMain = new MainClass();
         readonly SwiperClass objSwiper = new SwiperClass();
-        readonly CardClass objcard = new CardClass();
+        readonly CardClass objCard = new CardClass();
         readonly UsersClass objUser = new UsersClass();
         readonly Pattern objPattern = new Pattern();
 
@@ -419,23 +419,18 @@ namespace ClickServerService.Improved
                     bool isAllowedToSend = Program.accessPoints.Where(ap => ap.AP_ID == item.AP_ID).SingleOrDefault().ListSwiperSegmentIDs.Contains(swiperSegment);
                     if (isAllowedToSend)
                     {
-
                         if (item.TCPClient.Connected)
                         {
-
                             NetworkStream stream = item.TCPClient.GetStream();
                             byte[] bytes = Encoding.ASCII.GetBytes(command);
                             stream.Write(bytes, 0, bytes.Length);
-
                             objMain.MyPrint($"*S*+Send :> {item.TCPClient.Client.RemoteEndPoint} -> {command}", ConsoleColor.DarkYellow, DateTime.Now);
-
                         }
                         else
                             return -1;
                     }
                 }
                 return 1;
-
             }
             catch (Exception ex)
             {
@@ -443,7 +438,6 @@ namespace ClickServerService.Improved
                 return -1;
             }
         }
-
 
         public int Send_Main(string ipAp, string command, TcpClient client)
         {
@@ -459,9 +453,7 @@ namespace ClickServerService.Improved
                         NetworkStream stream = client.GetStream();
                         byte[] bytes = Encoding.ASCII.GetBytes(command);
                         stream.Write(bytes, 0, bytes.Length);
-
                         objMain.MyPrint($"*S*+Send :> {ipAp} -> {command}", ConsoleColor.DarkYellow, DateTime.Now);
-
                         return 1;
                     }
                     else
@@ -791,7 +783,7 @@ namespace ClickServerService.Improved
                             int ID_Swiper = int.Parse(addressByChargeRate.Rows[0]["ID"].ToString());
                             str4_Mac = ReciveText.Split('=')[1].Replace("\r", "").Split(',')[0].ToUpper();
                             str27 = "1537";
-                            DataTable byMacAddrress = objcard.Card_GetByMacAddrress(str4_Mac);
+                            DataTable byMacAddrress = objCard.Card_GetByMacAddrress(str4_Mac);
                             if (byMacAddrress.Rows.Count > 0)
                             {
                                 str27 = "1543";
@@ -803,9 +795,7 @@ namespace ClickServerService.Improved
                                 {
                                     flag1 = bool.Parse(byMacAddrress.Rows[0]["IsNonTicket"].ToString());
                                 }
-                                catch
-                                {
-                                }
+                                catch  {   }
                                 str27 = "1548";
                                 bool.Parse(byMacAddrress.Rows[0]["AllowRegistration"].ToString());
                                 int num3 = 0;
@@ -813,9 +803,7 @@ namespace ClickServerService.Improved
                                 {
                                     num3 = int.Parse(byMacAddrress.Rows[0]["ID_Card_Promotional"].ToString());
                                 }
-                                catch
-                                {
-                                }
+                                catch  { }
                                 str27 = "1556";
                                 bool boolean = Convert.ToBoolean(byMacAddrress.Rows[0]["IsNonPlayGames"].ToString().ToLower() == "" ? "false" : byMacAddrress.Rows[0]["IsNonPlayGames"].ToString());
                                 str27 = "1558";
@@ -857,7 +845,7 @@ namespace ClickServerService.Improved
                                         str27 = "B1629";
                                         bool flag4 = false;
                                         int num6 = 0;
-                                        Tuple<bool, int, int, int, int, bool, string> tuple = objcard.Card_CardProductTiming_Status(str8, num1);
+                                        Tuple<bool, int, int, int, int, bool, string> tuple = objCard.Card_CardProductTiming_Status(str8, num1);
                                         str27 = "B1633";
                                         int num7;
                                         if (tuple.Item1)
@@ -876,7 +864,7 @@ namespace ClickServerService.Improved
                                                 str1 = "[" + str7 + "]AT+PRC=" + (int.Parse(s) - 1).ToString() + "-" + str12;
                                                 if (!serverConfigView.FirstOrDefault().IsDecreasePriceInLevel2.Value)
                                                 {
-                                                    int num8 = objcard.Card_Play_Details_Insert(str8, 0, 0, Main_ID_GameCenter, str6, num5, 0, 0, IsPersonnel, num1, ID_Swiper, ID_Play_Type, 0, 0, 0, empty);
+                                                    int num8 = objCard.Card_Play_Details_Insert(str8, 0, 0, Main_ID_GameCenter, str6, num5, 0, 0, IsPersonnel, num1, ID_Swiper, ID_Play_Type, 0, 0, 0, empty);
                                                     str2 = str2 + " -L1 -" + num8;
                                                 }
                                             }
@@ -889,9 +877,9 @@ namespace ClickServerService.Improved
                                                 str1 = "[" + str7 + "]AT+PRC=" + (tuple.Item5 - 1).ToString() + " - " + str11;
                                                 if (!serverConfigView.FirstOrDefault().IsDecreasePriceInLevel2.Value)
                                                 {
-                                                    int num8 = objcard.Card_Play_Details_Insert(str8, 0, 0, Main_ID_GameCenter, str6, num5, 0, 0, IsPersonnel, num1, ID_Swiper, ID_Play_Type, 0, 0, 0, empty);
+                                                    int num8 = objCard.Card_Play_Details_Insert(str8, 0, 0, Main_ID_GameCenter, str6, num5, 0, 0, IsPersonnel, num1, ID_Swiper, ID_Play_Type, 0, 0, 0, empty);
                                                     str2 = str2 + " -L1 -" + num8;
-                                                    objcard.Card_CardProductTiming_SetFreeGame(str8, tuple.Item3, tuple.Item5 - 1);
+                                                    objCard.Card_CardProductTiming_SetFreeGame(str8, tuple.Item3, tuple.Item5 - 1);
                                                 }
                                             }
                                             else
@@ -913,8 +901,8 @@ namespace ClickServerService.Improved
                                                         str1 = "[" + str13 + "]AT+PRC=" + str15;
                                                         if (!serverConfigView.FirstOrDefault().IsDecreasePriceInLevel2.Value)
                                                         {
-                                                            int num8 = objcard.Card_Play_Details_Insert(str8, 0, 0, Main_ID_GameCenter, str6, num5, 0, 0, IsPersonnel, num1, ID_Swiper, ID_Play_Type, 0, 0, 0, empty);
-                                                            objcard.Card_CardProductTiming_SetChargePrice(str8, tuple.Item3, tuple.Item2 - num5);
+                                                            int num8 = objCard.Card_Play_Details_Insert(str8, 0, 0, Main_ID_GameCenter, str6, num5, 0, 0, IsPersonnel, num1, ID_Swiper, ID_Play_Type, 0, 0, 0, empty);
+                                                            objCard.Card_CardProductTiming_SetChargePrice(str8, tuple.Item3, tuple.Item2 - num5);
                                                             str2 = str2 + " -L1 -" + num8;
                                                         }
                                                     }
@@ -933,7 +921,7 @@ namespace ClickServerService.Improved
                                                     str1 = "[" + str7 + "]AT+PRC=--";
                                                     if (!serverConfigView.FirstOrDefault().IsDecreasePriceInLevel2.Value)
                                                     {
-                                                        int num8 = objcard.Card_Play_Details_Insert(str8, 0, 0, Main_ID_GameCenter, str6, num5, 0, 0, IsPersonnel, num1, ID_Swiper, ID_Play_Type, 0, 0, 0, empty);
+                                                        int num8 = objCard.Card_Play_Details_Insert(str8, 0, 0, Main_ID_GameCenter, str6, num5, 0, 0, IsPersonnel, num1, ID_Swiper, ID_Play_Type, 0, 0, 0, empty);
                                                         str2 = str2 + " -L1 -" + num8;
                                                     }
                                                 }
@@ -957,7 +945,7 @@ namespace ClickServerService.Improved
                                                     Pay_GiftPortion += int.Parse(dataTable.Rows[index]["Real_Charge"].ToString());
                                                     int num10 = int.Parse(dataTable.Rows[index]["Real_FreegameCount"].ToString());
                                                     int num11 = int.Parse(dataTable.Rows[index]["Real_FreeDailyGamesCount"].ToString());
-                                                    if (num11 > 0 && ("," + dataTable.Rows[index]["FreeDailyGames"].ToString() + ",").Contains("," + num1 + ",") && objcard.Card_Play_Details_Get_Today(str8, dataTable.Rows[index]["FreeDailyGames"].ToString()).Rows.Count < num11)
+                                                    if (num11 > 0 && ("," + dataTable.Rows[index]["FreeDailyGames"].ToString() + ",").Contains("," + num1 + ",") && objCard.Card_Play_Details_Get_Today(str8, dataTable.Rows[index]["FreeDailyGames"].ToString()).Rows.Count < num11)
                                                     {
                                                         empty = Guid.Parse(dataTable.Rows[index]["ID"].ToString());
                                                         flag6 = true;
@@ -995,7 +983,7 @@ namespace ClickServerService.Improved
                                                 str1 = "[" + str7 + "]AT+PRC=---";
                                                 if (!serverConfigView.FirstOrDefault().IsDecreasePriceInLevel2.Value)
                                                 {
-                                                    int num10 = objcard.Card_UpdatePriceAndBonus_PlayDetails2(str8, num8, num9, Main_ID_GameCenter, str6, num5, num8, num9, IsPersonnel, num1, ID_Swiper, ID_Play_Type, 0, 0, 0, empty);
+                                                    int num10 = objCard.Card_UpdatePriceAndBonus_PlayDetails2(str8, num8, num9, Main_ID_GameCenter, str6, num5, num8, num9, IsPersonnel, num1, ID_Swiper, ID_Play_Type, 0, 0, 0, empty);
                                                     str2 = str2 + " -L1 -" + num10;
                                                 }
                                             }
@@ -1015,18 +1003,18 @@ namespace ClickServerService.Improved
                                                         if (num6 > 0)
                                                         {
                                                             num11 -= num6;
-                                                            objcard.Card_CardProductTiming_SetChargePrice(str8, tuple.Item3, 0);
+                                                            objCard.Card_CardProductTiming_SetChargePrice(str8, tuple.Item3, 0);
                                                         }
                                                         if (num8 >= num11)
                                                         {
-                                                            int num12 = objcard.Card_UpdatePriceAndBonus_PlayDetails2(str8, num8 - num11, num9, Main_ID_GameCenter, str6, num5, num8 - num11, num9, IsPersonnel, num1, ID_Swiper, ID_Play_Type, num5, 0, Pay_GiftPortion, empty);
+                                                            int num12 = objCard.Card_UpdatePriceAndBonus_PlayDetails2(str8, num8 - num11, num9, Main_ID_GameCenter, str6, num5, num8 - num11, num9, IsPersonnel, num1, ID_Swiper, ID_Play_Type, num5, 0, Pay_GiftPortion, empty);
                                                             str2 = str2 + " -L1 -" + num12;
                                                         }
                                                         else
                                                         {
                                                             int Pay_BonusPortion = num11 - num8;
                                                             int num12 = num9 - Pay_BonusPortion;
-                                                            int num13 = objcard.Card_UpdatePriceAndBonus_PlayDetails2(str8, 0, num12, Main_ID_GameCenter, str6, num5, 0, num12, IsPersonnel, num1, ID_Swiper, ID_Play_Type, num5 - Pay_BonusPortion, Pay_BonusPortion, Pay_GiftPortion, empty);
+                                                            int num13 = objCard.Card_UpdatePriceAndBonus_PlayDetails2(str8, 0, num12, Main_ID_GameCenter, str6, num5, 0, num12, IsPersonnel, num1, ID_Swiper, ID_Play_Type, num5 - Pay_BonusPortion, Pay_BonusPortion, Pay_GiftPortion, empty);
                                                             str2 = str2 + " -L1 -" + num13;
                                                         }
                                                     }
@@ -1109,7 +1097,7 @@ namespace ClickServerService.Improved
                                 int num2 = int.Parse(addressByChargeRate.Rows[0]["ID_Games"].ToString());
                                 int ID_Swiper = int.Parse(addressByChargeRate.Rows[0]["ID"].ToString());
                                 int.Parse(addressByChargeRate.Rows[0]["ID_Games_Class"].ToString() == "" ? "-100" : addressByChargeRate.Rows[0]["ID_Games_Class"].ToString());
-                                DataTable byMacAddrress = objcard.Card_GetByMacAddrress(MacCode);
+                                DataTable byMacAddrress = objCard.Card_GetByMacAddrress(MacCode);
                                 if (byMacAddrress.Rows.Count > 0)
                                 {
                                     Guid empty = Guid.Empty;
@@ -1152,12 +1140,12 @@ namespace ClickServerService.Improved
                                     }
                                     bool flag3 = false;
                                     int num7 = 0;
-                                    Tuple<bool, int, int, int, int, bool, string> tuple = objcard.Card_CardProductTiming_Status(str8, num2);
+                                    Tuple<bool, int, int, int, int, bool, string> tuple = objCard.Card_CardProductTiming_Status(str8, num2);
                                     if (tuple.Item1)
                                     {
                                         if (tuple.Item6)
                                         {
-                                            int num8 = objcard.Card_Play_Details_Insert(str8, 0, 0, Main_ID_GameCenter, str6, num6, 0, 0, IsPersonnel, num2, ID_Swiper, ID_Play_Type, 0, 0, 0, empty);
+                                            int num8 = objCard.Card_Play_Details_Insert(str8, 0, 0, Main_ID_GameCenter, str6, num6, 0, 0, IsPersonnel, num2, ID_Swiper, ID_Play_Type, 0, 0, 0, empty);
                                             str2 = str2 + " -L2 -" + num8;
                                             flag3 = true;
                                             ID_Play_Type = 10;
@@ -1166,9 +1154,9 @@ namespace ClickServerService.Improved
                                         {
                                             flag3 = true;
                                             ID_Play_Type = 9;
-                                            int num8 = objcard.Card_Play_Details_Insert(str8, 0, 0, Main_ID_GameCenter, str6, num6, 0, 0, IsPersonnel, num2, ID_Swiper, ID_Play_Type, 0, 0, 0, empty);
+                                            int num8 = objCard.Card_Play_Details_Insert(str8, 0, 0, Main_ID_GameCenter, str6, num6, 0, 0, IsPersonnel, num2, ID_Swiper, ID_Play_Type, 0, 0, 0, empty);
                                             str2 = str2 + " -L2 -" + num8;
-                                            objcard.Card_CardProductTiming_SetFreeGame(str8, tuple.Item3, tuple.Item5 - 1);
+                                            objCard.Card_CardProductTiming_SetFreeGame(str8, tuple.Item3, tuple.Item5 - 1);
                                         }
                                         else if (tuple.Item4 > 0)
                                         {
@@ -1176,9 +1164,9 @@ namespace ClickServerService.Improved
                                             {
                                                 flag3 = true;
                                                 ID_Play_Type = 11;
-                                                int num8 = objcard.Card_Play_Details_Insert(str8, 0, 0, Main_ID_GameCenter, str6, num6, 0, 0, IsPersonnel, num2, ID_Swiper, ID_Play_Type, 0, 0, 0, empty);
+                                                int num8 = objCard.Card_Play_Details_Insert(str8, 0, 0, Main_ID_GameCenter, str6, num6, 0, 0, IsPersonnel, num2, ID_Swiper, ID_Play_Type, 0, 0, 0, empty);
                                                 str2 = str2 + " -L2 -" + num8;
-                                                objcard.Card_CardProductTiming_SetChargePrice(str8, tuple.Item3, tuple.Item2 - num6);
+                                                objCard.Card_CardProductTiming_SetChargePrice(str8, tuple.Item3, tuple.Item2 - num6);
                                             }
                                             else
                                             {
@@ -1189,7 +1177,7 @@ namespace ClickServerService.Improved
                                         else
                                         {
                                             ID_Play_Type = 5;
-                                            int num8 = objcard.Card_Play_Details_Insert(str8, 0, 0, Main_ID_GameCenter, str6, num6, 0, 0, IsPersonnel, num2, ID_Swiper, ID_Play_Type, 0, 0, 0, empty);
+                                            int num8 = objCard.Card_Play_Details_Insert(str8, 0, 0, Main_ID_GameCenter, str6, num6, 0, 0, IsPersonnel, num2, ID_Swiper, ID_Play_Type, 0, 0, 0, empty);
                                             str2 = str2 + " -L2 -" + num8;
                                             flag3 = true;
                                         }
@@ -1212,7 +1200,7 @@ namespace ClickServerService.Improved
                                                 Pay_GiftPortion += int.Parse(dataTable.Rows[index]["Real_Charge"].ToString());
                                                 int num10 = int.Parse(dataTable.Rows[index]["Real_FreegameCount"].ToString());
                                                 int num11 = int.Parse(dataTable.Rows[index]["Real_FreeDailyGamesCount"].ToString());
-                                                if (num11 > 0 && ("," + dataTable.Rows[index]["FreeDailyGames"].ToString() + ",").Contains("," + num2 + ",") && objcard.Card_Play_Details_Get_Today(str8, dataTable.Rows[index]["FreeDailyGames"].ToString()).Rows.Count < num11)
+                                                if (num11 > 0 && ("," + dataTable.Rows[index]["FreeDailyGames"].ToString() + ",").Contains("," + num2 + ",") && objCard.Card_Play_Details_Get_Today(str8, dataTable.Rows[index]["FreeDailyGames"].ToString()).Rows.Count < num11)
                                                 {
                                                     empty = Guid.Parse(dataTable.Rows[index]["ID"].ToString());
                                                     flag5 = true;
@@ -1241,7 +1229,7 @@ namespace ClickServerService.Improved
                                             ID_Play_Type = 7;
                                         if (flag5 | flag4)
                                         {
-                                            int num10 = objcard.Card_UpdatePriceAndBonus_PlayDetails2(str8, num8, num9, Main_ID_GameCenter, str6, num6, num8, num9, IsPersonnel, num2, ID_Swiper, ID_Play_Type, 0, 0, 0, empty);
+                                            int num10 = objCard.Card_UpdatePriceAndBonus_PlayDetails2(str8, num8, num9, Main_ID_GameCenter, str6, num6, num8, num9, IsPersonnel, num2, ID_Swiper, ID_Play_Type, 0, 0, 0, empty);
                                             str2 = str2 + " -L2 -" + num10;
                                         }
                                         else
@@ -1254,18 +1242,18 @@ namespace ClickServerService.Improved
                                                 if (num7 > 0)
                                                 {
                                                     num10 -= num7;
-                                                    objcard.Card_CardProductTiming_SetChargePrice(str8, tuple.Item3, 0);
+                                                    objCard.Card_CardProductTiming_SetChargePrice(str8, tuple.Item3, 0);
                                                 }
                                                 if (num8 >= num10)
                                                 {
-                                                    int num11 = objcard.Card_UpdatePriceAndBonus_PlayDetails2(str8, num8 - num10, num9, Main_ID_GameCenter, str6, num6, num8 - num10, num9, IsPersonnel, num2, ID_Swiper, ID_Play_Type, num6, 0, Pay_GiftPortion, empty);
+                                                    int num11 = objCard.Card_UpdatePriceAndBonus_PlayDetails2(str8, num8 - num10, num9, Main_ID_GameCenter, str6, num6, num8 - num10, num9, IsPersonnel, num2, ID_Swiper, ID_Play_Type, num6, 0, Pay_GiftPortion, empty);
                                                     str2 = str2 + " -L2 -" + num11;
                                                 }
                                                 else
                                                 {
                                                     int Pay_BonusPortion = num10 - num8;
                                                     int num11 = num9 - Pay_BonusPortion;
-                                                    int num12 = objcard.Card_UpdatePriceAndBonus_PlayDetails2(str8, 0, num11, Main_ID_GameCenter, str6, num6, 0, num11, IsPersonnel, num2, ID_Swiper, ID_Play_Type, num6 - Pay_BonusPortion, Pay_BonusPortion, Pay_GiftPortion, empty);
+                                                    int num12 = objCard.Card_UpdatePriceAndBonus_PlayDetails2(str8, 0, num11, Main_ID_GameCenter, str6, num6, 0, num11, IsPersonnel, num2, ID_Swiper, ID_Play_Type, num6 - Pay_BonusPortion, Pay_BonusPortion, Pay_GiftPortion, empty);
                                                     str2 = str2 + " -L2 -" + num12;
                                                 }
                                             }
@@ -1309,7 +1297,7 @@ namespace ClickServerService.Improved
                         string str7 = ReciveText.Split('=')[1].Replace("\r", "").Split(',')[0];
                         if (str7.ToLower() == "ffffffff")
                         {
-                            DataSet macAddrressFfffff = objcard.Card_GetByMacAddrressFFFFFF(str6);
+                            DataSet macAddrressFfffff = objCard.Card_GetByMacAddrressFFFFFF(str6);
                             DataTable table1 = macAddrressFfffff.Tables[0];
                             DataTable table2 = macAddrressFfffff.Tables[1];
                             if (table1.Rows.Count > 0 && table2.Rows.Count > 0)
@@ -1342,7 +1330,7 @@ namespace ClickServerService.Improved
                         else
                         {
                             DataTable dataTable = new DataTable();
-                            DataTable byMacAddrress = objcard.Card_GetByMacAddrress(str7);
+                            DataTable byMacAddrress = objCard.Card_GetByMacAddrress(str7);
                             int ID_Card_Play_Details = -1;
                             int IsPersonnel = 0;
                             string str10 = ReciveText.Split('=')[1].ToString();
@@ -1369,7 +1357,7 @@ namespace ClickServerService.Improved
                                     int OldCount = int.Parse(byMacAddrress.Rows[0]["Etickets"].ToString());
                                     if (int.Parse(byMacAddrress.Rows[0]["ID_Card_Series"].ToString()) == 3)
                                         IsPersonnel = 1;
-                                    DataTable byCardGuid = objcard.Card_Play_Details_GetByCardGUID(str6, Card_GUID, Main_ID_GameCenter);
+                                    DataTable byCardGuid = objCard.Card_Play_Details_GetByCardGUID(str6, Card_GUID, Main_ID_GameCenter);
                                     if (byCardGuid.Rows.Count > 0)
                                         ID_Card_Play_Details = int.Parse(byCardGuid.Rows[0]["ID"].ToString());
                                     if (!flag1)
@@ -1385,9 +1373,9 @@ namespace ClickServerService.Improved
                                                 {
                                                     if (IsPersonnel == 0)
                                                     {
-                                                        if (objcard.Card_Ticket_History_insert(Main_ID_GameCenter, -1, Count, Card_GUID, OldCount, 6, ID_Games_Ticket) > 0)
+                                                        if (objCard.Card_Ticket_History_insert(Main_ID_GameCenter, -1, Count, Card_GUID, OldCount, 6, ID_Games_Ticket) > 0)
                                                         {
-                                                            if (objcard.Card_SetEtickets(Card_GUID, Count + OldCount) > 0)
+                                                            if (objCard.Card_SetEtickets(Card_GUID, Count + OldCount) > 0)
                                                             {
                                                                 int num = Count + OldCount;
                                                                 str1 = "[" + str8 + "]AT+TRC=" + num.ToString();
@@ -1418,9 +1406,9 @@ namespace ClickServerService.Improved
                                                         str1 = "[" + str8 + "]AT+ok";
                                                         str2 = "[" + str8 + "]AT+ok";
                                                     }
-                                                    else if (str9 == "3" && objcard.Card_Ticket_History_insert(Main_ID_GameCenter, -1, Count, Card_GUID, OldCount, 6, ID_Games_Ticket) > 0)
+                                                    else if (str9 == "3" && objCard.Card_Ticket_History_insert(Main_ID_GameCenter, -1, Count, Card_GUID, OldCount, 6, ID_Games_Ticket) > 0)
                                                     {
-                                                        if (objcard.Card_SetEtickets(Card_GUID, Count + OldCount) > 0)
+                                                        if (objCard.Card_SetEtickets(Card_GUID, Count + OldCount) > 0)
                                                         {
                                                             int num = Count + OldCount;
                                                             str1 = "[" + str8 + "]AT+TRC=" + num.ToString();
@@ -1513,7 +1501,7 @@ namespace ClickServerService.Improved
                             catch { }
                             int.Parse(addressByChargeRate.Rows[0]["ID"].ToString());
                             str4_Mac = ReciveText.Split('=')[1].Replace("\r", "").Split(',')[0].ToUpper();
-                            DataTable byMacAddrress = objcard.Card_GetByMacAddrress(str4_Mac);
+                            DataTable byMacAddrress = objCard.Card_GetByMacAddrress(str4_Mac);
                             if (byMacAddrress.Rows.Count > 0)
                             {
                                 bool boolean = Convert.ToBoolean(byMacAddrress.Rows[0]["IsNonPlayGames"].ToString().ToLower() == "" ? "false" : byMacAddrress.Rows[0]["IsNonPlayGames"].ToString());
@@ -1524,7 +1512,7 @@ namespace ClickServerService.Improved
                                         int num1 = int.Parse(byMacAddrress.Rows[0]["ID_Card_Series"].ToString());
                                         string Card_GUID = byMacAddrress.Rows[0]["Card_GUID"].ToString();
 
-                                        if (objcard.Card_CardProductTiming_Get(Card_GUID).Rows.Count <= 0)
+                                        if (objCard.Card_CardProductTiming_Get(Card_GUID).Rows.Count <= 0)
                                         {
                                             int num3 = int.Parse(byMacAddrress.Rows[0]["CashPrice"].ToString());
                                             int num4 = int.Parse(byMacAddrress.Rows[0]["BonusPrice"].ToString());
@@ -1533,7 +1521,7 @@ namespace ClickServerService.Improved
                                             if (byMacAddrress.Rows.Count > 0)
                                             {
                                                 str8 = byMacAddrress.Rows[0]["Etickets"].ToString();
-                                                dataTable = objcard.Card_Play_Details_GetByCardGUID(byMacAddrress.Rows[0]["Card_GUID"].ToString());
+                                                dataTable = objCard.Card_Play_Details_GetByCardGUID(byMacAddrress.Rows[0]["Card_GUID"].ToString());
                                             }
                                             string str9 = "";
                                             string str10 = "";
@@ -1672,12 +1660,12 @@ namespace ClickServerService.Improved
                         {
                             str4_Mac = ReciveText.Split('=')[1].Replace("\r", "").Split(',')[0].ToUpper();
                             string str7 = "0";
-                            DataTable byMacAddrress = objcard.Card_GetByMacAddrress(str4_Mac);
+                            DataTable byMacAddrress = objCard.Card_GetByMacAddrress(str4_Mac);
                             DataTable dataTable = new DataTable();
                             if (byMacAddrress.Rows.Count > 0)
                             {
                                 str7 = byMacAddrress.Rows[0]["Etickets"].ToString();
-                                dataTable = objcard.Card_Play_Details_GetByCardGUID(byMacAddrress.Rows[0]["Card_GUID"].ToString());
+                                dataTable = objCard.Card_Play_Details_GetByCardGUID(byMacAddrress.Rows[0]["Card_GUID"].ToString());
                             }
                             string str8 = "";
                             string str9 = "";

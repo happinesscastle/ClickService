@@ -36,7 +36,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand("select * from Users where Card_GUID=@Card_GUID and Enable=1 ", connection);
+                    SqlCommand selectCommand = new SqlCommand("Select * from Users where Card_GUID=@Card_GUID and Enable=1 ", connection);
                     selectCommand.Parameters.AddWithValue(nameof(Card_GUID), Card_GUID);
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                     connection.Close();

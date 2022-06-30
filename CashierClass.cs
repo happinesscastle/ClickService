@@ -16,10 +16,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand("CashierDesk_GetAll", connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand selectCommand = new SqlCommand("CashierDesk_GetAll", connection) { CommandType = CommandType.StoredProcedure };
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
                 return dataTable;
@@ -39,10 +36,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(CashierDesk_Update), connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand sqlCommand = new SqlCommand(nameof(CashierDesk_Update), connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.Parameters.AddWithValue("@Title", Title);
                     sqlCommand.Parameters.AddWithValue("@Enable", Enable);
@@ -68,10 +62,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand(nameof(CashierDesk_Get), connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand selectCommand = new SqlCommand(nameof(CashierDesk_Get), connection) { CommandType = CommandType.StoredProcedure };
                     selectCommand.Parameters.AddWithValue("@ID", ID);
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
@@ -92,10 +83,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(CashierDesk_Delete), connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand sqlCommand = new SqlCommand(nameof(CashierDesk_Delete), connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.ExecuteNonQuery();
                 }

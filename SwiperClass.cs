@@ -86,41 +86,41 @@ namespace ClickServerService
 
         public int RetDayOfWeek()
         {
-            int num1 = Days_Special_Check();
-            int num2;
-            if (num1 == -1)
+            try
             {
-                switch (DateTime.Now.DayOfWeek)
+                int dayCheck = Days_Special_Check();
+                int dayInt;
+                if (dayCheck == -1)
                 {
-                    case DayOfWeek.Sunday:
-                        num2 = 1;
-                        break;
-                    case DayOfWeek.Monday:
-                        num2 = 2;
-                        break;
-                    case DayOfWeek.Tuesday:
-                        num2 = 3;
-                        break;
-                    case DayOfWeek.Wednesday:
-                        num2 = 4;
-                        break;
-                    case DayOfWeek.Thursday:
-                        num2 = 5;
-                        break;
-                    case DayOfWeek.Friday:
-                        num2 = 6;
-                        break;
-                    case DayOfWeek.Saturday:
-                        num2 = 0;
-                        break;
-                    default:
-                        num2 = 0;
-                        break;
+                    switch (DateTime.Now.DayOfWeek)
+                    {
+                        case DayOfWeek.Sunday:
+                            dayInt = 1; break;
+                        case DayOfWeek.Monday:
+                            dayInt = 2; break;
+                        case DayOfWeek.Tuesday:
+                            dayInt = 3; break;
+                        case DayOfWeek.Wednesday:
+                            dayInt = 4; break;
+                        case DayOfWeek.Thursday:
+                            dayInt = 5; break;
+                        case DayOfWeek.Friday:
+                            dayInt = 6; break;
+                        case DayOfWeek.Saturday:
+                            dayInt = 0; break;
+                        default:
+                            dayInt = 0; break;
+                    }
                 }
+                else
+                    dayInt = dayCheck;
+                return dayInt;
             }
-            else
-                num2 = num1;
-            return num2;
+            catch (Exception ex)
+            {
+                objMain.ErrorLog(ex);
+                return 0;
+            }
         }
 
         public int Days_Special_Check()
@@ -168,9 +168,6 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    var x = RetDayOfWeek();
-                    var g = objMain.ID_GameCenter_Local_Get();
-                    var d = DateTime.Now.ToString("HH:mm").Split(':')[0];
                     SqlCommand selectCommand = new SqlCommand("Swiper_Get_ByMacAddress_ByChargeRate_ByGameCenter", connection) { CommandType = CommandType.StoredProcedure };
                     selectCommand.Parameters.AddWithValue("@MacAddress", MacAddress);
                     selectCommand.Parameters.AddWithValue("@ID_Days", RetDayOfWeek());
@@ -197,7 +194,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand("update Swiper set Config_State=@ConfigState where  Swiper.MacAddress=@MacAddress and Swiper.ID_GameCenter=@ID_GameCenter", connection);
+                    SqlCommand sqlCommand = new SqlCommand("Update Swiper set Config_State=@ConfigState where  Swiper.MacAddress=@MacAddress and Swiper.ID_GameCenter=@ID_GameCenter", connection);
                     sqlCommand.Parameters.AddWithValue("@MacAddress", MacAddress);
                     sqlCommand.Parameters.AddWithValue("@ID_GameCenter", objMain.ID_GameCenter_Local_Get());
                     sqlCommand.Parameters.AddWithValue("@ConfigState", ConfigState);
@@ -222,7 +219,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand("SELECT        TOP (1) Swiper.ID, Swiper.ID_GameCenter, Swiper.Title, Swiper.MacAddress, Swiper.ID_Games, Swiper.State, Swiper.Dec, Swiper.DateStart, Swiper.Price1, Swiper.Price2, Swiper.Delay1, Swiper.Delay2, Swiper.Pulse,                           Swiper.Config_State, Swiper.RepeatCount, Swiper.IsDeleted, Swiper.PulseType, Swiper.Start_Count_Voltage, Swiper.Version, Swiper.TicketErrorStop, Swiper.PullUp, Swiper.ID_Swiper_Segment, Games.IsRetired                     FROM            Swiper INNER JOIN                          Games ON Swiper.ID_Games = Games.ID                     WHERE(Swiper.ID_GameCenter = @ID_GameCenter)                     AND(Swiper.IsDeleted = 0) AND(Swiper.Config_State = -1) and(Games.IsRetired = 0)                     ORDER BY Swiper.ID", connection);
+                    SqlCommand selectCommand = new SqlCommand("SELECT TOP (1) Swiper.ID, Swiper.ID_GameCenter, Swiper.Title, Swiper.MacAddress, Swiper.ID_Games, Swiper.State, Swiper.Dec, Swiper.DateStart, Swiper.Price1, Swiper.Price2, Swiper.Delay1, Swiper.Delay2, Swiper.Pulse, Swiper.Config_State, Swiper.RepeatCount, Swiper.IsDeleted, Swiper.PulseType, Swiper.Start_Count_Voltage, Swiper.Version, Swiper.TicketErrorStop, Swiper.PullUp, Swiper.ID_Swiper_Segment, Games.IsRetired FROM Swiper INNER JOIN Games ON Swiper.ID_Games = Games.ID WHERE(Swiper.ID_GameCenter = @ID_GameCenter) AND(Swiper.IsDeleted = 0) AND(Swiper.Config_State = -1) and(Games.IsRetired = 0) ORDER BY Swiper.ID", connection);
                     selectCommand.Parameters.AddWithValue("@ID_GameCenter", objMain.ID_GameCenter_Local_Get());
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                     if (dataTable.Rows.Count > 0)
@@ -397,8 +394,7 @@ namespace ClickServerService
             try
             {
                 string mac = command.Substring(1, 12);
-                mac = mac.Substring(0, 2) + mac.Substring(3, 2) + mac.Substring(6, 2) + mac.Substring(9, 2);
-                return mac;
+                return mac.Substring(0, 2) + mac.Substring(3, 2) + mac.Substring(6, 2) + mac.Substring(9, 2);
             }
             catch (Exception ex)
             {
@@ -414,8 +410,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     string query = $"select ID_Swiper_Segment From Swiper Where ID_GameCenter = {gameCenterID} And MacAddress = N'{mac}'";
-                    var temp = connection.ExecuteScalar(query);
-                    return temp.ToString();
+                    return connection.ExecuteScalar(query).ToString();
                 }
             }
             catch (Exception ex)

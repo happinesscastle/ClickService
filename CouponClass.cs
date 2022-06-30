@@ -16,10 +16,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand("Coupon_GetAll", connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand selectCommand = new SqlCommand("Coupon_GetAll", connection) { CommandType = CommandType.StoredProcedure };
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
                 return dataTable;
@@ -39,10 +36,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Coupon_Update), connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand sqlCommand = new SqlCommand(nameof(Coupon_Update), connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.Parameters.AddWithValue("@ID_GameCenter", ID_GameCenter);
                     sqlCommand.Parameters.AddWithValue("@Title", Title);
@@ -87,10 +81,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand(nameof(Coupon_Get), connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand selectCommand = new SqlCommand(nameof(Coupon_Get), connection) { CommandType = CommandType.StoredProcedure };
                     selectCommand.Parameters.AddWithValue("@ID", ID);
                     selectCommand.Parameters.AddWithValue("@ID_GameCenter", ID_GameCenter);
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
@@ -112,10 +103,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Coupon_Delete), connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand sqlCommand = new SqlCommand(nameof(Coupon_Delete), connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.Parameters.AddWithValue("@ID_GameCenter", ID_GameCenter);
                     sqlCommand.ExecuteNonQuery();

@@ -18,12 +18,7 @@ namespace ClickServerService
                 using (SqlConnection sqlConnection = new SqlConnection(objMain.DBPath()))
                 {
                     sqlConnection.Open();
-                    SqlCommand selectCommand = new SqlCommand
-                    {
-                        CommandType = CommandType.StoredProcedure,
-                        CommandText = nameof(Gift_list_GetAll),
-                        Connection = sqlConnection
-                    };
+                    SqlCommand selectCommand = new SqlCommand(nameof(Gift_list_GetAll), sqlConnection) { CommandType = CommandType.StoredProcedure };
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
                 return dataTable;
@@ -43,12 +38,7 @@ namespace ClickServerService
                 using (SqlConnection sqlConnection = new SqlConnection(objMain.DBPath()))
                 {
                     sqlConnection.Open();
-                    SqlCommand selectCommand = new SqlCommand
-                    {
-                        CommandText = nameof(Gift_Pattern_Series_list_GetAll),
-                        CommandType = CommandType.StoredProcedure,
-                        Connection = sqlConnection
-                    };
+                    SqlCommand selectCommand = new SqlCommand(nameof(Gift_Pattern_Series_list_GetAll), sqlConnection) { CommandType = CommandType.StoredProcedure };
                     selectCommand.Parameters.Add("@ID", SqlDbType.UniqueIdentifier).Value = ID;
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
@@ -69,12 +59,7 @@ namespace ClickServerService
                 using (SqlConnection sqlConnection = new SqlConnection(objMain.DBPath()))
                 {
                     sqlConnection.Open();
-                    SqlCommand selectCommand = new SqlCommand
-                    {
-                        CommandText = nameof(Gamecenter_GetAll_Pattern),
-                        Connection = sqlConnection,
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand selectCommand = new SqlCommand(nameof(Gamecenter_GetAll_Pattern), sqlConnection) { CommandType = CommandType.StoredProcedure };
                     selectCommand.Parameters.Add("@list", SqlDbType.NVarChar).Value = List;
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
@@ -95,12 +80,7 @@ namespace ClickServerService
                 using (SqlConnection sqlConnection = new SqlConnection(objMain.DBPath()))
                 {
                     sqlConnection.Open();
-                    SqlCommand selectCommand = new SqlCommand
-                    {
-                        CommandText = nameof(Gift_Series_Check_SeriesCOdeExist),
-                        Connection = sqlConnection,
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand selectCommand = new SqlCommand(nameof(Gift_Series_Check_SeriesCOdeExist), sqlConnection) { CommandType = CommandType.StoredProcedure };
                     selectCommand.Parameters.Add("@ID", SqlDbType.Int).Value = ID;
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
@@ -121,12 +101,7 @@ namespace ClickServerService
                 using (SqlConnection sqlConnection = new SqlConnection(objMain.DBPath()))
                 {
                     sqlConnection.Open();
-                    SqlCommand selectCommand = new SqlCommand
-                    {
-                        CommandText = nameof(Gift_GUID_Check_Validation),
-                        Connection = sqlConnection,
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand selectCommand = new SqlCommand(nameof(Gift_GUID_Check_Validation), sqlConnection) { CommandType = CommandType.StoredProcedure };
                     selectCommand.Parameters.Add("@list", SqlDbType.Structured).Value = dtGuidList;
                     new SqlDataAdapter(selectCommand).Fill(dataSet);
                 }
@@ -146,7 +121,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand com = new SqlCommand(nameof(Gift_Series_Add), connection);
+                    SqlCommand com = new SqlCommand(nameof(Gift_Series_Add), connection) { CommandType = CommandType.StoredProcedure };
                     com.Parameters.Add("@ID_Pattern", SqlDbType.Int).Value = ID_Pattern;
                     com.Parameters.Add("@Title", SqlDbType.NVarChar).Value = Title;
                     com.Parameters.Add("@Count", SqlDbType.Int).Value = count;
@@ -155,7 +130,6 @@ namespace ClickServerService
                     com.Parameters.Add("@Special", SqlDbType.Bit).Value = Special;
                     com.Parameters.Add("@userID", SqlDbType.Int).Value = UserID;
                     com.Parameters.Add("@List", SqlDbType.Structured).Value = dtList;
-                    com.CommandType = CommandType.StoredProcedure;
                     com.ExecuteNonQuery();
                     objMain.Synchronize_Insert(com);
                     return 1;
@@ -175,7 +149,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand com = new SqlCommand(nameof(Gift_Pattern_Add), connection);
+                    SqlCommand com = new SqlCommand(nameof(Gift_Pattern_Add), connection) { CommandType = CommandType.StoredProcedure };
                     com.Parameters.Add("@EditedID", SqlDbType.UniqueIdentifier).Value = EditID;
                     com.Parameters.Add("@Gamecenters", SqlDbType.NVarChar).Value = Gamecenter;
                     com.Parameters.Add("@Name", SqlDbType.NVarChar).Value = Name;
@@ -185,7 +159,6 @@ namespace ClickServerService
                     com.Parameters.Add("@FreeGamesCount", SqlDbType.Int).Value = FreeGamesCount;
                     com.Parameters.Add("@freeDailyGamesCount", SqlDbType.Int).Value = freeDailyGamesCount;
                     com.Parameters.Add("@Extracharge", SqlDbType.Int).Value = Extracharge;
-                    com.CommandType = CommandType.StoredProcedure;
                     com.ExecuteNonQuery();
                     objMain.Synchronize_Insert(com);
                     return 1;
@@ -206,7 +179,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand("select * from Gift_Pattern_series_List where Card_GUID=@Card_GUID  and cast(ValidationDate as date) >=  cast( @ValidationDate  as date)   and IsActive=1  ", connection);
+                    SqlCommand selectCommand = new SqlCommand("Select * from Gift_Pattern_series_List where Card_GUID=@Card_GUID  and cast(ValidationDate as date) >=  cast( @ValidationDate  as date)   and IsActive=1  ", connection);
                     selectCommand.Parameters.AddWithValue("@Card_GUID", Card_GUID);
                     selectCommand.Parameters.AddWithValue("@ValidationDate", DateTime.Now);
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
@@ -254,10 +227,9 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Gift_Pattern_Series_list_Calculate), connection);
+                    SqlCommand sqlCommand = new SqlCommand(nameof(Gift_Pattern_Series_list_Calculate), connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@Card_GUID", Card_GUID);
                     sqlCommand.Parameters.AddWithValue("@GamePrice", GamePrice);
-                    sqlCommand.CommandType = CommandType.StoredProcedure;
                     new SqlDataAdapter(sqlCommand).Fill(dataTable);
                     connection.Close();
                     connection.Dispose();
@@ -281,10 +253,9 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand(nameof(Gift_Pattern_Series_list_Calculate2), connection);
+                    SqlCommand selectCommand = new SqlCommand(nameof(Gift_Pattern_Series_list_Calculate2), connection) { CommandType = CommandType.StoredProcedure };
                     selectCommand.Parameters.AddWithValue("@Card_GUID", Card_GUID);
                     selectCommand.Parameters.AddWithValue("@DateNow", DateTime.Now);
-                    selectCommand.CommandType = CommandType.StoredProcedure;
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                     connection.Close();
                     connection.Dispose();
@@ -297,12 +268,12 @@ namespace ClickServerService
                                 int num2 = int.Parse(dataTable.Rows[index]["Real_Charge"].ToString());
                                 if (num2 <= num1)
                                 {
-                                    this.Gift_Pattern_Series_list_Update(Guid.Parse(dataTable.Rows[index]["ID"].ToString()), 0);
+                                    Gift_Pattern_Series_list_Update(Guid.Parse(dataTable.Rows[index]["ID"].ToString()), 0);
                                     num1 -= num2;
                                 }
                                 else
                                 {
-                                    this.Gift_Pattern_Series_list_Update(Guid.Parse(dataTable.Rows[index]["ID"].ToString()), num2 - num1);
+                                    Gift_Pattern_Series_list_Update(Guid.Parse(dataTable.Rows[index]["ID"].ToString()), num2 - num1);
                                     num1 = 0;
                                 }
                             }
@@ -325,7 +296,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand com = new SqlCommand(" update Gift_Pattern_series_List set Real_Charge=@Real_Charge where ID=@ID ", connection);
+                    SqlCommand com = new SqlCommand("Update Gift_Pattern_series_List set Real_Charge=@Real_Charge where ID=@ID ", connection);
                     com.Parameters.AddWithValue("@ID", ID);
                     com.Parameters.AddWithValue("@Real_Charge", Real_Charge);
                     com.ExecuteNonQuery();
@@ -352,9 +323,7 @@ namespace ClickServerService
                 using (SqlConnection sqlConnection = new SqlConnection(objMain.DBPath()))
                 {
                     sqlConnection.Open();
-                    SqlCommand selectCommand = new SqlCommand();
-                    selectCommand.CommandText = "Select * from Gift_Pattern where ID=@ID";
-                    selectCommand.Connection = sqlConnection;
+                    SqlCommand selectCommand = new SqlCommand("Select * from Gift_Pattern where ID=@ID", sqlConnection);
                     selectCommand.Parameters.Add("@ID", SqlDbType.UniqueIdentifier).Value = ID;
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
@@ -375,9 +344,7 @@ namespace ClickServerService
                 using (SqlConnection sqlConnection = new SqlConnection(objMain.DBPath()))
                 {
                     sqlConnection.Open();
-                    SqlCommand selectCommand = new SqlCommand();
-                    selectCommand.CommandText = "Select * from Gift_Pattern_series_List where Gift_Pattern_series_List.Code=@Code and ID_Pattern_Series=@ID_Pattern";
-                    selectCommand.Connection = sqlConnection;
+                    SqlCommand selectCommand = new SqlCommand("Select * from Gift_Pattern_series_List where Gift_Pattern_series_List.Code=@Code and ID_Pattern_Series=@ID_Pattern", sqlConnection);
                     selectCommand.Parameters.Add("@Code", SqlDbType.NVarChar).Value = Code;
                     selectCommand.Parameters.Add("@ID_Pattern", SqlDbType.NVarChar).Value = ID_Pattern;
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
@@ -399,9 +366,7 @@ namespace ClickServerService
                 using (SqlConnection sqlConnection = new SqlConnection(objMain.DBPath()))
                 {
                     sqlConnection.Open();
-                    SqlCommand selectCommand = new SqlCommand();
-                    selectCommand.CommandText = "Select * from Gift_Pattern_series_List where ID_Pattern_Series=@ID";
-                    selectCommand.Connection = sqlConnection;
+                    SqlCommand selectCommand = new SqlCommand("Select * from Gift_Pattern_series_List where ID_Pattern_Series=@ID", sqlConnection);
                     selectCommand.Parameters.Add("@ID", SqlDbType.UniqueIdentifier).Value = ID;
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
@@ -422,9 +387,7 @@ namespace ClickServerService
                 using (SqlConnection sqlConnection = new SqlConnection(objMain.DBPath()))
                 {
                     sqlConnection.Open();
-                    SqlCommand selectCommand = new SqlCommand();
-                    selectCommand.CommandText = "Select * from Gift_Pattern where ID=@ID";
-                    selectCommand.Connection = sqlConnection;
+                    SqlCommand selectCommand = new SqlCommand("Select * from Gift_Pattern where ID=@ID", sqlConnection);
                     selectCommand.Parameters.Add("@ID", SqlDbType.UniqueIdentifier).Value = Guid.Parse(ID);
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
@@ -485,7 +448,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand com = new SqlCommand("update Gift_Pattern_series Set IsDelete=1 where ID=@ID      ;               update Gift_Pattern_series_List Set IsActive = 0 where ID_Pattern_Series = @ID", connection);
+                    SqlCommand com = new SqlCommand("Update Gift_Pattern_series Set IsDelete=1 where ID=@ID ; Update Gift_Pattern_series_List Set IsActive = 0 where ID_Pattern_Series = @ID", connection);
                     com.Parameters.Add("@ID", SqlDbType.UniqueIdentifier).Value = ID;
                     com.ExecuteNonQuery();
                     objMain.Synchronize_Insert(com);
@@ -572,9 +535,7 @@ namespace ClickServerService
                 using (SqlConnection sqlConnection = new SqlConnection(objMain.DBPath()))
                 {
                     sqlConnection.Open();
-                    SqlCommand selectCommand = new SqlCommand();
-                    selectCommand.CommandText = "SELECT        Gift_Pattern_series_List.ID, Gift_Pattern_series_List.ID_Pattern_Series, Gift_Pattern_series_List.Code, Gift_Pattern_series_List.Card_GUID, Gift_Pattern_series_List.Mobile, Gift_Pattern_series_List.Charge,                           Gift_Pattern_series_List.FreeGames, Gift_Pattern_series_List.FreegameCount, Gift_Pattern_series_List.FreeDailyGames, Gift_Pattern_series_List.FreeDailyGamesCount, Gift_Pattern_series_List.Customer_Name,                           Gift_Pattern_series_List.StartDate, Gift_Pattern_series_List.EndDate, Gift_Pattern_series_List.ExtraCharge, Gift_Pattern_series_List.ValidationType, Gift_Pattern_series_List.ValidationDay,                         dbo.MiladiTOShamsi(Gift_Pattern_series_List.ValidationDate) as ValidationDate, Gift_Pattern_series_List.Status, Gift_Pattern_series_List.IsActive,dbo.MiladiTOShamsi(Gift_Pattern_series_List.StartActiveDate) as StartActiveDate, Gift_Pattern_series_List.GameCenterIDs,                           Gift_Pattern_series.Title AS SeriTitle,Gift_Pattern_series_List.Real_Charge FROM            Gift_Pattern_series_List INNER JOIN                          Gift_Pattern_series ON Gift_Pattern_series_List.ID_Pattern_Series = Gift_Pattern_series.ID WHERE(Gift_Pattern_series_List.Card_GUID = @Card_GUID)";
-                    selectCommand.Connection = sqlConnection;
+                    SqlCommand selectCommand = new SqlCommand("SELECT Gift_Pattern_series_List.ID, Gift_Pattern_series_List.ID_Pattern_Series, Gift_Pattern_series_List.Code, Gift_Pattern_series_List.Card_GUID, Gift_Pattern_series_List.Mobile, Gift_Pattern_series_List.Charge, Gift_Pattern_series_List.FreeGames, Gift_Pattern_series_List.FreegameCount, Gift_Pattern_series_List.FreeDailyGames, Gift_Pattern_series_List.FreeDailyGamesCount, Gift_Pattern_series_List.Customer_Name, Gift_Pattern_series_List.StartDate, Gift_Pattern_series_List.EndDate, Gift_Pattern_series_List.ExtraCharge, Gift_Pattern_series_List.ValidationType, Gift_Pattern_series_List.ValidationDay, dbo.MiladiTOShamsi(Gift_Pattern_series_List.ValidationDate) as ValidationDate, Gift_Pattern_series_List.Status, Gift_Pattern_series_List.IsActive,dbo.MiladiTOShamsi(Gift_Pattern_series_List.StartActiveDate) as StartActiveDate, Gift_Pattern_series_List.GameCenterIDs, Gift_Pattern_series.Title AS SeriTitle,Gift_Pattern_series_List.Real_Charge FROM Gift_Pattern_series_List INNER JOIN Gift_Pattern_series ON Gift_Pattern_series_List.ID_Pattern_Series = Gift_Pattern_series.ID WHERE(Gift_Pattern_series_List.Card_GUID = @Card_GUID)", sqlConnection);
                     selectCommand.Parameters.AddWithValue("@Card_GUID", Card_GUID);
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
@@ -595,7 +556,7 @@ namespace ClickServerService
                 using (OleDbConnection connection = new OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + Path + ";Extended Properties='Excel 8.0;HDR=Yes;'"))
                 {
                     connection.Open();
-                    OleDbCommand oleDbCommand = new OleDbCommand("select * from [" + Sheet + "]", connection);
+                    OleDbCommand oleDbCommand = new OleDbCommand("Select * From [" + Sheet + "]", connection);
                     new OleDbDataAdapter()
                     {
                         SelectCommand = oleDbCommand

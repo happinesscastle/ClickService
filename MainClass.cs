@@ -105,7 +105,6 @@ namespace ClickServerService
                 //}
 
                 DBPATH = Decrypt("5KispYBrnaxwJECGK5H03m+6LfTRSNheyX+byYknSM5V0Q8hvBdDDzepBL8HSXWE0aSZY7hI8ebSf4ZdeIjZtO+OSeXPhepIqGPjZ07Pl7vSnBqqL4Me1Kf88dplK9HcWefVjxJEh1/4iU1/Foptvw2hIDA/5O8AIGR5zr9tTBKaWV5yT8tZPhIpiVvVmYTm");
-
             }
             catch (Exception ex)
             {
@@ -120,7 +119,14 @@ namespace ClickServerService
 
         public void LoadGameCenterID()
         {
-            ID_GameCenter_Local = int.Parse(GameCenter_GetLocal(true).Rows[0]["ID"].ToString());
+            try
+            {
+                ID_GameCenter_Local = int.Parse(GameCenter_GetLocal(true).Rows[0]["ID"].ToString());
+            }
+            catch (Exception ex)
+            {
+                ErrorLog(ex);
+            }
         }
 
         public string Comma(string str) => string.Format("{0:n0}", int.Parse(str == "" ? "0" : str));
@@ -134,17 +140,13 @@ namespace ClickServerService
                 {
                     num = Convert.ToInt32(exp.StackTrace.Substring(exp.StackTrace.LastIndexOf(' ')));
                 }
-                catch
-                {
-                }
+                catch { }
                 string str1 = "";
                 try
                 {
                     str1 = exp.StackTrace.ToString();
                 }
-                catch
-                {
-                }
+                catch { }
                 try
                 {
                     using (SqlConnection connection = new SqlConnection(DBPath()))
@@ -171,9 +173,7 @@ namespace ClickServerService
                     WriteToFileError("Date: " + DateTime.Now.ToString() + " - Line: " + num.ToString() + " - MSG: " + exp.Message.ToString() + " - Trace: " + str1 + " " + Environment.NewLine);
                 }
             }
-            catch
-            {
-            }
+            catch { }
         }
 
         public void PbNCStatus()
@@ -693,7 +693,7 @@ namespace ClickServerService
             bool flag;
             try
             {
-                #region ' OLD '
+                #region ' Comment Code '
                 //RequestCode requestCode1 = new RequestCode();
                 //string requestCode2 = requestCode1.GetRequestCode();
                 //string str1 = key_Value_List.Select("KeyName ='OrderCode'")[0]["Value"].ToString();

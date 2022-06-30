@@ -16,10 +16,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Stock_Product_Group_Update), connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand sqlCommand = new SqlCommand(nameof(Stock_Product_Group_Update), connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.Parameters.AddWithValue("@Title", Title);
                     sqlCommand.ExecuteNonQuery();
@@ -41,10 +38,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand("Stock_Product_Group_GetAll", connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand selectCommand = new SqlCommand("Stock_Product_Group_GetAll", connection) { CommandType = CommandType.StoredProcedure };
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
                 return dataTable;
@@ -64,10 +58,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand(nameof(Stock_Product_Group_Get), connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand selectCommand = new SqlCommand(nameof(Stock_Product_Group_Get), connection) { CommandType = CommandType.StoredProcedure };
                     selectCommand.Parameters.AddWithValue("@ID", ID);
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
@@ -88,10 +79,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Stock_Product_Group_Delete), connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand sqlCommand = new SqlCommand(nameof(Stock_Product_Group_Delete), connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.ExecuteNonQuery();
                 }
@@ -112,10 +100,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand("Stock_Product_GetAll", connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand selectCommand = new SqlCommand("Stock_Product_GetAll", connection) { CommandType = CommandType.StoredProcedure };
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
                 return dataTable;
@@ -135,10 +120,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand(nameof(Stock_Product_Get), connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand selectCommand = new SqlCommand(nameof(Stock_Product_Get), connection) { CommandType = CommandType.StoredProcedure };
                     selectCommand.Parameters.AddWithValue("@ID", ID);
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
@@ -159,10 +141,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand(nameof(Stock_Product_GetByCode), connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand selectCommand = new SqlCommand(nameof(Stock_Product_GetByCode), connection) { CommandType = CommandType.StoredProcedure };
                     selectCommand.Parameters.AddWithValue("@Code", Code);
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
@@ -183,10 +162,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Stock_Product_Delete), connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand sqlCommand = new SqlCommand(nameof(Stock_Product_Delete), connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.ExecuteNonQuery();
                 }
@@ -207,10 +183,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Stock_Update), connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand sqlCommand = new SqlCommand(nameof(Stock_Update), connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.Parameters.AddWithValue("@ID_GameCenter", ID_GameCenter);
                     sqlCommand.Parameters.AddWithValue("@Code", Code);
@@ -237,10 +210,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand("Stock_GetAll", connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand selectCommand = new SqlCommand("Stock_GetAll", connection) { CommandType = CommandType.StoredProcedure };
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
                 return dataTable;
@@ -260,10 +230,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand(nameof(Stock_Get), connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand selectCommand = new SqlCommand(nameof(Stock_Get), connection) { CommandType = CommandType.StoredProcedure };
                     selectCommand.Parameters.AddWithValue("@ID", ID);
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
@@ -284,10 +251,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Stock_Delete), connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand sqlCommand = new SqlCommand(nameof(Stock_Delete), connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.ExecuteNonQuery();
                 }
@@ -308,10 +272,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Stock_Supplier_Update), connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand sqlCommand = new SqlCommand(nameof(Stock_Supplier_Update), connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.Parameters.AddWithValue("@Code", Code);
                     sqlCommand.Parameters.AddWithValue("@Name", Name);
@@ -345,10 +306,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand("Stock_Supplier_GetAll", connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand selectCommand = new SqlCommand("Stock_Supplier_GetAll", connection) { CommandType = CommandType.StoredProcedure };
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
                 return dataTable;
@@ -368,10 +326,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand(nameof(Stock_Supplier_Get), connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand selectCommand = new SqlCommand(nameof(Stock_Supplier_Get), connection) { CommandType = CommandType.StoredProcedure };
                     selectCommand.Parameters.AddWithValue("@ID", ID);
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
@@ -392,10 +347,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Stock_Supplier_Delete), connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand sqlCommand = new SqlCommand(nameof(Stock_Supplier_Delete), connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.ExecuteNonQuery();
                 }
@@ -416,10 +368,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Stock_Process_insert), connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand sqlCommand = new SqlCommand(nameof(Stock_Process_insert), connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", (objMain.Max_Tbl("Stock_Process", "ID") + 1));
                     sqlCommand.Parameters.AddWithValue("@ID_Stock_Product", ID_Stock_Product);
                     sqlCommand.Parameters.AddWithValue("@ID_Stock_Supplier", ID_Stock_Supplier);
@@ -452,10 +401,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand("Stock_Process_GetAll", connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand selectCommand = new SqlCommand("Stock_Process_GetAll", connection) { CommandType = CommandType.StoredProcedure };
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
                 return dataTable;
@@ -475,10 +421,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand(nameof(Stock_Process_Get), connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand selectCommand = new SqlCommand(nameof(Stock_Process_Get), connection) { CommandType = CommandType.StoredProcedure };
                     selectCommand.Parameters.AddWithValue("@ID", ID);
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
@@ -499,10 +442,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Stock_Process_Delete), connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand sqlCommand = new SqlCommand(nameof(Stock_Process_Delete), connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.ExecuteNonQuery();
                 }

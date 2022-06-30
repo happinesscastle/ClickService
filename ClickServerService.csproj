@@ -34,6 +34,9 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>ClickServerService.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Dapper, Version=1.50.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -87,6 +90,7 @@
     <Content Include="bin\Debug\ClickServerService.pdb" />
     <Content Include="bin\Debug\Dapper.dll" />
     <Content Include="bin\Debug\RCG.dll" />
+    <Content Include="ClickServerService.ico" />
     <Content Include="RCG.dll" />
   </ItemGroup>
   <ItemGroup>

@@ -17,10 +17,9 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Games_Groups_Update), connection);
+                    SqlCommand sqlCommand = new SqlCommand(nameof(Games_Groups_Update), connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.Parameters.AddWithValue("@Title", Title);
-                    sqlCommand.CommandType = CommandType.StoredProcedure;
                     sqlCommand.ExecuteNonQuery();
                 }
                 return 1;
@@ -40,10 +39,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand("Games_Groups_GetAll", connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand selectCommand = new SqlCommand("Games_Groups_GetAll", connection) { CommandType = CommandType.StoredProcedure };
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
                 return dataTable;
@@ -63,9 +59,8 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand(nameof(Games_Groups_Get), connection);
+                    SqlCommand selectCommand = new SqlCommand(nameof(Games_Groups_Get), connection) { CommandType = CommandType.StoredProcedure };
                     selectCommand.Parameters.AddWithValue("@ID", ID);
-                    selectCommand.CommandType = CommandType.StoredProcedure;
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
                 return dataTable;
@@ -85,10 +80,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Games_Groups_Delete), connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand sqlCommand = new SqlCommand(nameof(Games_Groups_Delete), connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.ExecuteNonQuery();
                 }
@@ -109,10 +101,9 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Games_Type_Update), connection);
+                    SqlCommand sqlCommand = new SqlCommand(nameof(Games_Type_Update), connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.Parameters.AddWithValue("@Title", Title);
-                    sqlCommand.CommandType = CommandType.StoredProcedure;
                     sqlCommand.ExecuteNonQuery();
                 }
                 return 1;
@@ -132,10 +123,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand("Games_Type_GetAll", connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand selectCommand = new SqlCommand("Games_Type_GetAll", connection) { CommandType = CommandType.StoredProcedure };
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
                 return dataTable;
@@ -155,9 +143,8 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand(nameof(Games_Type_Get), connection);
+                    SqlCommand selectCommand = new SqlCommand(nameof(Games_Type_Get), connection) { CommandType = CommandType.StoredProcedure };
                     selectCommand.Parameters.AddWithValue("@ID", ID);
-                    selectCommand.CommandType = CommandType.StoredProcedure;
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
                 return dataTable;
@@ -177,10 +164,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Games_Type_Delete), connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand sqlCommand = new SqlCommand(nameof(Games_Type_Delete), connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.ExecuteNonQuery();
                 }
@@ -201,7 +185,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Games_Class_Update), connection);
+                    SqlCommand sqlCommand = new SqlCommand(nameof(Games_Class_Update), connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.Parameters.AddWithValue("@Title", Title);
                     sqlCommand.Parameters.AddWithValue("@Des", Des);
@@ -211,7 +195,6 @@ namespace ClickServerService
                     sqlCommand.Parameters.AddWithValue("@IsFreeGames", IsFreeGames);
                     sqlCommand.Parameters.AddWithValue("@IsFreeDayliGames", IsFreeDayliGames);
                     sqlCommand.Parameters.AddWithValue("@IsBonusAllowed", IsBonusAllowed);
-                    sqlCommand.CommandType = CommandType.StoredProcedure;
                     sqlCommand.ExecuteNonQuery();
                 }
                 return 1;
@@ -231,10 +214,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand("Games_Class_GetAll", connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand selectCommand = new SqlCommand("Games_Class_GetAll", connection) { CommandType = CommandType.StoredProcedure };
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
                 return dataTable;
@@ -254,9 +234,8 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand(nameof(Games_Class_Get), connection);
+                    SqlCommand selectCommand = new SqlCommand(nameof(Games_Class_Get), connection) { CommandType = CommandType.StoredProcedure };
                     selectCommand.Parameters.AddWithValue("@ID", ID);
-                    selectCommand.CommandType = CommandType.StoredProcedure;
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
                 return dataTable;
@@ -276,10 +255,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Games_Class_Delete), connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand sqlCommand = new SqlCommand(nameof(Games_Class_Delete), connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.ExecuteNonQuery();
                 }
@@ -300,10 +276,9 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(ChargeGroup_Update), connection);
+                    SqlCommand sqlCommand = new SqlCommand(nameof(ChargeGroup_Update), connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.Parameters.AddWithValue("@Title", Title);
-                    sqlCommand.CommandType = CommandType.StoredProcedure;
                     sqlCommand.ExecuteNonQuery();
                 }
                 return 1;
@@ -323,10 +298,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand("ChargeGroup_GetAll", connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand selectCommand = new SqlCommand("ChargeGroup_GetAll", connection) { CommandType = CommandType.StoredProcedure };
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
                 return dataTable;
@@ -346,9 +318,8 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand(nameof(ChargeGroup_Get), connection);
+                    SqlCommand selectCommand = new SqlCommand(nameof(ChargeGroup_Get), connection) { CommandType = CommandType.StoredProcedure };
                     selectCommand.Parameters.AddWithValue("@ID", ID);
-                    selectCommand.CommandType = CommandType.StoredProcedure;
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
                 return dataTable;
@@ -368,10 +339,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(ChargeGroup_Delete), connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand sqlCommand = new SqlCommand(nameof(ChargeGroup_Delete), connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.ExecuteNonQuery();
                 }
@@ -392,11 +360,10 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand(nameof(Charge_Rate_Get), connection);
+                    SqlCommand selectCommand = new SqlCommand(nameof(Charge_Rate_Get), connection) { CommandType = CommandType.StoredProcedure };
                     selectCommand.Parameters.AddWithValue("@ID_ChargeGroup", ID_ChargeGroup);
                     selectCommand.Parameters.AddWithValue("@ID_Days", ID_Days);
                     selectCommand.Parameters.AddWithValue("@ID_Card_Status", ID_Card_Status);
-                    selectCommand.CommandType = CommandType.StoredProcedure;
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
                 return dataTable;
@@ -452,12 +419,11 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Days_Special_Update), connection);
+                    SqlCommand sqlCommand = new SqlCommand(nameof(Days_Special_Update), connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.Parameters.AddWithValue("@Title", Title);
                     sqlCommand.Parameters.AddWithValue("@DaysDate", DaysDate);
                     sqlCommand.Parameters.AddWithValue("@ID_SpecialDays_Type", ID_SpecialDays_Type);
-                    sqlCommand.CommandType = CommandType.StoredProcedure;
                     sqlCommand.ExecuteNonQuery();
                 }
                 return 1;
@@ -477,9 +443,8 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand(nameof(Days_Special_Get), connection);
+                    SqlCommand selectCommand = new SqlCommand(nameof(Days_Special_Get), connection) { CommandType = CommandType.StoredProcedure };
                     selectCommand.Parameters.AddWithValue("@ID", ID);
-                    selectCommand.CommandType = CommandType.StoredProcedure;
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
                 return dataTable;
@@ -499,10 +464,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Days_Special_Delete), connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand sqlCommand = new SqlCommand(nameof(Days_Special_Delete), connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.ExecuteNonQuery();
                 }
@@ -523,7 +485,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Games_Update), connection);
+                    SqlCommand sqlCommand = new SqlCommand(nameof(Games_Update), connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.Parameters.AddWithValue("@ID_GameCenter", ID_GameCenter);
                     sqlCommand.Parameters.AddWithValue("@Code", Code);
@@ -541,7 +503,6 @@ namespace ClickServerService
                     sqlCommand.Parameters.AddWithValue("@IsFreeGames", IsFreeGames);
                     sqlCommand.Parameters.AddWithValue("@IsFreeDailyGames", IsFreeDailyGames);
                     sqlCommand.Parameters.AddWithValue("@IsBonus", IsBonus);
-                    sqlCommand.CommandType = CommandType.StoredProcedure;
                     sqlCommand.ExecuteNonQuery();
                 }
                 return 1;
@@ -561,10 +522,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand("Games_GetAll", connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand selectCommand = new SqlCommand("Games_GetAll", connection) { CommandType = CommandType.StoredProcedure };
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
                 return dataTable;
@@ -584,10 +542,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand(nameof(Games_Get), connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand selectCommand = new SqlCommand(nameof(Games_Get), connection) { CommandType = CommandType.StoredProcedure };
                     selectCommand.Parameters.AddWithValue("@ID", ID);
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
@@ -608,10 +563,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Games_Delete), connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand sqlCommand = new SqlCommand(nameof(Games_Delete), connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.ExecuteNonQuery();
                 }
@@ -624,25 +576,7 @@ namespace ClickServerService
             }
         }
 
-        public int Bonuses_Update(
-          int ID,
-          string Title,
-          bool IsAccumulativeBalance,
-          bool IsRunningAccumulativeBalance,
-          bool IsAmountTendered,
-          int FromPrice,
-          int ToPrice,
-          int BonusType,
-          int Bonus,
-          int FreeGame,
-          int FreeGameDaily,
-          int ProductID,
-          int WhenID,
-          string CardStatusIDs,
-          bool IsReportToCashier,
-          bool IsPromptToRegister,
-          string Message,
-          int ID_GameCenter)
+        public int Bonuses_Update(int ID, string Title, bool IsAccumulativeBalance, bool IsRunningAccumulativeBalance, bool IsAmountTendered, int FromPrice, int ToPrice, int BonusType, int Bonus, int FreeGame, int FreeGameDaily, int ProductID, int WhenID, string CardStatusIDs, bool IsReportToCashier, bool IsPromptToRegister, string Message, int ID_GameCenter)
         {
             DataTable dataTable = new DataTable();
             try
@@ -650,7 +584,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Bonuses_Update), connection);
+                    SqlCommand sqlCommand = new SqlCommand(nameof(Bonuses_Update), connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.Parameters.AddWithValue("@Title", Title);
                     sqlCommand.Parameters.AddWithValue("@IsAccumulativeBalance", IsAccumulativeBalance);
@@ -669,7 +603,6 @@ namespace ClickServerService
                     sqlCommand.Parameters.AddWithValue("@IsPromptToRegister", IsPromptToRegister);
                     sqlCommand.Parameters.AddWithValue("@Message", Message);
                     sqlCommand.Parameters.AddWithValue("@ID_GameCenter", ID_GameCenter);
-                    sqlCommand.CommandType = CommandType.StoredProcedure;
                     sqlCommand.ExecuteNonQuery();
                 }
                 return 1;
@@ -689,10 +622,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand("Bonuses_GetAll", connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand selectCommand = new SqlCommand("Bonuses_GetAll", connection) { CommandType = CommandType.StoredProcedure };
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
                 return dataTable;
@@ -712,9 +642,8 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand(nameof(Bonuses_Get), connection);
+                    SqlCommand selectCommand = new SqlCommand(nameof(Bonuses_Get), connection) { CommandType = CommandType.StoredProcedure };
                     selectCommand.Parameters.AddWithValue("@ID", ID);
-                    selectCommand.CommandType = CommandType.StoredProcedure;
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
                 return dataTable;
@@ -734,10 +663,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Bonuses_Delete), connection)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                    SqlCommand sqlCommand = new SqlCommand(nameof(Bonuses_Delete), connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.ExecuteNonQuery();
                 }

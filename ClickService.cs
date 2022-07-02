@@ -78,7 +78,10 @@ namespace ClickServerService
         public static TcpClient clientAp2;
         private IContainer components = (IContainer)null;
 
-        public ClickService() => this.InitializeComponent();
+        public ClickService()
+        {
+            this.InitializeComponent();
+        }
 
         protected override void OnStart(string[] args)
         {

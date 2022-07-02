@@ -1,5 +1,6 @@
 ﻿using ClickServerService.Improved;
 using System.Threading.Tasks;
+using System.ServiceProcess;
 using System;
 
 namespace ClickServerService
@@ -9,20 +10,20 @@ namespace ClickServerService
 
         private static void Main()
         {
-            MainClass objMain = new MainClass();
             try
             {
+                //ServiceBase.Run(new ServiceBase[1] { new ClsStarter() });
+
                 Console.Title = "Click Server Service";
-                
+
                 Task.Run(() => new ClsStarter());
 
-                Task a = Task.Run(() => ForBeConteneud());
-                a.Wait();
+
+                Task fbc = Task.Run(() => ForBeConteneud());
+                fbc.Wait();
             }
-            catch (Exception ex)
-            {
-                objMain.ErrorLog(ex);
-            }
+            catch
+            { }
         }
 
         static void ForBeConteneud()

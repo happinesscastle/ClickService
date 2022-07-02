@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using ClickServerService.Models;
 using System.Threading.Tasks;
+using System.ServiceProcess;
+using System.ComponentModel;
 using System.Net.Sockets;
 using System.Threading;
 using System.Timers;
@@ -10,7 +12,7 @@ using System;
 
 namespace ClickServerService.Improved
 {
-    public class ClsStarter
+    public class ClsStarter //: ServiceBase
     {
         public static List<MyTCPClient> tCPClientList = new List<MyTCPClient>();
         public static List<Access_Point> accessPoints = null;
@@ -24,10 +26,30 @@ namespace ClickServerService.Improved
         readonly System.Timers.Timer Timer_Create_Repair_CheckList = new System.Timers.Timer();
         readonly System.Timers.Timer TimerChargeRate_SetNonRecive = new System.Timers.Timer();
 
+        //private IContainer components = (IContainer)null;
+
         public ClsStarter()
         {
-            AppLoadMain();
+            //InitializeComponent();
+
+            if (!objMain.Licence_Check())
+            {
+                objMain.MyPrint(" :1:Licence ERROR ", ConsoleColor.Red);
+            }
+            else
+                AppLoadMain();
         }
+
+        //protected override void OnStart(string[] args)
+        //{
+        //    if (!objMain.Licence_Check())
+        //    {
+        //        objMain.MyPrint(" :1:Licence ERROR ", ConsoleColor.Red);
+        //        Dispose();
+        //    }
+        //    else
+        //        AppLoadMain();
+        //}
 
         public void AppLoadMain()
         {
@@ -124,5 +146,20 @@ namespace ClickServerService.Improved
                 objMain.ErrorLog(ex);
             }
         }
+
+        //
+
+        //protected override void Dispose(bool disposing)
+        //{
+        //    if (disposing && components != null)
+        //        components.Dispose();
+        //    base.Dispose(disposing);
+        //}
+
+        //private void InitializeComponent()
+        //{
+        //    components = new Container();
+        //    ServiceName = "Service1";
+        //}
     }
 }

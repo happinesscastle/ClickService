@@ -63,7 +63,7 @@ namespace ClickServerService.Improved
         {
             try
             {
-                objMain.MyPrint("Receive - AppLoadMain", ConsoleColor.Blue);
+                //objMain.MyPrint("Receive - AppLoadMain", ConsoleColor.Blue);
                 flagConnectToSQL = false;
                 serverConfigView.ValidateReceivedData = 2;
                 serverConfigView.AP_IsEnable = false;

@@ -43,7 +43,7 @@ namespace ClickServerService.Improved
         {
             try
             {
-                objMain.MyPrint("Send - AppLoadMain", ConsoleColor.Blue);
+                //objMain.MyPrint("Send - AppLoadMain", ConsoleColor.Blue);
                 txtSend = "";
 
                 MainClass.key_Value_List = objMain.Key_Value_Get();

@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System.Text.RegularExpressions;
+using System.Security.Cryptography;
 using System.Collections.Generic;
 using ClickServerService.Models;
 using System.Data.SqlClient;
@@ -900,12 +901,56 @@ namespace ClickServerService
                     dt = DateTime.Now;
 
                 Console.ForegroundColor = color;
-                Console.WriteLine(text + "   " + dt.Value.ToString("HH:mm:ss:fff"));
+                Console.WriteLine(TextSpliter(text) + "   " + dt.Value.ToString("HH:mm:ss:fff"));
                 Console.ForegroundColor = ConsoleColor.White;
             }
             catch (Exception ex)
             {
                 ErrorLog(ex);
+            }
+        }
+
+        private bool IsNumber(string txt)
+        {
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(txt))
+                    return Regex.IsMatch(txt, "^[0-9]*$");
+                else
+                    return false;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private string TextSpliter(string commandText)
+        {
+            try
+            {
+                if (commandText.Contains('[') && commandText.Contains(']'))
+                {
+                    int aIndex = commandText.IndexOf('[') + 1;
+                    int zIndex = commandText.IndexOf(']');
+                    string macIP = commandText.Substring(aIndex, zIndex - aIndex);
+
+                    if (IsNumber(macIP))
+                    {//IP
+                        return commandText.Replace(macIP, Convert.ToUInt64(macIP).ToString(@"###\.###\.###\.###"));
+                    }
+                    else
+                    {//Mac-TimeStamp
+                        string tempMac = macIP.Substring(0, 2) + macIP.Substring(3, 2) + macIP.Substring(6, 2) + macIP.Substring(9, 2);
+                        return commandText.Replace(macIP, Regex.Replace(tempMac, "(.{2})(.{2})(.{2})(.{2})", "$1:$2:$3:$4") + "-" + macIP[2] + macIP[5] + macIP[8] + macIP[11]);
+                    }
+                }
+                else
+                    return commandText;
+            }
+            catch
+            {
+                return commandText;
             }
         }
 

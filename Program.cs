@@ -12,31 +12,31 @@ namespace ClickServerService
         {
             try
             {
-                // ServiceBase.Run(new ServiceBase[1] { new ClsStarter() });
+                ServiceBase.Run(new ServiceBase[1] { new ClsStarter() });
 
-                Console.Title = "Click Server Service";
-                Task.Run(() => new ClsStarter());
-                Task fbc = Task.Run(() => ForBeConteneud());
-                fbc.Wait();
+                //Console.Title = "Click Server Service";
+                //Task.Run(() => new ClsStarter());
+                //Task fbc = Task.Run(() => ForBeConteneud());
+                //fbc.Wait();
             }
             catch
             { }
         }
 
-        static void ForBeConteneud()
-        {
-            while (true)
-            {
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.Write(" : ");
-                Console.ForegroundColor = ConsoleColor.White;
-                var r = Console.ReadKey();
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.WriteLine(" -_-> " + r.Key);
-                Console.ForegroundColor = ConsoleColor.White;
-                if (r.Key == ConsoleKey.C)
-                    Console.Clear();
-            }
-        }
+        //static void ForBeConteneud()
+        //{
+        //    while (true)
+        //    {
+        //        Console.ForegroundColor = ConsoleColor.Cyan;
+        //        Console.Write(" : ");
+        //        Console.ForegroundColor = ConsoleColor.White;
+        //        var r = Console.ReadKey();
+        //        Console.ForegroundColor = ConsoleColor.Cyan;
+        //        Console.WriteLine(" -_-> " + r.Key);
+        //        Console.ForegroundColor = ConsoleColor.White;
+        //        if (r.Key == ConsoleKey.C)
+        //            Console.Clear();
+        //    }
+        //}
     }
 }

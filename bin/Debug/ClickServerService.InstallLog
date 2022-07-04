@@ -600,3 +600,50 @@ Affected parameters are:
 Removing EventLog source ClickService.
 Service ClickService is being removed from the system...
 Service ClickService was successfully removed from the system.
+Uninstalling assembly 'C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe
+   logfile = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.InstallLog
+Removing EventLog source ClickService.
+An exception occurred during the uninstallation of the System.Diagnostics.EventLogInstaller installer.
+System.Security.SecurityException: The source was not found, but some or all event logs could not be searched.  Inaccessible logs: Security, State.
+An exception occurred while uninstalling. This exception will be ignored and the uninstall will continue. However, the application might not be fully uninstalled after the uninstall is complete.
+Installing assembly 'C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe'.
+Affected parameters are:
+   logtoconsole = 
+   i = 
+   assemblypath = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe
+   logfile = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.InstallLog
+Installing service ClickService...
+Service ClickService has been successfully installed.
+Creating EventLog source ClickService in log Application...
+Committing assembly 'C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe'.
+Affected parameters are:
+   logtoconsole = 
+   i = 
+   assemblypath = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe
+   logfile = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.InstallLog
+Uninstalling assembly 'C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe
+   logfile = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.InstallLog
+Removing EventLog source ClickService.
+Service ClickService is being removed from the system...
+Service ClickService was successfully removed from the system.
+Installing assembly 'C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe'.
+Affected parameters are:
+   logtoconsole = 
+   i = 
+   assemblypath = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe
+   logfile = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.InstallLog
+Installing service ClickService...
+Service ClickService has been successfully installed.
+Creating EventLog source ClickService in log Application...
+Committing assembly 'C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe'.
+Affected parameters are:
+   logtoconsole = 
+   i = 
+   assemblypath = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe
+   logfile = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.InstallLog

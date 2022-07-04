@@ -72,7 +72,6 @@
     <Compile Include="CardClass.cs" />
     <Compile Include="CashierClass.cs" />
     <Compile Include="ClassStock.cs" />
-    <Compile Include="ClsClickService.cs" />
     <Compile Include="Improved\ClsReceiver.cs" />
     <Compile Include="Improved\ClsSender.cs" />
     <Compile Include="Improved\ClsSocketServer.cs" />
@@ -90,9 +89,6 @@
     <Compile Include="SwiperClass.cs" />
     <Compile Include="UsersClass.cs" />
     <Compile Include="ProjectInstaller.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="ClickService.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Program.cs" />

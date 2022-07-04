@@ -33,7 +33,6 @@ namespace ClickServerService.Improved
 
         public ClsStarter()
         {
-            ServerBufferLength = Convert.ToInt32(objMain.GetData_SocketInterfaceConfig("ServerBufferLength"));
             InitializeComponent();
         }
 

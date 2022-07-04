@@ -24,7 +24,7 @@ namespace ClickServerService
         /// <summary>
         /// Parameter for Printing Logs on Console When in Debug Mode.
         /// </summary>
-        readonly bool inDebugMode = false;
+        readonly bool inDebugMode = true;
         private readonly PersianCalendar persianCalendar = new PersianCalendar();
         private static readonly string PasswordHash = "P@@Sw0rd";
         private static readonly string SaltKey = "srqw1363277$";
@@ -907,7 +907,7 @@ namespace ClickServerService
             {
                 using (SqlConnection connection = new SqlConnection(DBPath()))
                 {
-                    return connection.ExecuteScalar($@"Select TOP(1) {columnName} From SocketInterfaceConfig").ToString();
+                    return connection.ExecuteScalar($@"Select ServerValue From Server_KeyValue Where ServerKey='{columnName}'").ToString();
                 }
             }
             catch (Exception ex)

@@ -881,7 +881,7 @@ namespace ClickServerService
             {
                 if (dt == null)
                     dt = DateTime.Now;
-                string command = text + "   " + dt.Value.ToString("HH:mm:ss:fff");
+                string command = text + "%" + dt.Value.ToString("HH:mm:ss:fff");
 
                 if (inDebugMode)
                 {

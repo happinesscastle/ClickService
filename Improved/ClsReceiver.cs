@@ -138,7 +138,7 @@ namespace ClickServerService.Improved
                     NetworkStream stream = client.GetStream();
                     byte[] bytes = Encoding.ASCII.GetBytes(command);
                     stream.Write(bytes, 0, bytes.Length);
-                    objMain.MyPrint($"*R*+Send :> {ipAp} -> {command}", ConsoleColor.Yellow, DateTime.Now);
+                    objMain.MyPrint($"R%Send%{ipAp}%{command}", ConsoleColor.Yellow, DateTime.Now);
                     return 1;
                 }
                 else
@@ -167,7 +167,7 @@ namespace ClickServerService.Improved
                         objMain.ServerConfig_SetAp1Status(objMain.ID_GameCenter_Local_Get(), false, multiRun_AP_ID);
                         try
                         {
-                            objMain.MyPrint($"*R*TCp_IP_Thread_{multiRun_AP_ID}.Abort()", ConsoleColor.DarkMagenta);
+                            objMain.MyPrint($"R%TCp_IP_Thread_{multiRun_AP_ID}.Abort()", ConsoleColor.DarkMagenta);
                             if (receiveThread != null)
                             {
                                 receiveThread.Interrupt();
@@ -179,7 +179,7 @@ namespace ClickServerService.Improved
                             objMain.MyPrint($"Ap{multiRun_AP_ID} NoStart :" + ex, ConsoleColor.Red);
                             objMain.ErrorLog(ex);
                         }
-                        objMain.MyPrint($"*R*Start TCp_IP_Thread_{multiRun_AP_ID}");
+                        objMain.MyPrint($"R%Start TCp_IP_Thread_{multiRun_AP_ID}");
                         receiveThread = new Thread(new ThreadStart(Receive_TCP));
                         receiveThread.Start();
                     }
@@ -217,7 +217,7 @@ namespace ClickServerService.Improved
                 while (true)
                 {
 
-                    objMain.MyPrint($"*R*clientAp{multiRun_AP_ID}.Connect (IP : {serverConfigView.AP_IP} , Port: {serverConfigView.AP_Port})", ConsoleColor.Magenta);
+                    objMain.MyPrint($"R%clientAp{multiRun_AP_ID}.Connect (IP : {serverConfigView.AP_IP} , Port: {serverConfigView.AP_Port})", ConsoleColor.Magenta);
                     NetworkStream stream = null;
                     if (!ClsStarter.tCPClientList.SingleOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient.Connected)
                     {
@@ -237,7 +237,7 @@ namespace ClickServerService.Improved
                             {
                                 string str2 = Encoding.ASCII.GetString(numArray, 0, count).Replace("\n", "");
 
-                                objMain.MyPrint("*R*+Recive :<" + serverConfigView.AP_IP + " : <- " + str2, ConsoleColor.Cyan, DateTime.Now);
+                                objMain.MyPrint("R%Recive%" + serverConfigView.AP_IP + "%" + str2, ConsoleColor.Cyan, DateTime.Now);
 
                                 dispStringRecive += str2;
                                 try
@@ -476,7 +476,7 @@ namespace ClickServerService.Improved
         {
             try
             {
-                objMain.MyPrint("*R*WriteToFile : " + message, ConsoleColor.Green);
+                objMain.MyPrint("R%WriteToFile : " + message, ConsoleColor.Green);
 
                 string pathFileLog = AppDomain.CurrentDomain.BaseDirectory + "\\ServiceLogs";
                 if (!Directory.Exists(pathFileLog))

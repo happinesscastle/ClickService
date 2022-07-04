@@ -421,7 +421,7 @@ namespace ClickServerService.Improved
                             NetworkStream stream = item.TCPClient.GetStream();
                             byte[] bytes = Encoding.ASCII.GetBytes(command);
                             stream.Write(bytes, 0, bytes.Length);
-                            objMain.MyPrint($"*S*+Send :> {item.TCPClient.Client.RemoteEndPoint} -> {command}", ConsoleColor.DarkYellow, DateTime.Now);
+                            objMain.MyPrint($"S%Send%{item.TCPClient.Client.RemoteEndPoint}%{command}", ConsoleColor.DarkYellow, DateTime.Now);
                         }
                         else
                             return -1;
@@ -450,7 +450,7 @@ namespace ClickServerService.Improved
                         NetworkStream stream = client.GetStream();
                         byte[] bytes = Encoding.ASCII.GetBytes(command);
                         stream.Write(bytes, 0, bytes.Length);
-                        objMain.MyPrint($"*S*+Send :> {ipAp} -> {command}", ConsoleColor.DarkYellow, DateTime.Now);
+                        objMain.MyPrint($"S%Send%{ipAp}%{command}", ConsoleColor.DarkYellow, DateTime.Now);
                         return 1;
                     }
                     else

@@ -482,7 +482,7 @@ namespace ClickServerService.Improved
                 if (!Directory.Exists(pathFileLog))
                     Directory.CreateDirectory(pathFileLog);
 
-                pathFileLog = $"{AppDomain.CurrentDomain.BaseDirectory}\\ServiceLogs\\ServiceLog_{DateTime.Now.Date.ToShortDateString().Replace('/', '_')}.txt";
+                pathFileLog = $"{AppDomain.CurrentDomain.BaseDirectory}\\ServiceLogs\\ServiceLog_{DateTime.Now:yyyy-MM-dd}.txt";
                 if (File.Exists(pathFileLog))
                 {
                     using (StreamWriter streamWriter = File.AppendText(pathFileLog))

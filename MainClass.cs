@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using System.Security.Cryptography;
+using ClickServerService.Improved;
 using System.Collections.Generic;
 using ClickServerService.Models;
 using System.Data.SqlClient;
@@ -23,7 +24,7 @@ namespace ClickServerService
         /// <summary>
         /// Parameter for Printing Logs on Console When in Debug Mode.
         /// </summary>
-        readonly bool inDebugMode = true;
+        readonly bool inDebugMode = false;
         private readonly PersianCalendar persianCalendar = new PersianCalendar();
         private static readonly string PasswordHash = "P@@Sw0rd";
         private static readonly string SaltKey = "srqw1363277$";
@@ -52,23 +53,12 @@ namespace ClickServerService
         {
             try
             {
-                if (encryptedText == "5KispYBrnaxwJECGK5H03m+6LfTRSNheyX+byYknSM5V0Q8hvBdDDzepBL8HSXWE0aSZY7hI8ebSf4ZdeIjZtO+OSeXPhepIqGPjZ07Pl7vSnBqqL4Me1Kf88dplK9HcWefVjxJEh1/4iU1/Foptvw2hIDA/5O8AIGR5zr9tTBKaWV5yT8tZPhIpiVvVmYTm")
-                {
-                    //return "Data Source=sb.happinesscastle.ir,8080;Initial Catalog=ClickEMS2;User ID=sa;Password=M1cr0l@b";
-                    return @"Data Source=SEM\SEM;Initial Catalog=GameCenter;Integrated Security=True";
-                }
-                return null;
-
                 byte[] buffer = Convert.FromBase64String(encryptedText);
                 byte[] bytes = new Rfc2898DeriveBytes(PasswordHash, Encoding.ASCII.GetBytes(SaltKey)).GetBytes(32);
-                RijndaelManaged rijndaelManaged = new RijndaelManaged
-                {
-                    Mode = CipherMode.CBC,
-                    Padding = PaddingMode.None
-                };
+                RijndaelManaged rijndaelManaged = new RijndaelManaged { Mode = CipherMode.CBC, Padding = PaddingMode.None };
                 ICryptoTransform decryptor = rijndaelManaged.CreateDecryptor(bytes, Encoding.ASCII.GetBytes(VIKey));
                 MemoryStream memoryStream = new MemoryStream(buffer);
-                CryptoStream cryptoStream = new CryptoStream((Stream)memoryStream, decryptor, CryptoStreamMode.Read);
+                CryptoStream cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read);
                 byte[] numArray = new byte[buffer.Length];
                 int count = cryptoStream.Read(numArray, 0, numArray.Length);
                 memoryStream.Close();
@@ -91,21 +81,19 @@ namespace ClickServerService
         {
             try
             {
-                //string path1 = AppDomain.CurrentDomain.BaseDirectory + "\\db01946.txt";
-                //if (File.Exists(path1))
-                //{
-                //  DBPATH = File.ReadAllText(path1);
-                //}
-                //else
-                //{
-                //  string path2 = AppDomain.CurrentDomain.BaseDirectory + "\\db.txt";
-                //  if (File.Exists(path2))
-                //    DBPATH = Decrypt(File.ReadAllText(path2));
-                //  else
-                //    File.Create(path2);
-                //}
-
-                DBPATH = Decrypt("5KispYBrnaxwJECGK5H03m+6LfTRSNheyX+byYknSM5V0Q8hvBdDDzepBL8HSXWE0aSZY7hI8ebSf4ZdeIjZtO+OSeXPhepIqGPjZ07Pl7vSnBqqL4Me1Kf88dplK9HcWefVjxJEh1/4iU1/Foptvw2hIDA/5O8AIGR5zr9tTBKaWV5yT8tZPhIpiVvVmYTm");
+                string path1 = AppDomain.CurrentDomain.BaseDirectory + "\\db01946.txt";
+                if (File.Exists(path1))
+                {
+                    DBPATH = File.ReadAllText(path1);
+                }
+                else
+                {
+                    string path2 = AppDomain.CurrentDomain.BaseDirectory + "\\db.txt";
+                    if (File.Exists(path2))
+                        DBPATH = Decrypt(File.ReadAllText(path2));
+                    else
+                        File.Create(path2);
+                }
             }
             catch (Exception ex)
             {
@@ -891,18 +879,21 @@ namespace ClickServerService
         {
             try
             {
-                if (!inDebugMode)
-                    return;
-
-                //if (text.Contains("check"))
-                //return;
-
                 if (dt == null)
                     dt = DateTime.Now;
+                string command = text + "   " + dt.Value.ToString("HH:mm:ss:fff");
 
-                Console.ForegroundColor = color;
-                Console.WriteLine(TextSpliter(text) + "   " + dt.Value.ToString("HH:mm:ss:fff"));
-                Console.ForegroundColor = ConsoleColor.White;
+                if (inDebugMode)
+                {
+                    Console.ForegroundColor = color;
+                    Console.WriteLine(command);
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+                if (ClsStarter.debugDataList.Count > ClsStarter.ServerBufferLength)
+                    ClsStarter.debugDataList.Clear();
+                if (string.IsNullOrWhiteSpace(command))
+                    command = "NuLL";
+                ClsStarter.debugDataList.Add($"{(int)color}&{command}");
             }
             catch (Exception ex)
             {
@@ -910,47 +901,19 @@ namespace ClickServerService
             }
         }
 
-        private bool IsNumber(string txt)
+        public string GetData_SocketInterfaceConfig(string columnName)
         {
             try
             {
-                if (!string.IsNullOrWhiteSpace(txt))
-                    return Regex.IsMatch(txt, "^[0-9]*$");
-                else
-                    return false;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        private string TextSpliter(string commandText)
-        {
-            try
-            {
-                if (commandText.Contains('[') && commandText.Contains(']'))
+                using (SqlConnection connection = new SqlConnection(DBPath()))
                 {
-                    int aIndex = commandText.IndexOf('[') + 1;
-                    int zIndex = commandText.IndexOf(']');
-                    string macIP = commandText.Substring(aIndex, zIndex - aIndex);
-
-                    if (IsNumber(macIP))
-                    {//IP
-                        return commandText.Replace(macIP, Convert.ToUInt64(macIP).ToString(@"###\.###\.###\.###"));
-                    }
-                    else
-                    {//Mac-TimeStamp
-                        string tempMac = macIP.Substring(0, 2) + macIP.Substring(3, 2) + macIP.Substring(6, 2) + macIP.Substring(9, 2);
-                        return commandText.Replace(macIP, Regex.Replace(tempMac, "(.{2})(.{2})(.{2})(.{2})", "$1:$2:$3:$4") + "-" + macIP[2] + macIP[5] + macIP[8] + macIP[11]);
-                    }
+                    return connection.ExecuteScalar($@"Select TOP(1) {columnName} From SocketInterfaceConfig").ToString();
                 }
-                else
-                    return commandText;
             }
-            catch
+            catch (Exception ex)
             {
-                return commandText;
+                ErrorLog(ex);
+                return "";
             }
         }
 

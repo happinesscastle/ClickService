@@ -1,7 +1,10 @@
-
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32106.194
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClickServerService", "ClickServerService.csproj", "{4CEF6919-623E-4DD6-B322-EA10B2E236D8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClickServiceInterface", "..\..\ClickServiceInterface\ClickServiceInterface.csproj", "{09E68082-D576-45E6-A24A-80EA88AD3F63}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,8 +16,15 @@ Global
 		{4CEF6919-623E-4DD6-B322-EA10B2E236D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4CEF6919-623E-4DD6-B322-EA10B2E236D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4CEF6919-623E-4DD6-B322-EA10B2E236D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09E68082-D576-45E6-A24A-80EA88AD3F63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09E68082-D576-45E6-A24A-80EA88AD3F63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09E68082-D576-45E6-A24A-80EA88AD3F63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09E68082-D576-45E6-A24A-80EA88AD3F63}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {52A08A29-8F08-4DAF-9F5C-8C55A50F6944}
 	EndGlobalSection
 EndGlobal

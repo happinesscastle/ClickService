@@ -12,13 +12,10 @@ namespace ClickServerService
         {
             try
             {
-                //ServiceBase.Run(new ServiceBase[1] { new ClsStarter() });
+                // ServiceBase.Run(new ServiceBase[1] { new ClsStarter() });
 
                 Console.Title = "Click Server Service";
-
                 Task.Run(() => new ClsStarter());
-
-
                 Task fbc = Task.Run(() => ForBeConteneud());
                 fbc.Wait();
             }

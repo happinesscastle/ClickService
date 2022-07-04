@@ -12,10 +12,13 @@ using System;
 
 namespace ClickServerService.Improved
 {
-    public class ClsStarter //: ServiceBase
+    public class ClsStarter : ServiceBase
     {
-        public static List<MyTCPClient> tCPClientList = new List<MyTCPClient>();
+        public static List<string> debugDataList = new List<string>();
         public static List<Access_Point> accessPoints = null;
+        public static List<MyTCPClient> tCPClientList = new List<MyTCPClient>();
+
+        public static int ServerBufferLength = 1000;
 
         readonly MainClass objMain = new MainClass();
         readonly GamesClass objGames = new GamesClass();
@@ -26,30 +29,24 @@ namespace ClickServerService.Improved
         readonly System.Timers.Timer Timer_Create_Repair_CheckList = new System.Timers.Timer();
         readonly System.Timers.Timer TimerChargeRate_SetNonRecive = new System.Timers.Timer();
 
-        //private IContainer components = (IContainer)null;
+        private IContainer components = null;
 
         public ClsStarter()
         {
-            //InitializeComponent();
+            ServerBufferLength = Convert.ToInt32(objMain.GetData_SocketInterfaceConfig("ServerBufferLength"));
+            InitializeComponent();
+        }
 
+        protected override void OnStart(string[] args)
+        {
             if (!objMain.Licence_Check())
             {
                 objMain.MyPrint(" :1:Licence ERROR ", ConsoleColor.Red);
+                Dispose();
             }
             else
                 AppLoadMain();
         }
-
-        //protected override void OnStart(string[] args)
-        //{
-        //    if (!objMain.Licence_Check())
-        //    {
-        //        objMain.MyPrint(" :1:Licence ERROR ", ConsoleColor.Red);
-        //        Dispose();
-        //    }
-        //    else
-        //        AppLoadMain();
-        //}
 
         public void AppLoadMain()
         {
@@ -79,6 +76,8 @@ namespace ClickServerService.Improved
                         objMain.MyPrint("+accessPoints : " + item.AP_ID.ToString(), ConsoleColor.White);
                     }
                     Task.Run(() => new ClsSender().Start());
+                    //
+                    Task.Run(() => new ClsSocketServer().Start());
                 }
 
                 #region ' Timers '
@@ -149,17 +148,17 @@ namespace ClickServerService.Improved
 
         //
 
-        //protected override void Dispose(bool disposing)
-        //{
-        //    if (disposing && components != null)
-        //        components.Dispose();
-        //    base.Dispose(disposing);
-        //}
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && components != null)
+                components.Dispose();
+            base.Dispose(disposing);
+        }
 
-        //private void InitializeComponent()
-        //{
-        //    components = new Container();
-        //    ServiceName = "Service1";
-        //}
+        private void InitializeComponent()
+        {
+            components = new Container();
+            ServiceName = "ClickServerService";
+        }
     }
 }

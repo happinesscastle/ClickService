@@ -793,3 +793,11 @@ Affected parameters are:
    i = 
    assemblypath = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe
    logfile = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.InstallLog
+Uninstalling assembly 'C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe
+   logfile = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.InstallLog
+Removing EventLog source ClickService.
+Service ClickService is being removed from the system...
+Service ClickService was successfully removed from the system.

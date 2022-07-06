@@ -38,13 +38,20 @@ namespace ClickServerService.Improved
 
         protected override void OnStart(string[] args)
         {
-            if (!objMain.Licence_Check())
+            try
             {
-                objMain.MyPrint(" :1:Licence ERROR ", ConsoleColor.Red);
-                Dispose();
+                if (!objMain.Licence_Check())
+                {
+                    objMain.MyPrint(" :1:Licence ERROR ", ConsoleColor.Red);
+                    Dispose();
+                }
+                else
+                    AppLoadMain();
             }
-            else
-                AppLoadMain();
+            catch (Exception ex)
+            {
+                objMain.ErrorLog(ex);
+            }
         }
 
         public void AppLoadMain()
@@ -72,7 +79,7 @@ namespace ClickServerService.Improved
                         Thread.Sleep(0);
                         Task.Run(() => new ClsReceiver(item.AP_ID).Start());
                         Thread.Sleep(0);
-                        objMain.MyPrint("+accessPoints : " + item.AP_ID.ToString(), ConsoleColor.White);
+                        objMain.MyPrint("*AccessPoints : " + item.AP_ID.ToString(), ConsoleColor.White);
                     }
                     Task.Run(() => new ClsSender().Start());
                     //

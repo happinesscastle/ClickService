@@ -405,38 +405,37 @@ namespace ClickServerService.Improved
             }
         }
 
-        public int Send_Main(string command)
+        public void Send_Main(string command)
         {
             try
             {
                 foreach (var item in ClsStarter.tCPClientList)
                 {
-
-                    string swiperSegment = objSwiper.GetSwiperSegmentByMac(objSwiper.GetMacSwiper(command), Main_ID_GameCenter);
-                    bool isAllowedToSend = ClsStarter.accessPoints.Where(ap => ap.AP_ID == item.AP_ID).SingleOrDefault().ListSwiperSegmentIDs.Contains(swiperSegment);
-                    if (isAllowedToSend)
+                    try
                     {
-                        if (item.TCPClient.Connected)
+                        string swiperSegment = objSwiper.GetSwiperSegmentByMac(objSwiper.GetMacSwiper(command), Main_ID_GameCenter);
+                        bool isAllowedToSend = ClsStarter.accessPoints.Where(ap => ap.AP_ID == item.AP_ID).SingleOrDefault().ListSwiperSegmentIDs.Contains(swiperSegment);
+                        if (isAllowedToSend)
                         {
-                            NetworkStream stream = item.TCPClient.GetStream();
-                            byte[] bytes = Encoding.ASCII.GetBytes(command);
-                            stream.Write(bytes, 0, bytes.Length);
-                            objMain.MyPrint($"S%Send%{item.TCPClient.Client.RemoteEndPoint}%{command}", ConsoleColor.DarkYellow, DateTime.Now);
+                            if (item.TCPClient.Connected)
+                            {
+                                NetworkStream stream = item.TCPClient.GetStream();
+                                byte[] bytes = Encoding.ASCII.GetBytes(command);
+                                stream.Write(bytes, 0, bytes.Length);
+                                objMain.MyPrint($"+S%Send%{item.TCPClient.Client.RemoteEndPoint}%{command}", ConsoleColor.DarkYellow, DateTime.Now);
+                            }
                         }
-                        else
-                            return -1;
                     }
+                    catch { }
                 }
-                return 1;
             }
             catch (Exception ex)
             {
                 objMain.ErrorLog(ex);
-                return -1;
             }
         }
 
-        public int Send_Main(string ipAp, string command, TcpClient client)
+        public void Send_Main(string ipAp, string command, TcpClient client)
         {
             try
             {
@@ -450,19 +449,13 @@ namespace ClickServerService.Improved
                         NetworkStream stream = client.GetStream();
                         byte[] bytes = Encoding.ASCII.GetBytes(command);
                         stream.Write(bytes, 0, bytes.Length);
-                        objMain.MyPrint($"S%Send%{ipAp}%{command}", ConsoleColor.DarkYellow, DateTime.Now);
-                        return 1;
+                        objMain.MyPrint($"+S%Send%{ipAp}%{command}", ConsoleColor.DarkYellow, DateTime.Now);
                     }
-                    else
-                        return -1;
                 }
-                else
-                    return -1;
             }
             catch (Exception ex)
             {
                 objMain.ErrorLog(ex);
-                return -1;
             }
         }
 

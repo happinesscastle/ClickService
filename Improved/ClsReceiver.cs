@@ -138,7 +138,7 @@ namespace ClickServerService.Improved
                     NetworkStream stream = client.GetStream();
                     byte[] bytes = Encoding.ASCII.GetBytes(command);
                     stream.Write(bytes, 0, bytes.Length);
-                    objMain.MyPrint($"R%Send%{ipAp}%{command}", ConsoleColor.Yellow, DateTime.Now);
+                    objMain.MyPrint($"+R%Send%{ipAp}%{command}", ConsoleColor.Yellow, DateTime.Now);
                     return 1;
                 }
                 else
@@ -237,7 +237,7 @@ namespace ClickServerService.Improved
                             {
                                 string str2 = Encoding.ASCII.GetString(numArray, 0, count).Replace("\n", "");
 
-                                objMain.MyPrint("R%Recive%" + serverConfigView.AP_IP + "%" + str2, ConsoleColor.Cyan, DateTime.Now);
+                                objMain.MyPrint("+R%Recive%" + serverConfigView.AP_IP + "%" + str2, ConsoleColor.Cyan, DateTime.Now);
 
                                 dispStringRecive += str2;
                                 try

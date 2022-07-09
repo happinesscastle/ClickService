@@ -303,8 +303,8 @@ namespace ClickServerService
         {
             try
             {
-                if (licence_IsSync == "0")
-                    return;
+                //if (licence_IsSync == "0")
+                //    return;
                 string commandText = com.CommandText;
                 string CommandTypeB = com.CommandType.ToString();
                 int count = com.Parameters.Count;
@@ -740,7 +740,7 @@ namespace ClickServerService
                 //    }
                 //}
                 //else
-                //    flag = false; 
+                //    flag = false;
                 #endregion
 
                 flag = true;

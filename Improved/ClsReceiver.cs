@@ -216,45 +216,51 @@ namespace ClickServerService.Improved
                 byte[] numArray = new byte[256];
                 while (true)
                 {
-
-                    objMain.MyPrint($"R%clientAp{multiRun_AP_ID}.Connect (IP : {serverConfigView.AP_IP} , Port: {serverConfigView.AP_Port})", ConsoleColor.Magenta);
-                    NetworkStream stream = null;
-                    if (!ClsStarter.tCPClientList.SingleOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient.Connected)
-                    {
-                        ClsStarter.tCPClientList.SingleOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient.Close();
-                        ClsStarter.tCPClientList.SingleOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient = new TcpClient();
-                        ClsStarter.tCPClientList.SingleOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient.Connect(serverConfigView.AP_IP, serverConfigView.AP_Port);
-                    }
-                    stream = ClsStarter.tCPClientList.SingleOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient.GetStream();
                     try
                     {
-                        int count;
-                        while ((count = stream.Read(numArray, 0, numArray.Length)) > 0)
+                        objMain.MyPrint($"R%clientAp{multiRun_AP_ID}.Connect (IP : {serverConfigView.AP_IP} , Port: {serverConfigView.AP_Port})", ConsoleColor.Magenta);
+                        NetworkStream stream = null;
+                        if (!ClsStarter.tCPClientList.SingleOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient.Connected)
                         {
-                            dispStringRecive = "";
-                            dispStringSplit = "";
-                            try
+                            ClsStarter.tCPClientList.SingleOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient.Close();
+                            ClsStarter.tCPClientList.SingleOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient = new TcpClient();
+                            ClsStarter.tCPClientList.SingleOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient.Connect(serverConfigView.AP_IP, serverConfigView.AP_Port);
+                        }
+                        stream = ClsStarter.tCPClientList.SingleOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient.GetStream();
+                        try
+                        {
+                            int count;
+                            while ((count = stream.Read(numArray, 0, numArray.Length)) > 0)
                             {
-                                string str2 = Encoding.ASCII.GetString(numArray, 0, count).Replace("\n", "");
-
-                                objMain.MyPrint("+R%Recive%" + serverConfigView.AP_IP + "%" + str2, ConsoleColor.Cyan, DateTime.Now);
-
-                                dispStringRecive += str2;
+                                dispStringRecive = "";
+                                dispStringSplit = "";
                                 try
                                 {
-                                    string[] strArray = dispStringRecive.Split('[');
-                                    for (int index = 0; index < strArray.Length; ++index)
+                                    string str2 = Encoding.ASCII.GetString(numArray, 0, count).Replace("\n", "");
+
+                                    objMain.MyPrint("+R%Recive%" + serverConfigView.AP_IP + "%" + str2, ConsoleColor.Cyan, DateTime.Now);
+
+                                    dispStringRecive += str2;
+                                    try
                                     {
-                                        dispStringSplit = strArray[index].Trim();
-                                        if (dispStringSplit.Length > 0)
+                                        string[] strArray = dispStringRecive.Split('[');
+                                        for (int index = 0; index < strArray.Length; ++index)
                                         {
-                                            dispStringSplit = "[" + strArray[index].Trim();
-                                            DateTime tempReciveTime = DateTime.Now;
-                                            if (Recive_ProcessData(dispStringSplit, multiRun_AP_ID) == "true")
-                                                Recive_DisplayText(dispStringSplit, $"P{multiRun_AP_ID}", tempReciveTime);
-                                            else if (_checkBoxShowAll)
-                                                Recive_DisplayText(dispStringSplit, $"P{multiRun_AP_ID}", tempReciveTime);
+                                            dispStringSplit = strArray[index].Trim();
+                                            if (dispStringSplit.Length > 0)
+                                            {
+                                                dispStringSplit = "[" + strArray[index].Trim();
+                                                DateTime tempReciveTime = DateTime.Now;
+                                                if (Recive_ProcessData(dispStringSplit, multiRun_AP_ID) == "true")
+                                                    Recive_DisplayText(dispStringSplit, $"P{multiRun_AP_ID}", tempReciveTime);
+                                                else if (_checkBoxShowAll)
+                                                    Recive_DisplayText(dispStringSplit, $"P{multiRun_AP_ID}", tempReciveTime);
+                                            }
                                         }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        objMain.ErrorLog(ex);
                                     }
                                 }
                                 catch (Exception ex)
@@ -262,10 +268,10 @@ namespace ClickServerService.Improved
                                     objMain.ErrorLog(ex);
                                 }
                             }
-                            catch (Exception ex)
-                            {
-                                objMain.ErrorLog(ex);
-                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            objMain.ErrorLog(ex);
                         }
                     }
                     catch (Exception ex)

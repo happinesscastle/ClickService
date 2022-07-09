@@ -2,6 +2,7 @@
 using System.Data;
 using Dapper;
 using System;
+using System.Text.RegularExpressions;
 
 namespace ClickServerService
 {
@@ -393,31 +394,49 @@ namespace ClickServerService
         {
             try
             {
-                string mac = command.Substring(1, 12);
-                return mac.Substring(0, 2) + mac.Substring(3, 2) + mac.Substring(6, 2) + mac.Substring(9, 2);
+                if (command != null)
+                    if (!string.IsNullOrWhiteSpace(command))
+                    {
+                        if (command.Contains("[") && command.Contains("]"))
+                        {
+                            int aIndex = command.IndexOf('[') + 1;
+                            int zIndex = command.IndexOf(']');
+                            string macIP = command.Substring(aIndex, zIndex - aIndex);
+
+                            if (!Regex.IsMatch(macIP, "^[0-9]*$"))
+                            {
+                                string tempMac = macIP.Substring(0, 2) + macIP.Substring(3, 2) + macIP.Substring(6, 2) + macIP.Substring(9, 2);
+                                return tempMac;
+                            }
+                        }
+                    }
             }
             catch (Exception ex)
             {
                 objMain.ErrorLog(ex);
-                return "";
             }
+            return "";
         }
 
         public string GetSwiperSegmentByMac(string mac, int gameCenterID)
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(mac))
+                    return "";
                 using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
                 {
                     string query = $"select ID_Swiper_Segment From Swiper Where ID_GameCenter = {gameCenterID} And MacAddress = N'{mac}'";
-                    return connection.ExecuteScalar(query).ToString();
+                    var temp = connection.ExecuteScalar(query);
+                    if (temp != null && (!string.IsNullOrWhiteSpace(temp.ToString())))
+                        return temp.ToString();
                 }
             }
             catch (Exception ex)
             {
                 objMain.ErrorLog(ex);
-                return "";
             }
+            return "";
         }
 
         #endregion

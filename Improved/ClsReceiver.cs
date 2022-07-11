@@ -273,9 +273,9 @@ namespace ClickServerService.Improved
                             objMain.ErrorLog(ex);
                         }
                     }
-                    catch (Exception ex)
+                    catch //(Exception ex)
                     {
-                        objMain.ErrorLog(ex);
+                       // objMain.ErrorLog(ex);
                     }
                 }
             }

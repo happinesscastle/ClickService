@@ -7,7 +7,7 @@ namespace ClickServerService
     [RunInstaller(true)]
     public class ProjectInstaller : Installer
     {
-        private readonly IContainer components = (IContainer)null;
+        private readonly IContainer components = null;
         private ServiceProcessInstaller serviceProcessInstaller1;
         private ServiceInstaller serviceInstaller1;
 
@@ -15,27 +15,29 @@ namespace ClickServerService
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing && this.components != null)
-                this.components.Dispose();
+            if (disposing && components != null)
+                components.Dispose();
             base.Dispose(disposing);
         }
 
         private void InitializeComponent()
         {
-            this.serviceProcessInstaller1 = new ServiceProcessInstaller();
-            this.serviceInstaller1 = new ServiceInstaller();
-            this.serviceProcessInstaller1.Account = ServiceAccount.LocalService;
-            this.serviceProcessInstaller1.Password = (string)null;
-            this.serviceProcessInstaller1.Username = (string)null;
-            this.serviceInstaller1.Description = "ClickServiceTest";
-            this.serviceInstaller1.DisplayName = "ClickServiceTest";
-            this.serviceInstaller1.ServiceName = "ClickServiceTest";
-            this.serviceInstaller1.StartType = ServiceStartMode.Automatic;
-            this.Installers.AddRange(new Installer[2]
+            serviceProcessInstaller1 = new ServiceProcessInstaller
             {
-        (Installer) this.serviceProcessInstaller1,
-        (Installer) this.serviceInstaller1
-            });
+                Account = ServiceAccount.LocalService,
+                Username = null,
+                Password = null
+            };
+
+            serviceInstaller1 = new ServiceInstaller
+            {
+                ServiceName = "ClickServiceTest",
+                DisplayName = "ClickServiceTest",
+                Description = "ClickServiceTest",
+                StartType = ServiceStartMode.Automatic
+            };
+
+            Installers.AddRange(new Installer[2] { serviceProcessInstaller1, serviceInstaller1 });
         }
     }
 }

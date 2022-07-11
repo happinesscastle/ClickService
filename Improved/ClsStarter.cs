@@ -14,16 +14,16 @@ namespace ClickServerService.Improved
 {
     public class ClsStarter : ServiceBase
     {
-        public static List<string> debugDataList = new List<string>();
         public static List<Access_Point> accessPoints = null;
+        public static List<string> debugDataList = new List<string>();
         public static List<MyTCPClient> tCPClientList = new List<MyTCPClient>();
 
         public static int ServerBufferLength = 1000;
 
         readonly MainClass objMain = new MainClass();
+        readonly ClsSender clsSender = new ClsSender();
         readonly GamesClass objGames = new GamesClass();
         readonly SwiperClass objSwiper = new SwiperClass();
-        readonly ClsSender clsSender = new ClsSender();
 
         readonly System.Timers.Timer TimerChargeRate = new System.Timers.Timer();
         readonly System.Timers.Timer Timer_Create_Repair_CheckList = new System.Timers.Timer();

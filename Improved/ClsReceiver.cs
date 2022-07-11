@@ -35,7 +35,6 @@ namespace ClickServerService.Improved
             try
             {
                 multiRun_AP_ID = apID;
-                AppLoadMain();
             }
             catch (Exception ex)
             {
@@ -47,6 +46,7 @@ namespace ClickServerService.Improved
         {
             try
             {
+                AppLoadMain();
                 while (true)
                 {
                     OnElapsedTime();
@@ -76,7 +76,6 @@ namespace ClickServerService.Improved
                 if (!objMain.Licence_Check())
                 {
                     WriteToFile(DateTime.Now.ToString() + ":1:Licence ERROR ");
-                    //Dispose();
                 }
                 else
                 {

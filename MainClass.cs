@@ -1,5 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using ClickServerService.Improved;
 using System.Collections.Generic;
 using ClickServerService.Models;
@@ -25,28 +24,37 @@ namespace ClickServerService
         /// Parameter for Printing Logs on Console When in Debug Mode.
         /// </summary>
         readonly bool inDebugMode = true;
+
         private readonly PersianCalendar persianCalendar = new PersianCalendar();
+
         private static readonly string PasswordHash = "P@@Sw0rd";
         private static readonly string SaltKey = "srqw1363277$";
         private static readonly string VIKey = "@ZerooneGamecenter";
+
         public static string DBPATH = string.Empty;
         public static string Local_IP = "";
         private static int ID_GameCenter_Local = 1;
         public static string RetVal = "";
         public static DataTable key_Value_List;
-        public static string licence_RequestCode = "";
-        public static string licence_IsStock = "0";
-        public static string licence_IsSync = "0";
-        public static string licence_IsRepair = "0";
-        public static string licence_IsGift = "0";
-        public static string licence_CardCount = "1";
-        public static string licence_IsTimingPlace = "0";
-        public static string licence_TimingPlaceCount = "0";
-        public static string licence_CashDeskCount = "0";
+
+        #region ' Licence '
+
+        //public static string licence_RequestCode = "";
+        //public static string licence_IsStock = "0";
+        //public static string licence_IsSync = "0";
+        //public static string licence_IsRepair = "0";
+        //public static string licence_IsGift = "0";
+        //public static string licence_CardCount = "1";
+        //public static string licence_IsTimingPlace = "0";
+        //public static string licence_TimingPlaceCount = "0";
+        //public static string licence_CashDeskCount = "0"; 
+
+        #endregion
 
         public MainClass()
         {
             Decript_Connection_String();
+            PbNCStatus();
         }
 
         public string Decrypt(string encryptedText)

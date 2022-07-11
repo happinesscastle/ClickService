@@ -16,28 +16,16 @@ namespace ClickServerService.Improved
         /// Global Variables
         /// </summary>
         List<ServerConfigView> serverConfigView = new List<ServerConfigView>();
+
+        readonly Pattern objPattern = new Pattern();
         readonly MainClass objMain = new MainClass();
-        readonly SwiperClass objSwiper = new SwiperClass();
         readonly CardClass objCard = new CardClass();
         readonly UsersClass objUser = new UsersClass();
-        readonly Pattern objPattern = new Pattern();
+        readonly SwiperClass objSwiper = new SwiperClass();
 
-        int Main_ID_GameCenter = 1;
-        int TCP_RepeatCount = 1;
+        int Main_ID_GameCenter = 1, TCP_RepeatCount = 1;
 
         string txtSend = "";
-
-        public ClsSender()
-        {
-            try
-            {
-                AppLoadMain();
-            }
-            catch (Exception ex)
-            {
-                objMain.ErrorLog(ex);
-            }
-        }
 
         public void AppLoadMain()
         {
@@ -75,17 +63,25 @@ namespace ClickServerService.Improved
 
         public void Start()
         {
-            while (true)
+            try
             {
-                try
+                AppLoadMain();
+                while (true)
                 {
-                    Timer_SendData_Tick();
-                    Thread.Sleep(300);
+                    try
+                    {
+                        Timer_SendData_Tick();
+                        Thread.Sleep(300);
+                    }
+                    catch (Exception ex)
+                    {
+                        objMain.ErrorLog(ex);
+                    }
                 }
-                catch (Exception ex)
-                {
-                    objMain.ErrorLog(ex);
-                }
+            }
+            catch (Exception ex)
+            {
+                objMain.ErrorLog(ex);
             }
         }
 

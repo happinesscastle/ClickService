@@ -489,20 +489,20 @@ namespace ClickServerService.Improved
             }
         }
 
-        public string Send_Process_Main(string ReciveText)
+        public string Send_Process_Main(string receiveText)
         {
             try
             {
-                ReciveText = ReciveText.Trim();
+                receiveText = receiveText.Trim();
                 string str1 = "";
                 string str2 = "";
                 string str3_Title = "";
                 string str4_Mac = "";
                 try
                 {
-                    if (ReciveText.Contains("CONFIG"))
+                    if (receiveText.Contains("CONFIG"))
                     {
-                        string str5 = ReciveText.Substring(1, 12);
+                        string str5 = receiveText.Substring(1, 12);
                         string str6 = str5.Substring(0, 2) + str5.Substring(3, 2) + str5.Substring(6, 2) + str5.Substring(9, 2);
                         string str7 = ((int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds).ToString();
                         string str8 = str7.Substring(str7.Length - 5, 4);
@@ -556,14 +556,14 @@ namespace ClickServerService.Improved
                 catch (Exception ex)
                 {
                     objMain.ErrorLog(ex);
-                    objMain.ErrorLogTemp("error Process Main CONFIG :exp= " + ex.Message + ",ReciveText=" + ReciveText);
+                    objMain.ErrorLogTemp("error Process Main CONFIG :exp= " + ex.Message + ",ReceiveText=" + receiveText);
                     return "";
                 }
                 try
                 {
-                    if (ReciveText.Contains("OKCFG"))
+                    if (receiveText.Contains("OKCFG"))
                     {
-                        string str5 = ReciveText.Substring(1, 12);
+                        string str5 = receiveText.Substring(1, 12);
                         string MacAddress = str5.Substring(0, 2) + str5.Substring(3, 2) + str5.Substring(6, 2) + str5.Substring(9, 2);
                         string str6 = MacAndTimeStamp_Create(MacAddress);
                         DataTable addressByChargeRate = objSwiper.Swiper_GetByMacAddressByChargeRate(MacAddress.ToUpper());
@@ -575,14 +575,14 @@ namespace ClickServerService.Improved
                             }
                             catch { }
                             int num1 = int.Parse(addressByChargeRate.Rows[0]["Config_State"].ToString());
-                            if (ReciveText.Contains("OKCFG1"))
+                            if (receiveText.Contains("OKCFG1"))
                             {
                                 objSwiper.Swiper_Update_Config_State(1, MacAddress);
                                 string str7 = addressByChargeRate.Rows[0]["Title"].ToString().Length > 8 ? addressByChargeRate.Rows[0]["Title"].ToString().Substring(0, 8) : addressByChargeRate.Rows[0]["Title"].ToString();
                                 str1 = "[" + str6 + "]AT+CFG2=" + str7;
                                 str2 = "[" + str6 + "]AT+CFG2=" + str7;
                             }
-                            if (ReciveText.Contains("OKCFG2"))
+                            if (receiveText.Contains("OKCFG2"))
                             {
                                 objSwiper.Swiper_Update_Config_State(2, MacAddress);
                                 if (MainClass.key_Value_List.Select("KeyName ='Enable_Charge_Rate'")[0]["Value"].ToString().ToLower() == "true")
@@ -596,7 +596,7 @@ namespace ClickServerService.Improved
                                     str2 = "[" + str6 + "]AT+CFG3=" + objMain.Comma(addressByChargeRate.Rows[0]["Price1"].ToString());
                                 }
                             }
-                            if (ReciveText.Contains("OKCFG3"))
+                            if (receiveText.Contains("OKCFG3"))
                             {
                                 if (num1 != -3)
                                 {
@@ -618,7 +618,7 @@ namespace ClickServerService.Improved
                                     str2 = "[" + str6 + "]AT+ok";
                                 }
                             }
-                            if (ReciveText.Contains("OKCFG4"))
+                            if (receiveText.Contains("OKCFG4"))
                             {
                                 if (num1 != -3)
                                 {
@@ -633,7 +633,7 @@ namespace ClickServerService.Improved
                                     objSwiper.Swiper_UpdateStateByMacAddress(MacAddress.ToUpper(), 0);
                                 }
                             }
-                            if (ReciveText.Contains("OKCFG5"))
+                            if (receiveText.Contains("OKCFG5"))
                             {
                                 string str7 = addressByChargeRate.Rows[0]["Version"].ToString();
                                 objSwiper.Swiper_Update_Config_State(5, MacAddress);
@@ -696,7 +696,7 @@ namespace ClickServerService.Improved
                                 str1 = "[" + str6 + "]AT+CFG6=" + str8 + "," + addressByChargeRate.Rows[0]["RepeatCount"].ToString() + "," + str9;
                                 str2 = "[" + str6 + "]AT+CFG6=" + str8 + "," + addressByChargeRate.Rows[0]["RepeatCount"].ToString() + "," + str9;
                             }
-                            if (ReciveText.Contains("OKCFG6"))
+                            if (receiveText.Contains("OKCFG6"))
                             {
                                 try
                                 {
@@ -731,7 +731,7 @@ namespace ClickServerService.Improved
                                     objSwiper.Swiper_Update_Config_State(0, MacAddress);
                                 }
                             }
-                            if (ReciveText.Contains("OKCFG7"))
+                            if (receiveText.Contains("OKCFG7"))
                             {
                                 str1 = "[" + str6 + "]AT+ok";
                                 str2 = "[" + str6 + "]AT+ok";
@@ -743,15 +743,15 @@ namespace ClickServerService.Improved
                 catch (Exception ex)
                 {
                     objMain.ErrorLog(ex);
-                    objMain.ErrorLogTemp("error Process Main OKCFG :exp= " + ex.Message + ",ReciveText=" + ReciveText);
+                    objMain.ErrorLogTemp("error Process Main OKCFG :exp= " + ex.Message + ",ReceiveText=" + receiveText);
                     return "";
                 }
                 string str27 = "1515";
                 try
                 {
-                    if (ReciveText.Contains("CID"))
+                    if (receiveText.Contains("CID"))
                     {
-                        string str5 = ReciveText.Substring(1, 12);
+                        string str5 = receiveText.Substring(1, 12);
                         string str6 = str5.Substring(0, 2) + str5.Substring(3, 2) + str5.Substring(6, 2) + str5.Substring(9, 2);
                         string str7 = MacAndTimeStamp_Create(str6);
                         DataTable addressByChargeRate = objSwiper.Swiper_GetByMacAddressByChargeRate(str6);
@@ -767,7 +767,7 @@ namespace ClickServerService.Improved
                             int num1 = int.Parse(addressByChargeRate.Rows[0]["ID_Games"].ToString());
                             int.Parse(addressByChargeRate.Rows[0]["ID_Games_Class"].ToString() == "" ? "-100" : addressByChargeRate.Rows[0]["ID_Games_Class"].ToString());
                             int ID_Swiper = int.Parse(addressByChargeRate.Rows[0]["ID"].ToString());
-                            str4_Mac = ReciveText.Split('=')[1].Replace("\r", "").Split(',')[0].ToUpper();
+                            str4_Mac = receiveText.Split('=')[1].Replace("\r", "").Split(',')[0].ToUpper();
                             str27 = "1537";
                             DataTable byMacAddrress = objCard.Card_GetByMacAddrress(str4_Mac);
                             if (byMacAddrress.Rows.Count > 0)
@@ -1046,17 +1046,17 @@ namespace ClickServerService.Improved
                 catch (Exception ex)
                 {
                     objMain.ErrorLog(ex);
-                    objMain.ErrorLogTemp("error Process Main CID :exp= " + ex.Message + ",ReciveText=" + ReciveText + ",LineCode=" + str27);
+                    objMain.ErrorLogTemp($"error Process Main CID :exp= {ex.Message},ReceiveText={receiveText},LineCode={str27}");
                     return "";
                 }
                 try
                 {
-                    if (ReciveText.Contains("+P="))
+                    if (receiveText.Contains("+P="))
                     {
-                        string str5 = ReciveText.Substring(1, 12);
+                        string str5 = receiveText.Substring(1, 12);
                         string str6 = str5.Substring(0, 2) + str5.Substring(3, 2) + str5.Substring(6, 2) + str5.Substring(9, 2);
                         string str7 = MacAndTimeStamp_Create(str6);
-                        string MacCode = ReciveText.Split('=')[1].Replace("\r", "").Split(',')[0];
+                        string MacCode = receiveText.Split('=')[1].Replace("\r", "").Split(',')[0];
                         DataTable addressByChargeRate = objSwiper.Swiper_GetByMacAddressByChargeRate(str6);
                         int num1 = 0;
                         if (addressByChargeRate.Rows.Count > 0)
@@ -1270,17 +1270,17 @@ namespace ClickServerService.Improved
                 catch (Exception ex)
                 {
                     objMain.ErrorLog(ex);
-                    objMain.ErrorLogTemp("error Process Main +P :exp= " + ex.Message + ",ReciveText=" + ReciveText);
+                    objMain.ErrorLogTemp($"error Process Main +P :exp= {ex.Message},ReceiveText={receiveText}");
                     return "";
                 }
                 try
                 {
-                    if (ReciveText.Contains("+T="))
+                    if (receiveText.Contains("+T="))
                     {
                         bool flag1 = false;
-                        string str5 = ReciveText.Substring(1, 12);
+                        string str5 = receiveText.Substring(1, 12);
                         string str6 = str5.Substring(0, 2) + str5.Substring(3, 2) + str5.Substring(6, 2) + str5.Substring(9, 2);
-                        string str7 = ReciveText.Split('=')[1].Replace("\r", "").Split(',')[0];
+                        string str7 = receiveText.Split('=')[1].Replace("\r", "").Split(',')[0];
                         if (str7.ToLower() == "ffffffff")
                         {
                             DataSet macAddrressFfffff = objCard.Card_GetByMacAddrressFFFFFF(str6);
@@ -1308,7 +1308,7 @@ namespace ClickServerService.Improved
                             }
                             catch { }
                         }
-                        if (ReciveText.Contains("SendOk"))
+                        if (receiveText.Contains("SendOk"))
                         {
                             str1 = "[" + str8 + "]AT+TRC=0";
                             str2 = "[" + str8 + "]AT+TRC=0";
@@ -1319,7 +1319,7 @@ namespace ClickServerService.Improved
                             DataTable byMacAddrress = objCard.Card_GetByMacAddrress(str7);
                             int ID_Card_Play_Details = -1;
                             int IsPersonnel = 0;
-                            string str10 = ReciveText.Split('=')[1].ToString();
+                            string str10 = receiveText.Split('=')[1].ToString();
                             int Count = 0;
                             string str11 = "E";
                             try
@@ -1439,14 +1439,14 @@ namespace ClickServerService.Improved
                 catch (Exception ex)
                 {
                     objMain.ErrorLog(ex);
-                    objMain.ErrorLogTemp("error Process Main +T :exp= " + ex.Message + ",ReciveText=" + ReciveText);
+                    objMain.ErrorLogTemp($"error Process Main +T :exp= {ex.Message},ReceiveText={receiveText}");
                     return "";
                 }
                 try
                 {
-                    if (ReciveText.Contains("Error_conf"))
+                    if (receiveText.Contains("Error_conf"))
                     {
-                        string str5 = ReciveText.Substring(1, 12);
+                        string str5 = receiveText.Substring(1, 12);
                         string str6 = str5.Substring(0, 2) + str5.Substring(3, 2) + str5.Substring(6, 2) + str5.Substring(9, 2);
                         string MacAddress = str6;
                         string str7 = MacAndTimeStamp_Create(MacAddress);
@@ -1466,14 +1466,14 @@ namespace ClickServerService.Improved
                 catch (Exception ex)
                 {
                     objMain.ErrorLog(ex);
-                    objMain.ErrorLogTemp("error Process Main Error_config :exp= " + ex.Message + ",ReciveText=" + ReciveText);
+                    objMain.ErrorLogTemp($"error Process Main Error_config :exp= {ex.Message},ReceiveText={receiveText}");
                     return "";
                 }
                 try
                 {
-                    if (ReciveText.Contains("HID"))
+                    if (receiveText.Contains("HID"))
                     {
-                        string str5 = ReciveText.Substring(1, 12);
+                        string str5 = receiveText.Substring(1, 12);
                         string str6 = str5.Substring(0, 2) + str5.Substring(3, 2) + str5.Substring(6, 2) + str5.Substring(9, 2);
                         string MacAddress = str6;
                         string str7 = MacAndTimeStamp_Create(MacAddress);
@@ -1486,7 +1486,7 @@ namespace ClickServerService.Improved
                             }
                             catch { }
                             int.Parse(addressByChargeRate.Rows[0]["ID"].ToString());
-                            str4_Mac = ReciveText.Split('=')[1].Replace("\r", "").Split(',')[0].ToUpper();
+                            str4_Mac = receiveText.Split('=')[1].Replace("\r", "").Split(',')[0].ToUpper();
                             DataTable byMacAddrress = objCard.Card_GetByMacAddrress(str4_Mac);
                             if (byMacAddrress.Rows.Count > 0)
                             {
@@ -1632,19 +1632,19 @@ namespace ClickServerService.Improved
                 catch (Exception ex)
                 {
                     objMain.ErrorLog(ex);
-                    objMain.ErrorLogTemp("error Process Main HID :exp= " + ex.Message + ",ReciveText=" + ReciveText);
+                    objMain.ErrorLogTemp($"error Process Main HID :exp= {ex.Message},ReceiveText={receiveText}");
                     return "";
                 }
                 try
                 {
-                    if (ReciveText.Contains("OK_"))
+                    if (receiveText.Contains("OK_"))
                     {
-                        string str5 = ReciveText.Substring(1, 12);
+                        string str5 = receiveText.Substring(1, 12);
                         string MacAddress = str5.Substring(0, 2) + str5.Substring(3, 2) + str5.Substring(6, 2) + str5.Substring(9, 2);
                         string str6 = MacAndTimeStamp_Create(MacAddress);
                         if (objSwiper.Swiper_GetByMacAddressByChargeRate(MacAddress.ToUpper()).Rows.Count > 0)
                         {
-                            str4_Mac = ReciveText.Split('=')[1].Replace("\r", "").Split(',')[0].ToUpper();
+                            str4_Mac = receiveText.Split('=')[1].Replace("\r", "").Split(',')[0].ToUpper();
                             string str7 = "0";
                             DataTable byMacAddrress = objCard.Card_GetByMacAddrress(str4_Mac);
                             DataTable dataTable = new DataTable();
@@ -1713,107 +1713,107 @@ namespace ClickServerService.Improved
                                 str26 = dataTable.Rows[4]["Price"].ToString();
                                 str28 = dataTable.Rows[4]["PriceKol"].ToString();
                             }
-                            if (ReciveText.Contains("OK_TP"))
+                            if (receiveText.Contains("OK_TP"))
                             {
                                 str1 = "[" + str6 + "]AT+TTIK=" + str7;
                                 str2 = "[" + str6 + "]AT+TTIK=" + str7;
                             }
-                            if (ReciveText.Contains("OK_TT") && str8.Length > 0)
+                            if (receiveText.Contains("OK_TT") && str8.Length > 0)
                             {
                                 str1 = "[" + str6 + "]A1=" + str8;
                                 str2 = "[" + str6 + "]A1=" + str8;
                             }
-                            if (ReciveText.Contains("OK_A1"))
+                            if (receiveText.Contains("OK_A1"))
                             {
                                 str1 = "[" + str6 + "]A2=" + str9;
                                 str2 = "[" + str6 + "]A2=" + str9;
                             }
-                            if (ReciveText.Contains("OK_A2"))
+                            if (receiveText.Contains("OK_A2"))
                             {
                                 str1 = "[" + str6 + "]A3=" + str10;
                                 str2 = "[" + str6 + "]A3=" + str10;
                             }
-                            if (ReciveText.Contains("OK_A3"))
+                            if (receiveText.Contains("OK_A3"))
                             {
                                 str1 = "[" + str6 + "]A4=" + str11;
                                 str2 = "[" + str6 + "]A4=" + str11;
                             }
-                            if (ReciveText.Contains("OK_A4") && str12.Length > 0)
+                            if (receiveText.Contains("OK_A4") && str12.Length > 0)
                             {
                                 str1 = "[" + str6 + "]B1=" + str12;
                                 str2 = "[" + str6 + "]B1=" + str12;
                             }
-                            if (ReciveText.Contains("OK_B1"))
+                            if (receiveText.Contains("OK_B1"))
                             {
                                 str1 = "[" + str6 + "]B2=" + str13;
                                 str2 = "[" + str6 + "]B2=" + str13;
                             }
-                            if (ReciveText.Contains("OK_B2"))
+                            if (receiveText.Contains("OK_B2"))
                             {
                                 str1 = "[" + str6 + "]B3=" + str14;
                                 str2 = "[" + str6 + "]B3=" + str14;
                             }
-                            if (ReciveText.Contains("OK_B3"))
+                            if (receiveText.Contains("OK_B3"))
                             {
                                 str1 = "[" + str6 + "]B4=" + str15;
                                 str2 = "[" + str6 + "]B4=" + str15;
                             }
-                            if (ReciveText.Contains("OK_B4") && str16.Length > 0)
+                            if (receiveText.Contains("OK_B4") && str16.Length > 0)
                             {
                                 str1 = "[" + str6 + "]C1=" + str16;
                                 str2 = "[" + str6 + "]C1=" + str16;
                             }
-                            if (ReciveText.Contains("OK_C1"))
+                            if (receiveText.Contains("OK_C1"))
                             {
                                 str1 = "[" + str6 + "]C2=" + str17;
                                 str2 = "[" + str6 + "]C2=" + str17;
                             }
-                            if (ReciveText.Contains("OK_C2"))
+                            if (receiveText.Contains("OK_C2"))
                             {
                                 str1 = "[" + str6 + "]C3=" + str18;
                                 str2 = "[" + str6 + "]C3=" + str18;
                             }
-                            if (ReciveText.Contains("OK_C3"))
+                            if (receiveText.Contains("OK_C3"))
                             {
                                 str1 = "[" + str6 + "]C4=" + str19;
                                 str2 = "[" + str6 + "]C4=" + str19;
                             }
-                            if (ReciveText.Contains("OK_C4") && str20.Length > 0)
+                            if (receiveText.Contains("OK_C4") && str20.Length > 0)
                             {
                                 str1 = "[" + str6 + "]D1=" + str20;
                                 str2 = "[" + str6 + "]D1=" + str20;
                             }
-                            if (ReciveText.Contains("OK_D1"))
+                            if (receiveText.Contains("OK_D1"))
                             {
                                 str1 = "[" + str6 + "]D2=" + str21;
                                 str2 = "[" + str6 + "]D2=" + str21;
                             }
-                            if (ReciveText.Contains("OK_D2"))
+                            if (receiveText.Contains("OK_D2"))
                             {
                                 str1 = "[" + str6 + "]D3=" + str22;
                                 str2 = "[" + str6 + "]D3=" + str22;
                             }
-                            if (ReciveText.Contains("OK_D3"))
+                            if (receiveText.Contains("OK_D3"))
                             {
                                 str1 = "[" + str6 + "]D4=" + str23;
                                 str2 = "[" + str6 + "]D4=" + str23;
                             }
-                            if (ReciveText.Contains("OK_D4") && str24.Length > 0)
+                            if (receiveText.Contains("OK_D4") && str24.Length > 0)
                             {
                                 str1 = "[" + str6 + "]E1=" + str24;
                                 str2 = "[" + str6 + "]E1=" + str24;
                             }
-                            if (ReciveText.Contains("OK_E1"))
+                            if (receiveText.Contains("OK_E1"))
                             {
                                 str1 = "[" + str6 + "]E2=" + str25;
                                 str2 = "[" + str6 + "]E2=" + str25;
                             }
-                            if (ReciveText.Contains("OK_E2"))
+                            if (receiveText.Contains("OK_E2"))
                             {
                                 str1 = "[" + str6 + "]E3=" + str26;
                                 str2 = "[" + str6 + "]E3=" + str26;
                             }
-                            if (ReciveText.Contains("OK_E3"))
+                            if (receiveText.Contains("OK_E3"))
                             {
                                 str1 = "[" + str6 + "]E4=" + str28;
                                 str2 = "[" + str6 + "]E4=" + str28;
@@ -1825,7 +1825,7 @@ namespace ClickServerService.Improved
                 catch (Exception ex)
                 {
                     objMain.ErrorLog(ex);
-                    objMain.ErrorLogTemp("error Process Main OKCFG_HID :exp= " + ex.Message + ",ReciveText=" + ReciveText);
+                    objMain.ErrorLogTemp($"error Process Main OKCFG_HID :exp= {ex.Message},ReceiveText={receiveText}");
                     return "";
                 }
                 return str1 + "!" + str2 + "!" + str3_Title + "!" + str4_Mac.ToUpper();
@@ -1888,27 +1888,27 @@ namespace ClickServerService.Improved
         {
             try
             {
-                string pathFileSendRecive = AppDomain.CurrentDomain.BaseDirectory + "\\ServiceLogs";
-                if (!Directory.Exists(pathFileSendRecive))
-                    Directory.CreateDirectory(pathFileSendRecive);
+                string pathFileSendReceive = AppDomain.CurrentDomain.BaseDirectory + "\\ServiceLogs";
+                if (!Directory.Exists(pathFileSendReceive))
+                    Directory.CreateDirectory(pathFileSendReceive);
 
-                pathFileSendRecive = "";
+                pathFileSendReceive = "";
                 string tempTime = DateTime.Now.ToString("yyyy-MM-dd");
 
                 if (objMain.Server_SendMessage_Insert(message, dtSR) != 1)
-                    pathFileSendRecive = $"\\ServiceLog_Send{tempTime}.txt";
+                    pathFileSendReceive = $"\\ServiceLog_Send{tempTime}.txt";
 
-                if (string.IsNullOrWhiteSpace(pathFileSendRecive))
+                if (string.IsNullOrWhiteSpace(pathFileSendReceive))
                     return;
-                pathFileSendRecive = AppDomain.CurrentDomain.BaseDirectory + pathFileSendRecive;
-                if (File.Exists(pathFileSendRecive))
+                pathFileSendReceive = AppDomain.CurrentDomain.BaseDirectory + pathFileSendReceive;
+                if (File.Exists(pathFileSendReceive))
                 {
-                    using (StreamWriter streamWriter = File.AppendText(pathFileSendRecive))
+                    using (StreamWriter streamWriter = File.AppendText(pathFileSendReceive))
                         streamWriter.WriteLine(message);
                 }
                 else
                 {
-                    using (StreamWriter text = File.CreateText(pathFileSendRecive))
+                    using (StreamWriter text = File.CreateText(pathFileSendReceive))
                         text.WriteLine(message);
                 }
             }

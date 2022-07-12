@@ -281,7 +281,7 @@ namespace ClickServerService
             }
         }
 
-        public DataTable Swiper_StateUpdateToNotReciveForChargeRate()
+        public DataTable Swiper_StateUpdateToNotReceiveForChargeRate()
         {
             DataTable dataTable = new DataTable();
             try

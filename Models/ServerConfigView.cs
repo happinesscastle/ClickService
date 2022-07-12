@@ -1,5 +1,3 @@
-using System;
-
 namespace ClickServerService.Models
 {
     public class ServerConfigView
@@ -15,7 +13,7 @@ namespace ClickServerService.Models
         public int? ValidateReceivedData { get; set; }
         public string ServerIP { get; set; }
         public int? RepeatConfig { get; set; }
-        public bool? IsShowAllRecive { get; set; }
+        public bool? IsShowAllReceive { get; set; }
         public bool? IsShowAllSend { get; set; }
         public bool? IsDecreasePriceInLevel2 { get; set; }
         public bool? IsEnableTimerSync { get; set; }

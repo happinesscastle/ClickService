@@ -27,7 +27,7 @@ namespace ClickServerService.Improved
 
         readonly System.Timers.Timer TimerChargeRate = new System.Timers.Timer();
         readonly System.Timers.Timer Timer_Create_Repair_CheckList = new System.Timers.Timer();
-        readonly System.Timers.Timer TimerChargeRate_SetNonRecive = new System.Timers.Timer();
+        readonly System.Timers.Timer TimerChargeRate_SetNonReceive = new System.Timers.Timer();
 
         private IContainer components = null;
 
@@ -92,9 +92,9 @@ namespace ClickServerService.Improved
                 TimerChargeRate.Interval = 10000.0;
                 TimerChargeRate.Enabled = false;
 
-                TimerChargeRate_SetNonRecive.Elapsed += new ElapsedEventHandler(TimerChargeRate_SetNonRecive_Tick);
-                TimerChargeRate_SetNonRecive.Interval = 300000.0;// 5 Min
-                TimerChargeRate_SetNonRecive.Enabled = true;
+                TimerChargeRate_SetNonReceive.Elapsed += new ElapsedEventHandler(TimerChargeRate_SetNonReceive_Tick);
+                TimerChargeRate_SetNonReceive.Interval = 300000.0;// 5 Min
+                TimerChargeRate_SetNonReceive.Enabled = true;
 
                 Timer_Create_Repair_CheckList.Elapsed += new ElapsedEventHandler(Timer_Create_Repair_CheckList_Tick);
                 Timer_Create_Repair_CheckList.Interval = 1800000.0;// 30 Min
@@ -140,11 +140,11 @@ namespace ClickServerService.Improved
             }
         }
 
-        private void TimerChargeRate_SetNonRecive_Tick(object sender, EventArgs e)
+        private void TimerChargeRate_SetNonReceive_Tick(object sender, EventArgs e)
         {
             try
             {
-                objSwiper.Swiper_StateUpdateToNotReciveForChargeRate();
+                objSwiper.Swiper_StateUpdateToNotReceiveForChargeRate();
             }
             catch (Exception ex)
             {

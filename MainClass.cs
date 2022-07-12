@@ -192,11 +192,11 @@ namespace ClickServerService
             }
         }
 
-        public void ErrorLogTemp(string P)
+        public void ErrorLogTemp(string errorText)
         {
             try
             {
-                WriteToFileError($"Date: {DateTime.Now} - P: {P}");
+                WriteToFileError($"Date: {DateTime.Now} - P: {errorText}");
             }
             catch { }
         }
@@ -246,7 +246,7 @@ namespace ClickServerService
             }
         }
 
-        public int Games_Ticket_Insert(int ID_GameCenter, string SwiperMacAddress, string Card_MacAddress, int Count, int Status, int ID_Card_Play_Details, string Card_GUID, int IsPersonnel, int ID_Games, int ID_Swiper)
+        public int Games_Ticket_Insert(int id_GameCenter, string swiperMacAddress, string card_MacAddress, int count, int status, int id_Card_Play_Details, string card_GUID, int isPersonnel, int id_Games, int id_Swiper)
         {
             try
             {
@@ -256,25 +256,25 @@ namespace ClickServerService
                     connection.Open();
                     SqlCommand com = new SqlCommand("INSERT INTO [dbo].[Games_Ticket] ([ID] ,[ID_GameCenter] ,[ID_Card_Play_Details] ,[Card_GUID] ,[SwiperMacAddress] ,[Card_MacAddress] ,[Count] ,[Date] ,[Status],[IsPersonnel],[ID_Games],[ID_Swiper]) VALUES (@ID ,@ID_GameCenter ,@ID_Card_Play_Details ,@Card_GUID ,@SwiperMacAddress ,@Card_MacAddress ,@Count ,@Date ,@Status,@IsPersonnel,@ID_Games,@ID_Swiper)", connection);
                     com.Parameters.AddWithValue("@ID", num);
-                    com.Parameters.AddWithValue("@ID_GameCenter", ID_GameCenter);
-                    com.Parameters.AddWithValue("@ID_Card_Play_Details", ID_Card_Play_Details);
+                    com.Parameters.AddWithValue("@ID_GameCenter", id_GameCenter);
+                    com.Parameters.AddWithValue("@ID_Card_Play_Details", id_Card_Play_Details);
                     try
                     {
-                        Guid.Parse(Card_GUID);
-                        com.Parameters.AddWithValue("@Card_GUID", Card_GUID);
+                        Guid.Parse(card_GUID);
+                        com.Parameters.AddWithValue("@Card_GUID", card_GUID);
                     }
                     catch
                     {
                         com.Parameters.AddWithValue("@Card_GUID", "00000000-0000-0000-0000-000000000000");
                     }
-                    com.Parameters.AddWithValue("@SwiperMacAddress", SwiperMacAddress);
-                    com.Parameters.AddWithValue("@Card_MacAddress", Card_MacAddress);
-                    com.Parameters.AddWithValue("@Count", Count);
+                    com.Parameters.AddWithValue("@SwiperMacAddress", swiperMacAddress);
+                    com.Parameters.AddWithValue("@Card_MacAddress", card_MacAddress);
+                    com.Parameters.AddWithValue("@Count", count);
                     com.Parameters.AddWithValue("@Date", DateTime.Now);
-                    com.Parameters.AddWithValue("@Status", Status);
-                    com.Parameters.AddWithValue("@IsPersonnel", IsPersonnel);
-                    com.Parameters.AddWithValue("@ID_Games", ID_Games);
-                    com.Parameters.AddWithValue("@ID_Swiper", ID_Swiper);
+                    com.Parameters.AddWithValue("@Status", status);
+                    com.Parameters.AddWithValue("@IsPersonnel", isPersonnel);
+                    com.Parameters.AddWithValue("@ID_Games", id_Games);
+                    com.Parameters.AddWithValue("@ID_Swiper", id_Swiper);
                     com.ExecuteNonQuery();
                     Synchronize_Insert(com);
                 }
@@ -311,8 +311,8 @@ namespace ClickServerService
         {
             try
             {
-                //if (licence_IsSync == "0")
-                //    return;
+                // if (licence_IsSync == "0")
+                // return;
                 string commandText = com.CommandText;
                 string CommandTypeB = com.CommandType.ToString();
                 int count = com.Parameters.Count;
@@ -335,12 +335,7 @@ namespace ClickServerService
             }
         }
 
-        public int SynchronizeTable_Insert(
-          int ID_GameCenter,
-          DateTime Date,
-          string CommandText,
-          string CommandTypeB,
-          string Parameters,
+        public int SynchronizeTable_Insert(int ID_GameCenter, DateTime Date, string CommandText, string CommandTypeB, string Parameters,
           string PV1, string PV2, string PV3, string PV4, string PV5, string PV6, string PV7, string PV8, string PV9,
           string PV10, string PV11, string PV12, string PV13, string PV14, string PV15, string PV16, string PV17, string PV18, string PV19,
           string PV20, string PV21, string PV22, string PV23, string PV24, string PV25, string PV26, string PV27, string PV28, string PV29,
@@ -541,7 +536,7 @@ namespace ClickServerService
             }
         }
 
-        public int Server_ReciveMessage_Insert(string message, DateTime DateSR)
+        public int Server_ReceiveMessage_Insert(string message, DateTime DateSR)
         {
             try
             {
@@ -591,44 +586,17 @@ namespace ClickServerService
             }
         }
 
-        public DataTable ServerConfig_GetByGameCenter(int ID_GameCenter, int multiRun_AP_ID = 0)
-        {
-            DataTable dataTable = new DataTable();
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(DBPath()))
-                {
-                    connection.Open();
-                    string query_ServerConfigView = @"SELECT dbo.Access_Point.AP_ID, dbo.ServerConfig.ID, dbo.Access_Point.ID_GameCenter, dbo.Access_Point.AP_Name, dbo.Access_Point.AP_IP, dbo.Access_Point.AP_Port, dbo.Access_Point.AP_IsEnable, dbo.Access_Point.AP_Status, dbo.ServerConfig.ValidateReceivedData, dbo.ServerConfig.ServerIP, dbo.ServerConfig.RepeatConfig, dbo.ServerConfig.IsShowAllRecive, dbo.ServerConfig.IsShowAllSend, dbo.ServerConfig.IsDecreasePriceInLevel2, dbo.ServerConfig.IsEnableTimerSync, dbo.ServerConfig.TimeSync, dbo.ServerConfig.IsRestart, dbo.ServerConfig.Ftp_UserName, dbo.ServerConfig.Ftp_Password
-                                                      FROM dbo.Access_Point INNER JOIN dbo.ServerConfig
-                                                      ON dbo.Access_Point.ID_GameCenter = dbo.ServerConfig.ID_GameCenter ";
-                    string query = $@"{query_ServerConfigView} Where dbo.Access_Point.ID_GameCenter = @ID_GameCenter And dbo.Access_Point.AP_ID = @MultiRun_AP_ID ;
-                                     Update ServerConfig set IsRestart = 0  Where ID_GameCenter = @ID_GameCenter";
-                    SqlCommand selectCommand = new SqlCommand(query, connection);
-                    selectCommand.Parameters.AddWithValue("@ID_GameCenter", ID_GameCenter);
-                    selectCommand.Parameters.AddWithValue("@MultiRun_AP_ID", multiRun_AP_ID);
-                    new SqlDataAdapter(selectCommand).Fill(dataTable);
-                }
-                return dataTable;
-            }
-            catch (Exception ex)
-            {
-                ErrorLog(ex);
-                return dataTable;
-            }
-        }
-
         public List<ServerConfigView> ServerConfig_GetByGameCenterID(int id_GameCenter, int? multiRun_AP_ID = null)
         {
             try
             {
                 using (SqlConnection connection = new SqlConnection(DBPath()))
                 {
-                    string query_ServerConfigView = @"SELECT dbo.Access_Point.AP_ID, dbo.ServerConfig.ID, dbo.Access_Point.ID_GameCenter, dbo.Access_Point.AP_Name, dbo.Access_Point.AP_IP, dbo.Access_Point.AP_Port, dbo.Access_Point.AP_IsEnable, dbo.Access_Point.AP_Status, dbo.ServerConfig.ValidateReceivedData, dbo.ServerConfig.ServerIP, dbo.ServerConfig.RepeatConfig, dbo.ServerConfig.IsShowAllRecive, dbo.ServerConfig.IsShowAllSend, dbo.ServerConfig.IsDecreasePriceInLevel2, dbo.ServerConfig.IsEnableTimerSync, dbo.ServerConfig.TimeSync, dbo.ServerConfig.IsRestart, dbo.ServerConfig.Ftp_UserName, dbo.ServerConfig.Ftp_Password
-                                                      FROM dbo.Access_Point INNER JOIN dbo.ServerConfig
-                                                      ON dbo.Access_Point.ID_GameCenter = dbo.ServerConfig.ID_GameCenter ";
+                    string query_ServerConfigView = @"Select dbo.Access_Point.AP_ID, dbo.ServerConfig.ID, dbo.Access_Point.ID_GameCenter, dbo.Access_Point.AP_Name, dbo.Access_Point.AP_IP, dbo.Access_Point.AP_Port, dbo.Access_Point.AP_IsEnable, dbo.Access_Point.AP_Status, dbo.ServerConfig.ValidateReceivedData, dbo.ServerConfig.ServerIP, dbo.ServerConfig.RepeatConfig, dbo.ServerConfig.IsShowAllRecive As 'IsShowAllReceive', dbo.ServerConfig.IsShowAllSend, dbo.ServerConfig.IsDecreasePriceInLevel2, dbo.ServerConfig.IsEnableTimerSync, dbo.ServerConfig.TimeSync, dbo.ServerConfig.IsRestart, dbo.ServerConfig.Ftp_UserName, dbo.ServerConfig.Ftp_Password
+                                                      From dbo.Access_Point Inner Join dbo.ServerConfig
+                                                      On dbo.Access_Point.ID_GameCenter = dbo.ServerConfig.ID_GameCenter ";
                     string query = $@"{query_ServerConfigView} Where dbo.Access_Point.ID_GameCenter = @ID_GameCenter ;
-                                     Update ServerConfig set IsRestart = 0  Where ID_GameCenter = @ID_GameCenter";
+                                     Update ServerConfig Set IsRestart = 0  Where ID_GameCenter = @ID_GameCenter";
                     List<ServerConfigView> temp = (List<ServerConfigView>)connection.Query<ServerConfigView>(query, new { ID_GameCenter = id_GameCenter });
                     if (multiRun_AP_ID != null)
                         temp = temp.Where(i => i.AP_ID == multiRun_AP_ID).ToList();
@@ -762,7 +730,7 @@ namespace ClickServerService
             return flag;
         }
 
-        public int ReceiveStorage_insert(string ReciveText, int P)
+        public int ReceiveStorage_insert(string receiveText, int P)
         {
             try
             {
@@ -770,7 +738,7 @@ namespace ClickServerService
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand(nameof(ReceiveStorage_insert), connection) { CommandType = CommandType.StoredProcedure };
-                    sqlCommand.Parameters.AddWithValue("@ReciveText", ReciveText);
+                    sqlCommand.Parameters.AddWithValue("@ReciveText", receiveText);
                     sqlCommand.Parameters.AddWithValue("@P", P);
                     sqlCommand.ExecuteNonQuery();
                     connection.Close();
@@ -784,7 +752,7 @@ namespace ClickServerService
             }
         }
 
-        public int ReceiveStorage_getReciveText(string ReciveText)
+        public int ReceiveStorage_getReciveText(string receiveText)
         {
             try
             {
@@ -793,7 +761,7 @@ namespace ClickServerService
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand(nameof(ReceiveStorage_getReciveText), connection) { CommandType = CommandType.StoredProcedure };
-                    sqlCommand.Parameters.AddWithValue("@ReciveText", ReciveText);
+                    sqlCommand.Parameters.AddWithValue("@ReciveText", receiveText);
                     SqlParameter sqlParameter = sqlCommand.Parameters.Add("@RetState", SqlDbType.Int);
                     sqlParameter.Direction = ParameterDirection.Output;
                     sqlCommand.ExecuteNonQuery();
@@ -809,7 +777,7 @@ namespace ClickServerService
             }
         }
 
-        public int ReceiveStorage_UpdateIsProcess(string ReciveText)
+        public int ReceiveStorage_UpdateIsProcess(string receiveText)
         {
             try
             {
@@ -818,7 +786,7 @@ namespace ClickServerService
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand(nameof(ReceiveStorage_UpdateIsProcess), connection) { CommandType = CommandType.StoredProcedure };
-                    sqlCommand.Parameters.AddWithValue("@ReciveText", ReciveText);
+                    sqlCommand.Parameters.AddWithValue("@ReciveText", receiveText);
                     sqlCommand.Parameters.AddWithValue("@Processed_Date", DateTime.Now);
                     sqlCommand.ExecuteNonQuery();
                     connection.Close();

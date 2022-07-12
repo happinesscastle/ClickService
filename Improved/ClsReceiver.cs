@@ -24,11 +24,11 @@ namespace ClickServerService.Improved
         Thread receiveThread;
 
         bool _checkBoxShowAll = false;
-        bool chbShowAllRecive = false;
+        bool chbShowAllReceive = false;
         bool flagConnectToSQL = false;
         readonly int multiRun_AP_ID = 0;
 
-        string dispStringRecive = "", dispStringSplit = "", txtRecive = "";
+        string dispStringReceive = "", dispStringSplit = "", txtReceive = "";
 
         public ClsReceiver(int apID)
         {
@@ -69,8 +69,8 @@ namespace ClickServerService.Improved
                 serverConfigView.AP_IsEnable = false;
                 serverConfigView.ServerIP = "0.0.0.0";
                 serverConfigView.RepeatConfig = 2;
-                chbShowAllRecive = true;
-                txtRecive = "";
+                chbShowAllReceive = true;
+                txtReceive = "";
                 objSwiper.Swiper_Update_Config_StateAll(0, objMain.ID_GameCenter_Local_Get());
 
                 if (!objMain.Licence_Check())
@@ -85,9 +85,9 @@ namespace ClickServerService.Improved
                     if (byGameCenter.Any())
                     {
                         serverConfigView = byGameCenter.FirstOrDefault();
-                        chbShowAllRecive = serverConfigView.IsShowAllRecive.Value;
-                        _checkBoxShowAll = serverConfigView.IsShowAllRecive.Value;
-                        WriteToFile("txtServerIp:" + serverConfigView.ServerIP + $",chbAP{multiRun_AP_ID}:" + serverConfigView.AP_IsEnable.ToString() + $",txtAp{multiRun_AP_ID}_IP:" + serverConfigView.AP_IP + ",cblRepeatConfig:" + (object)serverConfigView.RepeatConfig + "cblValidateReceivedData:" + (object)serverConfigView.ValidateReceivedData + ",chbDecreasePriceInLevel2:" + serverConfigView.IsDecreasePriceInLevel2.ToString() + ",chbShowAllRecive:" + chbShowAllRecive.ToString() + ",chbShowAllSend:" + serverConfigView.IsShowAllSend.ToString());
+                        chbShowAllReceive = serverConfigView.IsShowAllReceive.Value;
+                        _checkBoxShowAll = serverConfigView.IsShowAllReceive.Value;
+                        WriteToFile("txtServerIp:" + serverConfigView.ServerIP + $",chbAP{multiRun_AP_ID}:" + serverConfigView.AP_IsEnable.ToString() + $",txtAp{multiRun_AP_ID}_IP:" + serverConfigView.AP_IP + ",cblRepeatConfig:" + (object)serverConfigView.RepeatConfig + "cblValidateReceivedData:" + (object)serverConfigView.ValidateReceivedData + ",chbDecreasePriceInLevel2:" + serverConfigView.IsDecreasePriceInLevel2.ToString() + ",chbShowAllReceive:" + chbShowAllReceive.ToString() + ",chbShowAllSend:" + serverConfigView.IsShowAllSend.ToString());
                     }
                     else
                         WriteToFile("Not find service config. Please config server service");
@@ -208,7 +208,7 @@ namespace ClickServerService.Improved
 
         public void Receive_TCP()
         {
-            dispStringRecive = "";
+            dispStringReceive = "";
             dispStringSplit = "";
             try
             {
@@ -231,29 +231,29 @@ namespace ClickServerService.Improved
                             int count;
                             while ((count = stream.Read(numArray, 0, numArray.Length)) > 0)
                             {
-                                dispStringRecive = "";
+                                dispStringReceive = "";
                                 dispStringSplit = "";
                                 try
                                 {
                                     string str2 = Encoding.ASCII.GetString(numArray, 0, count).Replace("\n", "");
 
-                                    objMain.MyPrint("+R%Recive%" + serverConfigView.AP_IP + "%" + str2, ConsoleColor.Cyan, DateTime.Now);
+                                    objMain.MyPrint("+R%Receive%" + serverConfigView.AP_IP + "%" + str2, ConsoleColor.Cyan, DateTime.Now);
 
-                                    dispStringRecive += str2;
+                                    dispStringReceive += str2;
                                     try
                                     {
-                                        string[] strArray = dispStringRecive.Split('[');
+                                        string[] strArray = dispStringReceive.Split('[');
                                         for (int index = 0; index < strArray.Length; ++index)
                                         {
                                             dispStringSplit = strArray[index].Trim();
                                             if (dispStringSplit.Length > 0)
                                             {
                                                 dispStringSplit = "[" + strArray[index].Trim();
-                                                DateTime tempReciveTime = DateTime.Now;
-                                                if (Recive_ProcessData(dispStringSplit, multiRun_AP_ID) == "true")
-                                                    Recive_DisplayText(dispStringSplit, $"P{multiRun_AP_ID}", tempReciveTime);
+                                                DateTime tempReceiveTime = DateTime.Now;
+                                                if (Receive_ProcessData(dispStringSplit, multiRun_AP_ID) == "true")
+                                                    Receive_DisplayText(dispStringSplit, $"P{multiRun_AP_ID}", tempReceiveTime);
                                                 else if (_checkBoxShowAll)
-                                                    Recive_DisplayText(dispStringSplit, $"P{multiRun_AP_ID}", tempReciveTime);
+                                                    Receive_DisplayText(dispStringSplit, $"P{multiRun_AP_ID}", tempReceiveTime);
                                             }
                                         }
                                     }
@@ -285,19 +285,19 @@ namespace ClickServerService.Improved
             }
         }
 
-        public string Recive_ProcessData(string ReciveText, int P)
+        public string Receive_ProcessData(string receiveText, int p)
         {
             bool flag = false;
             try
             {
-                ReciveText = ReciveText.Trim();
+                receiveText = receiveText.Trim();
                 try
                 {
-                    if (ReciveText.Contains("CONFIG"))
+                    if (receiveText.Contains("CONFIG"))
                     {
-                        if (new Regex("^[[][0-9a-fA-F]{12}[]][+]CONFIG$", RegexOptions.IgnoreCase).Match(ReciveText).Success)
+                        if (new Regex("^[[][0-9a-fA-F]{12}[]][+]CONFIG$", RegexOptions.IgnoreCase).Match(receiveText).Success)
                         {
-                            ReceiveStorage_Insert(ReciveText, P);
+                            ReceiveStorage_Insert(receiveText, p);
                             flag = true;
                         }
                     }
@@ -305,15 +305,15 @@ namespace ClickServerService.Improved
                 catch (Exception ex)
                 {
                     objMain.ErrorLog(ex);
-                    objMain.ErrorLogTemp("error Process_ReciveData CONFIG :exp= " + ex.Message + ",ReciveText=" + ReciveText);
+                    objMain.ErrorLogTemp($"error Process_ReceiveData CONFIG :exp= {ex.Message},ReceiveText={receiveText}");
                 }
                 try
                 {
-                    if (ReciveText.Contains("OKCFG") && !flag)
+                    if (receiveText.Contains("OKCFG") && !flag)
                     {
-                        if (new Regex("^[[][0-9a-fA-F]{12}[]]OKCFG[0-9]{1}$", RegexOptions.IgnoreCase).Match(ReciveText).Success)
+                        if (new Regex("^[[][0-9a-fA-F]{12}[]]OKCFG[0-9]{1}$", RegexOptions.IgnoreCase).Match(receiveText).Success)
                         {
-                            ReceiveStorage_Insert(ReciveText, P);
+                            ReceiveStorage_Insert(receiveText, p);
                             flag = true;
                         }
                     }
@@ -321,15 +321,15 @@ namespace ClickServerService.Improved
                 catch (Exception ex)
                 {
                     objMain.ErrorLog(ex);
-                    objMain.ErrorLogTemp("error Process_ReciveData OKCFG :exp= " + ex.Message + ",ReciveText=" + ReciveText);
+                    objMain.ErrorLogTemp($"error Process_ReceiveData OKCFG :exp= {ex.Message},ReceiveText={receiveText}");
                 }
                 try
                 {
-                    if (ReciveText.Contains("CID") && !flag)
+                    if (receiveText.Contains("CID") && !flag)
                     {
-                        if (new Regex("^[[][0-9a-f]{12}[]][+]CID[=][0-9a-fA-F]{8}[,][0-9]{1}$", RegexOptions.IgnoreCase).Match(ReciveText).Success)
+                        if (new Regex("^[[][0-9a-f]{12}[]][+]CID[=][0-9a-fA-F]{8}[,][0-9]{1}$", RegexOptions.IgnoreCase).Match(receiveText).Success)
                         {
-                            ReceiveStorage_Insert(ReciveText, P);
+                            ReceiveStorage_Insert(receiveText, p);
                             flag = true;
                         }
                     }
@@ -337,15 +337,15 @@ namespace ClickServerService.Improved
                 catch (Exception ex)
                 {
                     objMain.ErrorLog(ex);
-                    objMain.ErrorLogTemp("error Process_ReciveData CID :exp= " + ex.Message + ",ReciveText=" + ReciveText);
+                    objMain.ErrorLogTemp($"error Process_ReceiveData CID :exp= {ex.Message},ReceiveText={receiveText}");
                 }
                 try
                 {
-                    if (ReciveText.Contains("+P=") && !flag)
+                    if (receiveText.Contains("+P=") && !flag)
                     {
-                        if (new Regex("^[[][0-9a-f]{12}[]][+]P[=][0-9a-fA-F]{8}[,][0-9]{1}$", RegexOptions.IgnoreCase).Match(ReciveText).Success)
+                        if (new Regex("^[[][0-9a-f]{12}[]][+]P[=][0-9a-fA-F]{8}[,][0-9]{1}$", RegexOptions.IgnoreCase).Match(receiveText).Success)
                         {
-                            ReceiveStorage_Insert(ReciveText, P);
+                            ReceiveStorage_Insert(receiveText, p);
                             flag = true;
                         }
                     }
@@ -353,15 +353,15 @@ namespace ClickServerService.Improved
                 catch (Exception ex)
                 {
                     objMain.ErrorLog(ex);
-                    objMain.ErrorLogTemp("error Process_ReciveData +P :exp= " + ex.Message + ",ReciveText=" + ReciveText);
+                    objMain.ErrorLogTemp($"error Process_ReceiveData +P :exp= {ex.Message},ReceiveText={receiveText}");
                 }
                 try
                 {
-                    if (ReciveText.Contains("+T=") && !flag)
+                    if (receiveText.Contains("+T=") && !flag)
                     {
-                        if (new Regex("^[[][0-9a-f]{12}[]][+]T[=][0-9a-fA-F]{8}[,][0-9]{4}[,][A-Z]{1}$", RegexOptions.IgnoreCase).Match(ReciveText).Success)
+                        if (new Regex("^[[][0-9a-f]{12}[]][+]T[=][0-9a-fA-F]{8}[,][0-9]{4}[,][A-Z]{1}$", RegexOptions.IgnoreCase).Match(receiveText).Success)
                         {
-                            ReceiveStorage_Insert(ReciveText, P);
+                            ReceiveStorage_Insert(receiveText, p);
                             flag = true;
                         }
                     }
@@ -369,78 +369,78 @@ namespace ClickServerService.Improved
                 catch (Exception ex)
                 {
                     objMain.ErrorLog(ex);
-                    objMain.ErrorLogTemp("error Process_ReciveData +T :exp= " + ex.Message + ",ReciveText=" + ReciveText);
+                    objMain.ErrorLogTemp($"error Process_ReceiveData +T :exp= {ex.Message},ReceiveText={receiveText}");
                 }
                 try
                 {
-                    if (ReciveText.Contains("Error_conf") && !flag)
+                    if (receiveText.Contains("Error_conf") && !flag)
                     {
-                        ReceiveStorage_Insert(ReciveText, P);
+                        ReceiveStorage_Insert(receiveText, p);
                         flag = true;
                     }
                 }
                 catch (Exception ex)
                 {
                     objMain.ErrorLog(ex);
-                    objMain.ErrorLogTemp("error Process_ReciveData Error_config :exp= " + ex.Message + ",ReciveText=" + ReciveText);
+                    objMain.ErrorLogTemp($"error Process_ReceiveData Error_config :exp= {ex.Message},ReceiveText={receiveText}");
                 }
                 try
                 {
-                    if (ReciveText.Contains("HID") && !flag)
+                    if (receiveText.Contains("HID") && !flag)
                     {
-                        new Regex("^[[][0-9a-f]{12}[]][+]HID[=][0-9a-fA-F]{8}[,][0-9]{1}$", RegexOptions.IgnoreCase).Match(ReciveText);
-                        ReceiveStorage_Insert(ReciveText, P);
+                        new Regex("^[[][0-9a-f]{12}[]][+]HID[=][0-9a-fA-F]{8}[,][0-9]{1}$", RegexOptions.IgnoreCase).Match(receiveText);
+                        ReceiveStorage_Insert(receiveText, p);
                         flag = true;
                     }
                 }
                 catch (Exception ex)
                 {
                     objMain.ErrorLog(ex);
-                    objMain.ErrorLogTemp("error Process_ReciveData HID :exp= " + ex.Message + ",ReciveText=" + ReciveText);
+                    objMain.ErrorLogTemp($"error Process_ReceiveData HID :exp= {ex.Message},ReceiveText={receiveText}");
                 }
                 try
                 {
-                    if (ReciveText.Contains("OK_") && !flag)
+                    if (receiveText.Contains("OK_") && !flag)
                     {
-                        new Regex("^[[][0-9a-fA-F]{12}[]]OKCFG_[0-9a-fA-F]$", RegexOptions.IgnoreCase).Match(ReciveText);
-                        ReceiveStorage_Insert(ReciveText, P);
+                        new Regex("^[[][0-9a-fA-F]{12}[]]OKCFG_[0-9a-fA-F]$", RegexOptions.IgnoreCase).Match(receiveText);
+                        ReceiveStorage_Insert(receiveText, p);
                         flag = true;
                     }
                 }
                 catch (Exception ex)
                 {
                     objMain.ErrorLog(ex);
-                    objMain.ErrorLogTemp("error Process_ReciveData OKCFG_HID :exp= " + ex.Message + ",ReciveText=" + ReciveText);
+                    objMain.ErrorLogTemp($"error Process_ReceiveData OKCFG_HID :exp= {ex.Message},ReceiveText={receiveText}");
                 }
                 return flag.ToString().ToLower();
             }
             catch (Exception ex)
             {
                 objMain.ErrorLog(ex);
-                objMain.ErrorLogTemp("error Process_ReciveData :" + ex.Message);
+                objMain.ErrorLogTemp($"error Process_ReceiveData :{ex.Message}");
                 return flag.ToString().ToLower();
             }
         }
 
-        private void Recive_DisplayText(string reciveData, string tcpIpName, DateTime reciveTime)
+        private void Receive_DisplayText(string receiveData, string tcpIpName, DateTime receiveTime)
         {
             try
             {
-                if (txtRecive.Length > 10000)
-                    txtRecive = "";
+                if (txtReceive.Length > 10000)
+                    txtReceive = "";
 
-                string reciveTimeStr = reciveTime.ToString("HH:mm:ss:fff");
-                if (!chbShowAllRecive)
+                string receiveTimeStr = receiveTime.ToString("HH:mm:ss:fff");
+                if (!chbShowAllReceive)
                 {
-                    if (txtRecive.Contains(reciveData))
+                    if (txtReceive.Contains(receiveData))
                         return;
-                    WriteToFile_ReciveLog($"{tcpIpName}-{reciveTimeStr}-{reciveData}", reciveTime);
-                    txtRecive += $"{tcpIpName}-{reciveTimeStr}-{reciveData}";
+                    WriteToFile_ReceiveLog($"{tcpIpName}-{receiveTimeStr}-{receiveData}", receiveTime);
+                    txtReceive += $"{tcpIpName}-{receiveTimeStr}-{receiveData}";
                 }
                 else
                 {
-                    WriteToFile_ReciveLog($"{tcpIpName}-{reciveTimeStr}-{reciveData}", reciveTime);
-                    txtRecive += $"{tcpIpName}-{reciveTimeStr}-{reciveData}";
+                    WriteToFile_ReceiveLog($"{tcpIpName}-{receiveTimeStr}-{receiveData}", receiveTime);
+                    txtReceive += $"{tcpIpName}-{receiveTimeStr}-{receiveData}";
                 }
             }
             catch (Exception ex)
@@ -449,18 +449,18 @@ namespace ClickServerService.Improved
             }
         }
 
-        public bool ReceiveStorage_Insert(string ReciveText, int P)
+        public bool ReceiveStorage_Insert(string receiveText, int p)
         {
             try
             {
-                objMain.ReceiveStorage_insert(ReciveText, P);
-                if (ReciveText.Contains("OKCFG1"))
-                    objMain.ReceiveStorage_insert(ReciveText, P);
+                objMain.ReceiveStorage_insert(receiveText, p);
+                if (receiveText.Contains("OKCFG1"))
+                    objMain.ReceiveStorage_insert(receiveText, p);
                 return true;
             }
             catch (Exception ex)
             {
-                objMain.ErrorLogTemp("ReceiveStorage_Insert:exp:" + ex.Message + "ReciveText:" + ReciveText);
+                objMain.ErrorLogTemp($"ReceiveStorage_Insert:exp:{ex.Message}ReceiveText:{receiveText}");
                 return false;
             }
         }
@@ -508,31 +508,31 @@ namespace ClickServerService.Improved
         /// <summary>
         /// Insert in Database if Not Write in File
         /// </summary>
-        public void WriteToFile_ReciveLog(string message, DateTime dtSR)
+        public void WriteToFile_ReceiveLog(string message, DateTime dtSR)
         {
             try
             {
-                string pathFileSendRecive = AppDomain.CurrentDomain.BaseDirectory + "\\ServiceLogs";
-                if (!Directory.Exists(pathFileSendRecive))
-                    Directory.CreateDirectory(pathFileSendRecive);
+                string pathFileSendReceive = AppDomain.CurrentDomain.BaseDirectory + "\\ServiceLogs";
+                if (!Directory.Exists(pathFileSendReceive))
+                    Directory.CreateDirectory(pathFileSendReceive);
 
-                pathFileSendRecive = "";
+                pathFileSendReceive = "";
                 string tempTime = DateTime.Now.ToString("yyyy-MM-dd");
 
-                if (objMain.Server_ReciveMessage_Insert(message, dtSR) != 1)
-                    pathFileSendRecive = $"\\ServiceLog_Recive{tempTime}.txt";
+                if (objMain.Server_ReceiveMessage_Insert(message, dtSR) != 1)
+                    pathFileSendReceive = $"\\ServiceLog_Receive{tempTime}.txt";
 
-                if (string.IsNullOrWhiteSpace(pathFileSendRecive))
+                if (string.IsNullOrWhiteSpace(pathFileSendReceive))
                     return;
-                pathFileSendRecive = AppDomain.CurrentDomain.BaseDirectory + pathFileSendRecive;
-                if (File.Exists(pathFileSendRecive))
+                pathFileSendReceive = AppDomain.CurrentDomain.BaseDirectory + pathFileSendReceive;
+                if (File.Exists(pathFileSendReceive))
                 {
-                    using (StreamWriter streamWriter = File.AppendText(pathFileSendRecive))
+                    using (StreamWriter streamWriter = File.AppendText(pathFileSendReceive))
                         streamWriter.WriteLine(message);
                 }
                 else
                 {
-                    using (StreamWriter text = File.CreateText(pathFileSendRecive))
+                    using (StreamWriter text = File.CreateText(pathFileSendReceive))
                         text.WriteLine(message);
                 }
             }

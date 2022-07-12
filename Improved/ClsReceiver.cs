@@ -159,12 +159,12 @@ namespace ClickServerService.Improved
                 {
                     if ((Send_Main(serverConfigView.AP_IP, "check", ClsStarter.tCPClientList.SingleOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient) == 1) && receiveThread.IsAlive)
                     {
-                        objMain.ServerConfig_SetAp1Status(objMain.ID_GameCenter_Local_Get(), true, multiRun_AP_ID);
+                        objMain.ServerConfig_SetApStatus(objMain.ID_GameCenter_Local_Get(), true, multiRun_AP_ID);
                     }
                     else
                     {
                         WriteToFile(DateTime.Now.ToString() + $": Ap{multiRun_AP_ID} is Disconnect.");
-                        objMain.ServerConfig_SetAp1Status(objMain.ID_GameCenter_Local_Get(), false, multiRun_AP_ID);
+                        objMain.ServerConfig_SetApStatus(objMain.ID_GameCenter_Local_Get(), false, multiRun_AP_ID);
                         try
                         {
                             objMain.MyPrint($"R%TCp_IP_Thread_{multiRun_AP_ID}.Abort()", ConsoleColor.DarkMagenta);
@@ -236,11 +236,11 @@ namespace ClickServerService.Improved
                                 dispStringSplit = "";
                                 try
                                 {
-                                    string str2 = Encoding.ASCII.GetString(numArray, 0, count).Replace("\n", "");
+                                    string readData = Encoding.ASCII.GetString(numArray, 0, count).Replace("\n", "");
 
-                                    objMain.MyPrint("+R%Receive%" + serverConfigView.AP_IP + "%" + str2, ConsoleColor.Cyan, DateTime.Now);
+                                    objMain.MyPrint("+R%Receive%" + serverConfigView.AP_IP + "%" + readData, ConsoleColor.Cyan, DateTime.Now);
 
-                                    dispStringReceive += str2;
+                                    dispStringReceive += readData;
                                     try
                                     {
                                         string[] strArray = dispStringReceive.Split('[');

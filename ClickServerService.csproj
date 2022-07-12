@@ -84,6 +84,8 @@
     <Compile Include="Models\Access_Point.cs" />
     <Compile Include="Models\MyTCPClient.cs" />
     <Compile Include="Models\ServerConfigView.cs" />
+    <Compile Include="Models\Swiper.cs" />
+    <Compile Include="Models\Swipers_Get_ByChargeRate_ByGameCenter.cs" />
     <Compile Include="Pattern.cs" />
     <Compile Include="ProductTemplateClass.cs" />
     <Compile Include="SwiperClass.cs" />

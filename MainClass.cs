@@ -554,9 +554,7 @@ namespace ClickServerService
                 {
                     dateTime = Convert.ToDateTime(DateSR);
                 }
-                catch
-                {
-                }
+                catch { }
                 sqlCommand.Parameters.AddWithValue("@Date", dateTime);
                 sqlCommand.ExecuteNonQuery();
                 connection.Close();
@@ -614,7 +612,7 @@ namespace ClickServerService
             }
         }
 
-        public int ServerConfig_SetAp1Status(int ID_GameCenter, bool Status, int multiRun_AP_ID = 0)
+        public int ServerConfig_SetApStatus(int ID_GameCenter, bool Status, int multiRun_AP_ID = 0)
         {
             try
             {
@@ -623,27 +621,6 @@ namespace ClickServerService
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand("Update Access_Point Set AP_Status = @Status Where ID_GameCenter = @ID_GameCenter And AP_ID = @MultiRun_AP_ID", connection);
                     sqlCommand.Parameters.AddWithValue("@MultiRun_AP_ID", multiRun_AP_ID);
-                    sqlCommand.Parameters.AddWithValue("@ID_GameCenter", ID_GameCenter);
-                    sqlCommand.Parameters.AddWithValue("@Status", Status);
-                    sqlCommand.ExecuteNonQuery();
-                }
-                return 1;
-            }
-            catch (Exception ex)
-            {
-                ErrorLog(ex);
-                return -1;
-            }
-        }
-
-        public int ServerConfig_SetAp2Status(int ID_GameCenter, bool Status)
-        {
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(DBPath()))
-                {
-                    connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(" update ServerConfig set AP2_Status=@Status  where [ID_GameCenter]=@ID_GameCenter ", connection);
                     sqlCommand.Parameters.AddWithValue("@ID_GameCenter", ID_GameCenter);
                     sqlCommand.Parameters.AddWithValue("@Status", Status);
                     sqlCommand.ExecuteNonQuery();

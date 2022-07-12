@@ -1,14 +1,19 @@
 ﻿using System.Text.RegularExpressions;
+using System.Collections.Generic;
+using ClickServerService.Models;
 using System.Data.SqlClient;
 using System.Data;
 using Dapper;
 using System;
+using System.Linq;
 
 namespace ClickServerService
 {
     internal class SwiperClass
     {
         private readonly MainClass objMain = new MainClass();
+        public static List<Swiper> Swipers = new List<Swiper>();
+        public static List<Swipers_Get_ByChargeRate_ByGameCenter> Swipers_ChargeRate = new List<Swipers_Get_ByChargeRate_ByGameCenter>();
 
         public int Swiper_Update(int ID, int ID_GameCenter, string Title, string MacAddress, int ID_Games, bool State, string Dec, DateTime DateStart, int Price1, int Price2, int Delay1, int Delay2)
         {
@@ -170,7 +175,7 @@ namespace ClickServerService
                 {
                     connection.Open();
                     SqlCommand selectCommand = new SqlCommand("Swiper_Get_ByMacAddress_ByChargeRate_ByGameCenter", connection) { CommandType = CommandType.StoredProcedure };
-                    selectCommand.Parameters.AddWithValue("@MacAddress", MacAddress);
+                    selectCommand.Parameters.AddWithValue("@MacAddress", MacAddress.ToUpper());
                     selectCommand.Parameters.AddWithValue("@ID_Days", RetDayOfWeek());
                     selectCommand.Parameters.AddWithValue("@ID_GameCenter", objMain.ID_GameCenter_Local_Get());
                     selectCommand.Parameters.AddWithValue("@hourTime", DateTime.Now.ToString("HH:mm").Split(':')[0]);
@@ -390,6 +395,9 @@ namespace ClickServerService
 
         #region ' S.E.M '
 
+        /// <summary>
+        /// Get Mac From Command
+        /// </summary>
         public string GetMacSwiper(string command)
         {
             try
@@ -437,6 +445,55 @@ namespace ClickServerService
                 objMain.ErrorLog(ex);
             }
             return "";
+        }
+
+        /// <summary>
+        /// Get All Swiper From Database 
+        /// </summary>
+        public List<Swiper> GetAllSwiper()
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                {
+
+                    string query = @"Select * From Swiper ID_GameCenter = @ID_GameCenter";
+                    var temp = (List<Swiper>)connection.Query<Swiper>(query, new { ID_GameCenter = objMain.ID_GameCenter_Local_Get() });
+                    if (temp.Any())
+                        return temp;
+                }
+            }
+            catch (Exception ex)
+            {
+                objMain.ErrorLog(ex);
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Get Swipers By ByChargeRate
+        /// </summary>
+        public List<Swipers_Get_ByChargeRate_ByGameCenter> Swipers_GetByChargeRate()
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                {
+                    var param = new DynamicParameters();
+                    param.Add("@ID_Days", RetDayOfWeek());
+                    param.Add("@ID_GameCenter", objMain.ID_GameCenter_Local_Get());
+                    param.Add("@hourTime", DateTime.Now.ToString("HH:mm").Split(':')[0]);
+                    var res = connection.QueryMultiple("Swipers_Get_ByChargeRate_ByGameCenter", param, commandType: CommandType.StoredProcedure);
+                    List<Swipers_Get_ByChargeRate_ByGameCenter> temp = res.Read<Swipers_Get_ByChargeRate_ByGameCenter>().ToList();
+                    if (temp.Any())
+                        return temp;
+                }
+            }
+            catch (Exception ex)
+            {
+                objMain.ErrorLog(ex);
+            }
+            return null;
         }
 
         #endregion

@@ -24,7 +24,7 @@ namespace ClickServerService.Improved
 
         int Main_ID_GameCenter = 1, TCP_RepeatCount = 1;
 
-        string txtSend = ""; 
+        string txtSend = "";
 
         #endregion
 
@@ -35,7 +35,6 @@ namespace ClickServerService.Improved
                 //objMain.MyPrint("Send - AppLoadMain", ConsoleColor.Blue);
                 txtSend = "";
 
-                MainClass.key_Value_List = objMain.Key_Value_Get();
                 objSwiper.Swiper_Update_Config_StateAll(0, objMain.ID_GameCenter_Local_Get());
 
                 objMain.LoadGameCenterID();
@@ -93,13 +92,13 @@ namespace ClickServerService.Improved
                 DataTable storageGetForSend = objMain.ReceiveStorage_GetForSend();
                 for (int index1 = 0; index1 < storageGetForSend.Rows.Count; ++index1)
                 {
-                    string str1 = Send_Process_Main(storageGetForSend.Rows[index1]["ReciveText"].ToString());
-                    if (!string.IsNullOrWhiteSpace(str1))
+                    string readDataProcessMain = Send_Process_Main(storageGetForSend.Rows[index1]["ReciveText"].ToString());
+                    if (!string.IsNullOrWhiteSpace(readDataProcessMain))
                     {
-                        string str2 = str1.Split('!')[0].ToString();
-                        str1.Split('!')[1].ToString();
-                        string t_SwiperName = str1.Split('!')[2].ToString();
-                        string t_CardmacAddress = str1.Split('!')[3].ToString();
+                        string str2 = readDataProcessMain.Split('!')[0].ToString();
+                        readDataProcessMain.Split('!')[1].ToString();
+                        string t_SwiperName = readDataProcessMain.Split('!')[2].ToString();
+                        string t_CardmacAddress = readDataProcessMain.Split('!')[3].ToString();
 
                         objMain.ReceiveStorage_UpdateIsProcess(storageGetForSend.Rows[index1]["ReciveText"].ToString());
                         int tcpRepeatCount = TCP_RepeatCount;
@@ -410,8 +409,13 @@ namespace ClickServerService.Improved
                 {
                     try
                     {
-                        string swiperSegment = objSwiper.GetSwiperSegmentByMac(objSwiper.GetMacSwiper(command), Main_ID_GameCenter);
-                        bool isAllowedToSend = ClsStarter.accessPoints.Where(ap => ap.AP_ID == item.AP_ID).SingleOrDefault().ListSwiperSegmentIDs.Contains(swiperSegment);
+                        bool isAllowedToSend = false;
+                        var swiper = SwiperClass.Swipers.SingleOrDefault(mc => mc.MacAddress.ToUpper() == objSwiper.GetMacSwiper(command).ToUpper());
+                        if (swiper != null)
+                        {
+                            if (swiper.ID_Swiper_Segment != null)
+                                isAllowedToSend = ClsStarter.accessPoints.Where(ap => ap.AP_ID == item.AP_ID).SingleOrDefault().ListSwiperSegmentIDs.Contains(swiper.ID_Swiper_Segment.Value.ToString());
+                        }
                         if (isAllowedToSend)
                         {
                             if (item.TCPClient.Connected)
@@ -436,9 +440,16 @@ namespace ClickServerService.Improved
         {
             try
             {
-                string swiperSegment = objSwiper.GetSwiperSegmentByMac(objSwiper.GetMacSwiper(command), Main_ID_GameCenter);
-                int id_ap = ClsStarter.accessPoints.Where(i => i.AP_IP == ipAp).FirstOrDefault().AP_ID;
-                bool isAllowedToSend = ClsStarter.accessPoints.Where(ap => ap.AP_ID == id_ap).SingleOrDefault().ListSwiperSegmentIDs.Contains(swiperSegment);
+                bool isAllowedToSend = false;
+                var swiper = SwiperClass.Swipers.SingleOrDefault(mc => mc.MacAddress.ToUpper() == objSwiper.GetMacSwiper(command).ToUpper());
+                if (swiper != null)
+                {
+                    if (swiper.ID_Swiper_Segment != null)
+                    {
+                        int id_ap = ClsStarter.accessPoints.Where(i => i.AP_IP == ipAp).FirstOrDefault().AP_ID;
+                        ClsStarter.accessPoints.Where(ap => ap.AP_ID == id_ap).SingleOrDefault().ListSwiperSegmentIDs.Contains(swiper.ID_Swiper_Segment.Value.ToString());
+                    }
+                }
                 if (isAllowedToSend)
                 {
                     if (client.Connected)
@@ -567,7 +578,7 @@ namespace ClickServerService.Improved
                         string str5 = receiveText.Substring(1, 12);
                         string MacAddress = str5.Substring(0, 2) + str5.Substring(3, 2) + str5.Substring(6, 2) + str5.Substring(9, 2);
                         string str6 = MacAndTimeStamp_Create(MacAddress);
-                        DataTable addressByChargeRate = objSwiper.Swiper_GetByMacAddressByChargeRate(MacAddress.ToUpper());
+                        DataTable addressByChargeRate = objSwiper.Swiper_GetByMacAddressByChargeRate(MacAddress);
                         if (addressByChargeRate.Rows.Count > 0)
                         {
                             try
@@ -1294,7 +1305,7 @@ namespace ClickServerService.Improved
                             }
                         }
                         string str8 = MacAndTimeStamp_Create(str6);
-                        DataTable addressByChargeRate = objSwiper.Swiper_GetByMacAddressByChargeRate(str6.ToUpper());
+                        DataTable addressByChargeRate = objSwiper.Swiper_GetByMacAddressByChargeRate(str6);
                         int ID_Games = -1;
                         int ID_Swiper = -1;
                         string str9 = "1";
@@ -1451,7 +1462,7 @@ namespace ClickServerService.Improved
                         string str6 = str5.Substring(0, 2) + str5.Substring(3, 2) + str5.Substring(6, 2) + str5.Substring(9, 2);
                         string MacAddress = str6;
                         string str7 = MacAndTimeStamp_Create(MacAddress);
-                        DataTable addressByChargeRate = objSwiper.Swiper_GetByMacAddressByChargeRate(MacAddress.ToUpper());
+                        DataTable addressByChargeRate = objSwiper.Swiper_GetByMacAddressByChargeRate(MacAddress);
                         if (addressByChargeRate.Rows.Count > 0)
                         {
                             try
@@ -1848,7 +1859,7 @@ namespace ClickServerService.Improved
                 {
                     string lower = stateForChangePrice.Rows[index2]["MacAddress"].ToString().ToLower();
                     string str3 = MacAndTimeStamp_Create(lower);
-                    DataTable addressByChargeRate = objSwiper.Swiper_GetByMacAddressByChargeRate(lower.ToUpper());
+                    DataTable addressByChargeRate = objSwiper.Swiper_GetByMacAddressByChargeRate(lower);
                     if (addressByChargeRate.Rows.Count > 0)
                     {
                         objSwiper.Swiper_UpdateStateByMacAddress(lower.ToUpper(), -3);

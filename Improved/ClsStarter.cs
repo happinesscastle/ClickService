@@ -80,11 +80,14 @@ namespace ClickServerService.Improved
             try
             {
                 objMain.MyPrint("Starter - AppLoadMain", ConsoleColor.Blue);
-
                 accessPoints = objMain.GetAccessPoints();
+                SwiperClass.Swipers = objSwiper.GetAllSwiper();
+                SwiperClass.Swipers_ChargeRate = objSwiper.Swipers_GetByChargeRate();
                 Thread.Sleep(0);
                 if (accessPoints.Any())
                 {
+                    MainClass.key_Value_List = objMain.Key_Value_Get();
+
                     foreach (var item in accessPoints)
                     {
                         try
@@ -127,7 +130,6 @@ namespace ClickServerService.Improved
 
                 #endregion
 
-                MainClass.key_Value_List = objMain.Key_Value_Get();
                 TimerChargeRate.Enabled = MainClass.key_Value_List.Select("KeyName ='Enable_Charge_Rate'")[0]["Value"].ToString().ToLower() == "true";
 
             }
@@ -147,6 +149,7 @@ namespace ClickServerService.Improved
                     return;
                 objGames.Charge_Rate_GetAll(objMain.ID_GameCenter_Local_Get());
                 clsSender.ManualChargeRate();
+                SwiperClass.Swipers_ChargeRate = objSwiper.Swipers_GetByChargeRate();
                 TimerChargeRate.Interval = 60000.0;// 1 Min
             }
             catch (Exception ex)

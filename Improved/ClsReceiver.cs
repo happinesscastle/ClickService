@@ -275,7 +275,7 @@ namespace ClickServerService.Improved
                     }
                     catch //(Exception ex)
                     {
-                       // objMain.ErrorLog(ex);
+                        // objMain.ErrorLog(ex);
                     }
                 }
             }
@@ -434,12 +434,12 @@ namespace ClickServerService.Improved
                 {
                     if (txtRecive.Contains(reciveData))
                         return;
-                    WriteToFile_SendRecive($"{tcpIpName}-{reciveTimeStr}-{reciveData}", 2, reciveTime);
+                    WriteToFile_ReciveLog($"{tcpIpName}-{reciveTimeStr}-{reciveData}", reciveTime);
                     txtRecive += $"{tcpIpName}-{reciveTimeStr}-{reciveData}";
                 }
                 else
                 {
-                    WriteToFile_SendRecive($"{tcpIpName}-{reciveTimeStr}-{reciveData}", 2, reciveTime);
+                    WriteToFile_ReciveLog($"{tcpIpName}-{reciveTimeStr}-{reciveData}", reciveTime);
                     txtRecive += $"{tcpIpName}-{reciveTimeStr}-{reciveData}";
                 }
             }
@@ -508,10 +508,7 @@ namespace ClickServerService.Improved
         /// <summary>
         /// Insert in Database if Not Write in File
         /// </summary>
-        /// <param name="message"></param>
-        /// <param name="sendOrRecive"> 1-> Send * 2-> Recive</param>
-        /// <param name="dtSR"></param>
-        public void WriteToFile_SendRecive(string message, int sendOrRecive, DateTime dtSR)
+        public void WriteToFile_ReciveLog(string message, DateTime dtSR)
         {
             try
             {
@@ -522,16 +519,8 @@ namespace ClickServerService.Improved
                 pathFileSendRecive = "";
                 string tempTime = DateTime.Now.ToString("yyyy-MM-dd");
 
-                if (sendOrRecive == 1)
-                {
-                    if (objMain.Server_SendMessage_Insert(message, dtSR) != 1)
-                        pathFileSendRecive = $"\\ServiceLog_Send{tempTime}.txt";
-                }
-                else if (sendOrRecive == 2)
-                {
-                    if (objMain.Server_ReciveMessage_Insert(message, dtSR) != 1)
-                        pathFileSendRecive = $"\\ServiceLog_Recive{tempTime}.txt";
-                }
+                if (objMain.Server_ReciveMessage_Insert(message, dtSR) != 1)
+                    pathFileSendRecive = $"\\ServiceLog_Recive{tempTime}.txt";
 
                 if (string.IsNullOrWhiteSpace(pathFileSendRecive))
                     return;

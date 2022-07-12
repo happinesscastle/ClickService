@@ -9,8 +9,13 @@ namespace ClickServerService.Improved
 {
     public class ClsSocketServer
     {
+        #region ' Variables '
+
         readonly MainClass objMain = new MainClass();
-    private   readonly int PortNumber = 2930;
+
+        private readonly int PortNumber = 2930;
+
+        #endregion
 
         public ClsSocketServer()
         {

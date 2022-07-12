@@ -20,10 +20,12 @@ namespace ClickServerService
 {
     internal class MainClass
     {
+        #region ' Variables '
+
         /// <summary>
-        /// Parameter for Printing Logs on Console When in Debug Mode.
+        /// Parameter for Printing Logs on Console When in Debug Mode. ( for Programmers )
         /// </summary>
-        readonly bool inDebugMode = true;
+        readonly bool inDebugMode = false;
 
         private readonly PersianCalendar persianCalendar = new PersianCalendar();
 
@@ -36,6 +38,8 @@ namespace ClickServerService
         private static int ID_GameCenter_Local = 1;
         public static string RetVal = "";
         public static DataTable key_Value_List;
+
+        #endregion
 
         #region ' Licence '
 
@@ -821,7 +825,7 @@ namespace ClickServerService
             }
         }
 
-        #region SEM
+        #region ' SEM '
 
         /// <summary>
         /// Get All Enable AccessPoints in Table(Access_Point) Where ID_GameCenter
@@ -894,8 +898,6 @@ namespace ClickServerService
         }
 
         #endregion
-
-        //
 
         #region ' Useless '
 

@@ -12,9 +12,8 @@ namespace ClickServerService.Improved
 {
     public class ClsSender
     {
-        /// <summary>
-        /// Global Variables
-        /// </summary>
+        #region ' Variables '
+
         List<ServerConfigView> serverConfigView = new List<ServerConfigView>();
 
         readonly Pattern objPattern = new Pattern();
@@ -25,7 +24,9 @@ namespace ClickServerService.Improved
 
         int Main_ID_GameCenter = 1, TCP_RepeatCount = 1;
 
-        string txtSend = "";
+        string txtSend = ""; 
+
+        #endregion
 
         public void AppLoadMain()
         {
@@ -556,7 +557,7 @@ namespace ClickServerService.Improved
                 catch (Exception ex)
                 {
                     objMain.ErrorLog(ex);
-                    objMain.ErrorLogTemp("error Process Main CONFIG :exp= " + ex.Message + ",ReceiveText=" + receiveText);
+                    objMain.ErrorLogTemp($"error Process Main CONFIG :exp= {ex.Message},ReceiveText={receiveText}");
                     return "";
                 }
                 try
@@ -743,7 +744,7 @@ namespace ClickServerService.Improved
                 catch (Exception ex)
                 {
                     objMain.ErrorLog(ex);
-                    objMain.ErrorLogTemp("error Process Main OKCFG :exp= " + ex.Message + ",ReceiveText=" + receiveText);
+                    objMain.ErrorLogTemp($"error Process Main OKCFG :exp= {ex.Message},ReceiveText={receiveText}");
                     return "";
                 }
                 string str27 = "1515";
@@ -878,12 +879,12 @@ namespace ClickServerService.Improved
                                                     {
                                                         str27 = "B1677";
                                                         flag4 = true;
-                                                        str2 = "[" + str7 + "]AT+PRC=" + this.objMain.Comma((tuple.Item2 - num5).ToString());
+                                                        str2 = "[" + str7 + "]AT+PRC=" + objMain.Comma((tuple.Item2 - num5).ToString());
                                                         string str13 = str7;
-                                                        MainClass objMain = this.objMain;
+                                                        MainClass objMain1 = objMain;
                                                         num7 = tuple.Item2 - num5;
                                                         string str14 = num7.ToString();
-                                                        string str15 = objMain.Comma(str14);
+                                                        string str15 = objMain1.Comma(str14);
                                                         str1 = "[" + str13 + "]AT+PRC=" + str15;
                                                         if (!serverConfigView.FirstOrDefault().IsDecreasePriceInLevel2.Value)
                                                         {
@@ -1008,13 +1009,13 @@ namespace ClickServerService.Improved
                                                 else
                                                 {
                                                     string str10 = str7;
-                                                    MainClass objMain1 = this.objMain;
+                                                    MainClass objMain1 = objMain;
                                                     num7 = num8 + num9 + num6;
                                                     string str11 = num7.ToString();
                                                     string str12 = objMain1.Comma(str11);
                                                     str2 = "[" + str10 + "]AT+NRC=" + str12;
                                                     string str13 = str7;
-                                                    MainClass objMain2 = this.objMain;
+                                                    MainClass objMain2 = objMain;
                                                     num7 = num8 + num9 + num6;
                                                     string str14 = num7.ToString();
                                                     string str15 = objMain2.Comma(str14);
@@ -1246,13 +1247,13 @@ namespace ClickServerService.Improved
                                             else
                                             {
                                                 string str10 = str7;
-                                                MainClass objMain1 = this.objMain;
+                                                MainClass objMain1 = objMain;
                                                 int num10 = num8 + num9 + num7;
                                                 string str11 = num10.ToString();
                                                 string str12 = objMain1.Comma(str11);
                                                 str2 = "[" + str10 + "]AT+NRC=" + str12;
                                                 string str13 = str7;
-                                                MainClass objMain2 = this.objMain;
+                                                MainClass objMain2 = objMain;
                                                 num10 = num8 + num9 + num7;
                                                 string str14 = num10.ToString();
                                                 string str15 = objMain2.Comma(str14);
@@ -1262,7 +1263,7 @@ namespace ClickServerService.Improved
                                     }
                                 }
                                 else
-                                    objMain.ErrorLogTemp("Card not Find :" + MacCode);
+                                    objMain.ErrorLogTemp($"Card not Find :{MacCode}");
                             }
                         }
                     }
@@ -1833,7 +1834,7 @@ namespace ClickServerService.Improved
             catch (Exception ex)
             {
                 objMain.ErrorLog(ex);
-                objMain.ErrorLogTemp("error Process Main :" + ex.Message);
+                objMain.ErrorLogTemp($"error Process Main :{ex.Message}");
                 return "";
             }
         }

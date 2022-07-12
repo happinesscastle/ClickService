@@ -13,9 +13,9 @@ namespace ClickServerService.Improved
 {
     public class ClsReceiver
     {
-        /// <summary>
-        /// Global Variables
-        /// </summary>
+
+        #region ' Variables '
+
         ServerConfigView serverConfigView = new ServerConfigView();
 
         readonly MainClass objMain = new MainClass();
@@ -23,12 +23,13 @@ namespace ClickServerService.Improved
 
         Thread receiveThread;
 
-        bool _checkBoxShowAll = false;
-        bool chbShowAllReceive = false;
-        bool flagConnectToSQL = false;
+        bool checkBoxShowAll = false, chbShowAllReceive = false, flagConnectToSQL = false;
+
         readonly int multiRun_AP_ID = 0;
 
         string dispStringReceive = "", dispStringSplit = "", txtReceive = "";
+
+        #endregion
 
         public ClsReceiver(int apID)
         {
@@ -86,7 +87,7 @@ namespace ClickServerService.Improved
                     {
                         serverConfigView = byGameCenter.FirstOrDefault();
                         chbShowAllReceive = serverConfigView.IsShowAllReceive.Value;
-                        _checkBoxShowAll = serverConfigView.IsShowAllReceive.Value;
+                        checkBoxShowAll = serverConfigView.IsShowAllReceive.Value;
                         WriteToFile("txtServerIp:" + serverConfigView.ServerIP + $",chbAP{multiRun_AP_ID}:" + serverConfigView.AP_IsEnable.ToString() + $",txtAp{multiRun_AP_ID}_IP:" + serverConfigView.AP_IP + ",cblRepeatConfig:" + (object)serverConfigView.RepeatConfig + "cblValidateReceivedData:" + (object)serverConfigView.ValidateReceivedData + ",chbDecreasePriceInLevel2:" + serverConfigView.IsDecreasePriceInLevel2.ToString() + ",chbShowAllReceive:" + chbShowAllReceive.ToString() + ",chbShowAllSend:" + serverConfigView.IsShowAllSend.ToString());
                     }
                     else
@@ -252,7 +253,7 @@ namespace ClickServerService.Improved
                                                 DateTime tempReceiveTime = DateTime.Now;
                                                 if (Receive_ProcessData(dispStringSplit, multiRun_AP_ID) == "true")
                                                     Receive_DisplayText(dispStringSplit, $"P{multiRun_AP_ID}", tempReceiveTime);
-                                                else if (_checkBoxShowAll)
+                                                else if (checkBoxShowAll)
                                                     Receive_DisplayText(dispStringSplit, $"P{multiRun_AP_ID}", tempReceiveTime);
                                             }
                                         }
@@ -273,10 +274,7 @@ namespace ClickServerService.Improved
                             objMain.ErrorLog(ex);
                         }
                     }
-                    catch //(Exception ex)
-                    {
-                        // objMain.ErrorLog(ex);
-                    }
+                    catch { }
                 }
             }
             catch (SocketException ex)
@@ -487,17 +485,9 @@ namespace ClickServerService.Improved
                 if (!Directory.Exists(pathFileLog))
                     Directory.CreateDirectory(pathFileLog);
 
-                pathFileLog = $"{AppDomain.CurrentDomain.BaseDirectory}\\ServiceLogs\\ServiceLog_{DateTime.Now:yyyy-MM-dd}.txt";
-                if (File.Exists(pathFileLog))
-                {
-                    using (StreamWriter streamWriter = File.AppendText(pathFileLog))
-                        streamWriter.WriteLine(message);
-                }
-                else
-                {
-                    using (StreamWriter text = File.CreateText(pathFileLog))
-                        text.WriteLine(message);
-                }
+                pathFileLog += $"\\ServiceLog_AP{multiRun_AP_ID}_{DateTime.Now:yyyy-MM-dd}.txt";
+
+                File.AppendAllText(pathFileLog, message, Encoding.UTF8);
             }
             catch (Exception ex)
             {
@@ -512,28 +502,16 @@ namespace ClickServerService.Improved
         {
             try
             {
-                string pathFileSendReceive = AppDomain.CurrentDomain.BaseDirectory + "\\ServiceLogs";
-                if (!Directory.Exists(pathFileSendReceive))
-                    Directory.CreateDirectory(pathFileSendReceive);
+                int retValue = objMain.Server_ReceiveMessage_Insert(message, dtSR);
 
-                pathFileSendReceive = "";
-                string tempTime = DateTime.Now.ToString("yyyy-MM-dd");
-
-                if (objMain.Server_ReceiveMessage_Insert(message, dtSR) != 1)
-                    pathFileSendReceive = $"\\ServiceLog_Receive{tempTime}.txt";
-
-                if (string.IsNullOrWhiteSpace(pathFileSendReceive))
-                    return;
-                pathFileSendReceive = AppDomain.CurrentDomain.BaseDirectory + pathFileSendReceive;
-                if (File.Exists(pathFileSendReceive))
+                if (retValue != 1)
                 {
-                    using (StreamWriter streamWriter = File.AppendText(pathFileSendReceive))
-                        streamWriter.WriteLine(message);
-                }
-                else
-                {
-                    using (StreamWriter text = File.CreateText(pathFileSendReceive))
-                        text.WriteLine(message);
+                    string pathFileReceive = AppDomain.CurrentDomain.BaseDirectory + "\\ServiceLogs";
+                    if (!Directory.Exists(pathFileReceive))
+                        Directory.CreateDirectory(pathFileReceive);
+
+                    pathFileReceive += $"\\ServiceLog_Receive_AP{multiRun_AP_ID}_{DateTime.Now:yyyy-MM-dd}.txt";
+                    File.WriteAllText(pathFileReceive, message, Encoding.UTF8);
                 }
             }
             catch (Exception ex)

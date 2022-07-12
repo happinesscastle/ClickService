@@ -14,6 +14,8 @@ namespace ClickServerService.Improved
 {
     public class ClsStarter : ServiceBase
     {
+        #region ' Variables '
+
         public static List<Access_Point> accessPoints = null;
         public static List<string> debugDataList = new List<string>();
         public static List<MyTCPClient> tCPClientList = new List<MyTCPClient>();
@@ -29,12 +31,31 @@ namespace ClickServerService.Improved
         readonly System.Timers.Timer Timer_Create_Repair_CheckList = new System.Timers.Timer();
         readonly System.Timers.Timer TimerChargeRate_SetNonReceive = new System.Timers.Timer();
 
+        #endregion
+
+        #region ' Service '
+
         private IContainer components = null;
 
         public ClsStarter()
         {
             InitializeComponent();
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && components != null)
+                components.Dispose();
+            base.Dispose(disposing);
+        }
+
+        private void InitializeComponent()
+        {
+            components = new Container();
+            ServiceName = "ClickServerService";
+        }
+
+        #endregion
 
         protected override void OnStart(string[] args)
         {
@@ -66,27 +87,31 @@ namespace ClickServerService.Improved
                 {
                     foreach (var item in accessPoints)
                     {
-                        TcpClient tcp = new TcpClient();
-                        tCPClientList.Add(new MyTCPClient(item.AP_ID, tcp));
                         try
                         {
-                            tCPClientList.SingleOrDefault(i => i.AP_ID == item.AP_ID).TCPClient.Connect(item.AP_IP, item.AP_Port);
+                            TcpClient tcp = new TcpClient();
+                            tCPClientList.Add(new MyTCPClient(item.AP_ID, tcp));
+                            try
+                            {
+                                tCPClientList.SingleOrDefault(i => i.AP_ID == item.AP_ID).TCPClient.Connect(item.AP_IP, item.AP_Port);
+                            }
+                            catch
+                            {
+                                objMain.MyPrint("Not Connect " + item.AP_IP, ConsoleColor.Red);
+                            }
+                            Thread.Sleep(0);
+                            Task.Run(() => new ClsReceiver(item.AP_ID).Start());
+                            Thread.Sleep(0);
+                            objMain.MyPrint("*AccessPoints : " + item.AP_ID.ToString(), ConsoleColor.White);
                         }
-                        catch
-                        {
-                            objMain.MyPrint("Not Connect " + item.AP_IP, ConsoleColor.Red);
-                        }
-                        Thread.Sleep(0);
-                        Task.Run(() => new ClsReceiver(item.AP_ID).Start());
-                        Thread.Sleep(0);
-                        objMain.MyPrint("*AccessPoints : " + item.AP_ID.ToString(), ConsoleColor.White);
+                        catch { }
                     }
                     Task.Run(() => new ClsSender().Start());
                     //
                     Task.Run(() => new ClsSocketServer().Start());
                 }
 
-                #region ' Timers '
+                #region ' Initialization Timers '
 
                 TimerChargeRate.Elapsed += new ElapsedEventHandler(TimerChargeRate_Tick);
                 TimerChargeRate.Interval = 10000.0;
@@ -111,6 +136,8 @@ namespace ClickServerService.Improved
                 objMain.ErrorLog(ex);
             }
         }
+
+        #region ' Timers Tick '
 
         private void TimerChargeRate_Tick(object sender, EventArgs e)
         {
@@ -152,19 +179,6 @@ namespace ClickServerService.Improved
             }
         }
 
-        //
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && components != null)
-                components.Dispose();
-            base.Dispose(disposing);
-        }
-
-        private void InitializeComponent()
-        {
-            components = new Container();
-            ServiceName = "ClickServerService";
-        }
+        #endregion
     }
 }

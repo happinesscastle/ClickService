@@ -1,8 +1,8 @@
-﻿using System.Data.SqlClient;
+﻿using System.Text.RegularExpressions;
+using System.Data.SqlClient;
 using System.Data;
 using Dapper;
 using System;
-using System.Text.RegularExpressions;
 
 namespace ClickServerService
 {

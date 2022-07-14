@@ -18,8 +18,8 @@ namespace ClickServerService.Improved
 
         ServerConfigView serverConfigView = new ServerConfigView();
 
-        readonly MainClass objMain = new MainClass();
-        readonly SwiperClass objSwiper = new SwiperClass();
+        readonly MainClass clsMain = new MainClass();
+        readonly SwiperClass clsSwiper = new SwiperClass();
 
         Thread receiveThread;
 
@@ -39,7 +39,7 @@ namespace ClickServerService.Improved
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
             }
         }
 
@@ -56,7 +56,7 @@ namespace ClickServerService.Improved
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
             }
         }
 
@@ -64,7 +64,7 @@ namespace ClickServerService.Improved
         {
             try
             {
-                //objMain.MyPrint("Receive - AppLoadMain", ConsoleColor.Blue);
+                //clsMain.MyPrint("Receive - AppLoadMain", ConsoleColor.Blue);
                 flagConnectToSQL = false;
                 serverConfigView.ValidateReceivedData = 2;
                 serverConfigView.AP_IsEnable = false;
@@ -72,23 +72,23 @@ namespace ClickServerService.Improved
                 serverConfigView.RepeatConfig = 2;
                 chbShowAllReceive = true;
                 txtReceive = "";
-                objSwiper.Swiper_Update_Config_StateAll(0, objMain.ID_GameCenter_Local_Get());
+                clsSwiper.Swiper_Update_Config_StateByGameCenterID(clsMain.ID_GameCenter_Local_Get(), 0);
 
-                if (!objMain.Licence_Check())
+                if (!clsMain.Licence_Check())
                 {
                     WriteToFile(DateTime.Now.ToString() + ":1:Licence ERROR ");
                 }
                 else
                 {
-                    objMain.LoadGameCenterID();
+                    clsMain.LoadGameCenterID();
 
-                    List<ServerConfigView> byGameCenter = objMain.ServerConfig_GetByGameCenterID(objMain.ID_GameCenter_Local_Get(), multiRun_AP_ID);
+                    List<ServerConfigView> byGameCenter = clsMain.ServerConfig_GetByGameCenterID(clsMain.ID_GameCenter_Local_Get(), multiRun_AP_ID);
                     if (byGameCenter.Any())
                     {
                         serverConfigView = byGameCenter.FirstOrDefault();
                         chbShowAllReceive = serverConfigView.IsShowAllReceive.Value;
                         checkBoxShowAll = serverConfigView.IsShowAllReceive.Value;
-                        WriteToFile("txtServerIp:" + serverConfigView.ServerIP + $",chbAP{multiRun_AP_ID}:" + serverConfigView.AP_IsEnable.ToString() + $",txtAp{multiRun_AP_ID}_IP:" + serverConfigView.AP_IP + ",cblRepeatConfig:" + (object)serverConfigView.RepeatConfig + "cblValidateReceivedData:" + (object)serverConfigView.ValidateReceivedData + ",chbDecreasePriceInLevel2:" + serverConfigView.IsDecreasePriceInLevel2.ToString() + ",chbShowAllReceive:" + chbShowAllReceive.ToString() + ",chbShowAllSend:" + serverConfigView.IsShowAllSend.ToString());
+                        WriteToFile("txtServerIp:" + serverConfigView.ServerIP + $",chbAP{multiRun_AP_ID}:" + serverConfigView.AP_IsEnable.ToString() + $",txtAp{multiRun_AP_ID}_IP:" + serverConfigView.AP_IP + ",cblRepeatConfig:" + serverConfigView.RepeatConfig + "cblValidateReceivedData:" + serverConfigView.ValidateReceivedData + ",chbDecreasePriceInLevel2:" + serverConfigView.IsDecreasePriceInLevel2.ToString() + ",chbShowAllReceive:" + chbShowAllReceive.ToString() + ",chbShowAllSend:" + serverConfigView.IsShowAllSend.ToString());
                     }
                     else
                         WriteToFile("Not find service config. Please config server service");
@@ -111,7 +111,7 @@ namespace ClickServerService.Improved
                     {
                         serverConfigView.ServerIP = "";
                     }
-                    objSwiper.Swiper_Update_Config_StateByGameCenterID(objMain.ID_GameCenter_Local_Get(), 0);
+                    clsSwiper.Swiper_Update_Config_StateByGameCenterID(clsMain.ID_GameCenter_Local_Get(), 0);
                     if (serverConfigView.AP_IsEnable)
                     {
                         try
@@ -125,7 +125,7 @@ namespace ClickServerService.Improved
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
             }
         }
 
@@ -138,7 +138,7 @@ namespace ClickServerService.Improved
                     NetworkStream stream = client.GetStream();
                     byte[] bytes = Encoding.ASCII.GetBytes(command);
                     stream.Write(bytes, 0, bytes.Length);
-                    objMain.MyPrint($"+R%Send%{ipAp}%{command}", ConsoleColor.Yellow, DateTime.Now);
+                    clsMain.MyPrint($"+R%Send%{ipAp}%{command}", ConsoleColor.Yellow, DateTime.Now);
                     return 1;
                 }
                 else
@@ -146,7 +146,7 @@ namespace ClickServerService.Improved
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -159,15 +159,15 @@ namespace ClickServerService.Improved
                 {
                     if ((Send_Main(serverConfigView.AP_IP, "check", ClsStarter.tCPClientList.SingleOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient) == 1) && receiveThread.IsAlive)
                     {
-                        objMain.ServerConfig_SetApStatus(objMain.ID_GameCenter_Local_Get(), true, multiRun_AP_ID);
+                        clsMain.ServerConfig_SetApStatus(clsMain.ID_GameCenter_Local_Get(), true, multiRun_AP_ID);
                     }
                     else
                     {
                         WriteToFile(DateTime.Now.ToString() + $": Ap{multiRun_AP_ID} is Disconnect.");
-                        objMain.ServerConfig_SetApStatus(objMain.ID_GameCenter_Local_Get(), false, multiRun_AP_ID);
+                        clsMain.ServerConfig_SetApStatus(clsMain.ID_GameCenter_Local_Get(), false, multiRun_AP_ID);
                         try
                         {
-                            objMain.MyPrint($"R%TCp_IP_Thread_{multiRun_AP_ID}.Abort()", ConsoleColor.DarkMagenta);
+                            clsMain.MyPrint($"R%TCp_IP_Thread_{multiRun_AP_ID}.Abort()", ConsoleColor.DarkMagenta);
                             if (receiveThread != null)
                             {
                                 receiveThread.Interrupt();
@@ -176,10 +176,10 @@ namespace ClickServerService.Improved
                         }
                         catch (Exception ex)
                         {
-                            objMain.MyPrint($"Ap{multiRun_AP_ID} NoStart :" + ex, ConsoleColor.Red);
-                            objMain.ErrorLog(ex);
+                            clsMain.MyPrint($"Ap{multiRun_AP_ID} NoStart :" + ex, ConsoleColor.Red);
+                            clsMain.ErrorLog(ex);
                         }
-                        objMain.MyPrint($"R%Start TCp_IP_Thread_{multiRun_AP_ID}");
+                        clsMain.MyPrint($"R%Start TCp_IP_Thread_{multiRun_AP_ID}");
                         receiveThread = new Thread(new ThreadStart(Receive_TCP));
                         receiveThread.Start();
                     }
@@ -187,7 +187,7 @@ namespace ClickServerService.Improved
                 catch (Exception ex)
                 {
                     WriteToFile(DateTime.Now.ToString() + $": Ap{multiRun_AP_ID} :" + ex.Message);
-                    objMain.ErrorLog(ex);
+                    clsMain.ErrorLog(ex);
                 }
             }
             if (!flagConnectToSQL)
@@ -197,13 +197,13 @@ namespace ClickServerService.Improved
             }
             try
             {
-                List<ServerConfigView> byGameCenter = objMain.ServerConfig_GetByGameCenterID(objMain.ID_GameCenter_Local_Get(), multiRun_AP_ID);
+                List<ServerConfigView> byGameCenter = clsMain.ServerConfig_GetByGameCenterID(clsMain.ID_GameCenter_Local_Get(), multiRun_AP_ID);
                 if (byGameCenter.Any() && byGameCenter.FirstOrDefault().IsRestart.Value)
                     AppLoadMain();
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
             }
         }
 
@@ -218,7 +218,7 @@ namespace ClickServerService.Improved
                 {
                     try
                     {
-                        objMain.MyPrint($"R%clientAp{multiRun_AP_ID}.Connect (IP : {serverConfigView.AP_IP} , Port: {serverConfigView.AP_Port})", ConsoleColor.Magenta);
+                        clsMain.MyPrint($"R%clientAp{multiRun_AP_ID}.Connect (IP : {serverConfigView.AP_IP} , Port: {serverConfigView.AP_Port})", ConsoleColor.Magenta);
                         NetworkStream stream = null;
                         if (!ClsStarter.tCPClientList.SingleOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient.Connected)
                         {
@@ -230,6 +230,7 @@ namespace ClickServerService.Improved
                         try
                         {
                             int count;
+
                             while ((count = stream.Read(numArray, 0, numArray.Length)) > 0)
                             {
                                 dispStringReceive = "";
@@ -238,7 +239,7 @@ namespace ClickServerService.Improved
                                 {
                                     string readData = Encoding.ASCII.GetString(numArray, 0, count).Replace("\n", "");
 
-                                    objMain.MyPrint("+R%Receive%" + serverConfigView.AP_IP + "%" + readData, ConsoleColor.Cyan, DateTime.Now);
+                                    clsMain.MyPrint("+R%Receive%" + serverConfigView.AP_IP + "%" + readData, ConsoleColor.Cyan, DateTime.Now);
 
                                     dispStringReceive += readData;
                                     try
@@ -260,26 +261,23 @@ namespace ClickServerService.Improved
                                     }
                                     catch (Exception ex)
                                     {
-                                        objMain.ErrorLog(ex);
+                                        clsMain.ErrorLog(ex);
                                     }
                                 }
                                 catch (Exception ex)
                                 {
-                                    objMain.ErrorLog(ex);
+                                    clsMain.ErrorLog(ex);
                                 }
                             }
                         }
-                        catch (Exception ex)
-                        {
-                            objMain.ErrorLog(ex);
-                        }
+                        catch { }
                     }
                     catch { }
                 }
             }
             catch (SocketException ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
             }
         }
 
@@ -302,8 +300,8 @@ namespace ClickServerService.Improved
                 }
                 catch (Exception ex)
                 {
-                    objMain.ErrorLog(ex);
-                    objMain.ErrorLogTemp($"error Process_ReceiveData CONFIG :exp= {ex.Message},ReceiveText={receiveText}");
+                    clsMain.ErrorLog(ex);
+                    clsMain.ErrorLogTemp($"Error Process_ReceiveData CONFIG :exp= {ex.Message},ReceiveText={receiveText}");
                 }
                 try
                 {
@@ -318,8 +316,8 @@ namespace ClickServerService.Improved
                 }
                 catch (Exception ex)
                 {
-                    objMain.ErrorLog(ex);
-                    objMain.ErrorLogTemp($"error Process_ReceiveData OKCFG :exp= {ex.Message},ReceiveText={receiveText}");
+                    clsMain.ErrorLog(ex);
+                    clsMain.ErrorLogTemp($"Error Process_ReceiveData OKCFG :exp= {ex.Message},ReceiveText={receiveText}");
                 }
                 try
                 {
@@ -334,8 +332,8 @@ namespace ClickServerService.Improved
                 }
                 catch (Exception ex)
                 {
-                    objMain.ErrorLog(ex);
-                    objMain.ErrorLogTemp($"error Process_ReceiveData CID :exp= {ex.Message},ReceiveText={receiveText}");
+                    clsMain.ErrorLog(ex);
+                    clsMain.ErrorLogTemp($"Error Process_ReceiveData CID :exp= {ex.Message},ReceiveText={receiveText}");
                 }
                 try
                 {
@@ -350,8 +348,8 @@ namespace ClickServerService.Improved
                 }
                 catch (Exception ex)
                 {
-                    objMain.ErrorLog(ex);
-                    objMain.ErrorLogTemp($"error Process_ReceiveData +P :exp= {ex.Message},ReceiveText={receiveText}");
+                    clsMain.ErrorLog(ex);
+                    clsMain.ErrorLogTemp($"Error Process_ReceiveData +P :exp= {ex.Message},ReceiveText={receiveText}");
                 }
                 try
                 {
@@ -366,8 +364,8 @@ namespace ClickServerService.Improved
                 }
                 catch (Exception ex)
                 {
-                    objMain.ErrorLog(ex);
-                    objMain.ErrorLogTemp($"error Process_ReceiveData +T :exp= {ex.Message},ReceiveText={receiveText}");
+                    clsMain.ErrorLog(ex);
+                    clsMain.ErrorLogTemp($"Error Process_ReceiveData +T :exp= {ex.Message},ReceiveText={receiveText}");
                 }
                 try
                 {
@@ -379,8 +377,8 @@ namespace ClickServerService.Improved
                 }
                 catch (Exception ex)
                 {
-                    objMain.ErrorLog(ex);
-                    objMain.ErrorLogTemp($"error Process_ReceiveData Error_config :exp= {ex.Message},ReceiveText={receiveText}");
+                    clsMain.ErrorLog(ex);
+                    clsMain.ErrorLogTemp($"Error Process_ReceiveData Error_config :exp= {ex.Message},ReceiveText={receiveText}");
                 }
                 try
                 {
@@ -393,8 +391,8 @@ namespace ClickServerService.Improved
                 }
                 catch (Exception ex)
                 {
-                    objMain.ErrorLog(ex);
-                    objMain.ErrorLogTemp($"error Process_ReceiveData HID :exp= {ex.Message},ReceiveText={receiveText}");
+                    clsMain.ErrorLog(ex);
+                    clsMain.ErrorLogTemp($"Error Process_ReceiveData HID :exp= {ex.Message},ReceiveText={receiveText}");
                 }
                 try
                 {
@@ -407,15 +405,15 @@ namespace ClickServerService.Improved
                 }
                 catch (Exception ex)
                 {
-                    objMain.ErrorLog(ex);
-                    objMain.ErrorLogTemp($"error Process_ReceiveData OKCFG_HID :exp= {ex.Message},ReceiveText={receiveText}");
+                    clsMain.ErrorLog(ex);
+                    clsMain.ErrorLogTemp($"Error Process_ReceiveData OKCFG_HID :exp= {ex.Message},ReceiveText={receiveText}");
                 }
                 return flag.ToString().ToLower();
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
-                objMain.ErrorLogTemp($"error Process_ReceiveData :{ex.Message}");
+                clsMain.ErrorLog(ex);
+                clsMain.ErrorLogTemp($"Error Process_ReceiveData :{ex.Message}");
                 return flag.ToString().ToLower();
             }
         }
@@ -443,7 +441,7 @@ namespace ClickServerService.Improved
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
             }
         }
 
@@ -451,14 +449,14 @@ namespace ClickServerService.Improved
         {
             try
             {
-                objMain.ReceiveStorage_insert(receiveText, p);
+                clsMain.ReceiveStorage_insert(receiveText, p);
                 if (receiveText.Contains("OKCFG1"))
-                    objMain.ReceiveStorage_insert(receiveText, p);
+                    clsMain.ReceiveStorage_insert(receiveText, p);
                 return true;
             }
             catch (Exception ex)
             {
-                objMain.ErrorLogTemp($"ReceiveStorage_Insert:exp:{ex.Message}ReceiveText:{receiveText}");
+                clsMain.ErrorLogTemp($"ReceiveStorage_Insert:exp:{ex.Message}ReceiveText:{receiveText}");
                 return false;
             }
         }
@@ -479,7 +477,7 @@ namespace ClickServerService.Improved
         {
             try
             {
-                objMain.MyPrint("R%WriteToFile : " + message, ConsoleColor.Green);
+                clsMain.MyPrint("R%WriteToFile : " + message, ConsoleColor.Green);
 
                 string pathFileLog = AppDomain.CurrentDomain.BaseDirectory + "\\ServiceLogs";
                 if (!Directory.Exists(pathFileLog))
@@ -491,7 +489,7 @@ namespace ClickServerService.Improved
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
             }
         }
 
@@ -502,7 +500,7 @@ namespace ClickServerService.Improved
         {
             try
             {
-                int retValue = objMain.Server_ReceiveMessage_Insert(message, dtSR);
+                int retValue = clsMain.Server_ReceiveMessage_Insert(message, dtSR);
 
                 if (retValue != 1)
                 {
@@ -516,7 +514,7 @@ namespace ClickServerService.Improved
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
             }
         }
 

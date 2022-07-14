@@ -6,7 +6,7 @@ namespace ClickServerService
     {
         #region ' Useless '
 
-        public string Config1 = "AT+CFG1=" + string.Format("{0:yyyy-MM-dd_hh-mm-ss-tt}", (object)DateTime.Now);
+        public string Config1 = "AT+CFG1=" + string.Format("{0:yyyy-MM-dd_hh-mm-ss-tt}", DateTime.Now);
         public string Config2 = "AT+CFG2=12000,35000";
         public string Config3 = "AT+CFG3=DELAY1,DELAY2";
         public string Config4 = "AT+CFGI=ENABLE,PULSE";

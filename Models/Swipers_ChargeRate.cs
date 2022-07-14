@@ -2,7 +2,7 @@ using System;
 
 namespace ClickServerService.Models
 {
-    public class Swipers_Get_ByChargeRate_ByGameCenter
+    public class Swipers_ChargeRate
     {
         public int ID { get; set; }
         public int ID_GameCenter { get; set; }

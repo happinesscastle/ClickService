@@ -8,14 +8,14 @@ namespace ClickServerService
     {
         #region ' Useless '
 
-        private readonly MainClass objMain = new MainClass();
+        private readonly MainClass clsMain = new MainClass();
 
         public DataTable ProductTemplate_Group_Get()
         {
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     new SqlDataAdapter(new SqlCommand("select * from ProductTemplate_Group where IsDeleted=0", connection)).Fill(dataTable);
@@ -24,7 +24,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }
@@ -33,11 +33,11 @@ namespace ClickServerService
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand("INSERT INTO [dbo].[ProductTemplate_Group] ([ID] ,[Title] ,[IsDeleted]) VALUES (@ID ,@Title ,@IsDeleted)", connection);
-                    sqlCommand.Parameters.AddWithValue("@ID", (objMain.Max_Tbl("ProductTemplate_Group", "ID") + 1));
+                    sqlCommand.Parameters.AddWithValue("@ID", (clsMain.Max_Tbl("ProductTemplate_Group", "ID") + 1));
                     sqlCommand.Parameters.AddWithValue("@Title", title);
                     sqlCommand.Parameters.AddWithValue("@IsDeleted", 0);
                     sqlCommand.ExecuteNonQuery();
@@ -46,7 +46,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -55,7 +55,7 @@ namespace ClickServerService
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand("update [ProductTemplate_Group] set [Title]=@Title where [ID]=@ID ", connection);
@@ -68,7 +68,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -78,7 +78,7 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand selectCommand = new SqlCommand("select * from ProductTemplate_Group where IsDeleted=0 and ID=@ID", connection);
@@ -89,7 +89,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }
@@ -98,7 +98,7 @@ namespace ClickServerService
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand("update ProductTemplate_Group set IsDeleted=1 where ID=@ID ", connection);
@@ -109,7 +109,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -119,7 +119,7 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     new SqlDataAdapter(new SqlCommand("select * from ProductTemplate_SubGroup where IsDeleted=0", connection)).Fill(dataTable);
@@ -128,7 +128,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }
@@ -137,11 +137,11 @@ namespace ClickServerService
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand("INSERT INTO [dbo].[ProductTemplate_SubGroup] ([ID] ,[Title] ,[ID_ProductTemplate_Group] ,[IsDeleted]) VALUES (@ID ,@Title ,@ID_ProductTemplate_Group ,@IsDeleted)", connection);
-                    sqlCommand.Parameters.AddWithValue("@ID", (objMain.Max_Tbl("ProductTemplate_SubGroup", "ID") + 1));
+                    sqlCommand.Parameters.AddWithValue("@ID", (clsMain.Max_Tbl("ProductTemplate_SubGroup", "ID") + 1));
                     sqlCommand.Parameters.AddWithValue("@Title", title);
                     sqlCommand.Parameters.AddWithValue("@ID_ProductTemplate_Group", id_ProductTemplate_Group);
                     sqlCommand.Parameters.AddWithValue("@IsDeleted", 0);
@@ -151,7 +151,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -160,7 +160,7 @@ namespace ClickServerService
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand("update [ProductTemplate_SubGroup] set [Title]=@Title ,[ID_ProductTemplate_Group]=@ID_ProductTemplate_Group where [ID]=@ID ", connection);
@@ -173,7 +173,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -183,7 +183,7 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand selectCommand = new SqlCommand("select * from ProductTemplate_SubGroup where IsDeleted=0 and ID=@ID", connection);
@@ -194,7 +194,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }
@@ -204,7 +204,7 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand selectCommand = new SqlCommand("select * from ProductTemplate_SubGroup where IsDeleted=0 and ID_ProductTemplate_Group=@ID_ProductTemplate_Group", connection);
@@ -215,7 +215,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }
@@ -224,7 +224,7 @@ namespace ClickServerService
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand("update ProductTemplate_SubGroup set IsDeleted=1 where ID=@ID ", connection);
@@ -235,7 +235,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -245,7 +245,7 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     new SqlDataAdapter(new SqlCommand("select * from ProductTemplate where IsDeleted=0", connection)).Fill(dataTable);
@@ -254,7 +254,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }
@@ -263,11 +263,11 @@ namespace ClickServerService
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand("INSERT INTO  [ProductTemplate] ([ID] ,[Title] ,[TextColor] ,[BackColor] ,[ProductType] ,[ProductBarcode] ,[ProductID] ,[Priority] ,[ID_ProductTemplate_SubGroup] ,[IsDeleted]) VALUES (@ID ,@Title ,@TextColor ,@BackColor ,@ProductType ,@ProductBarcode ,@ProductID ,@Priority ,@ID_ProductTemplate_SubGroup ,@IsDeleted)", connection);
-                    sqlCommand.Parameters.AddWithValue("@ID", (objMain.Max_Tbl("ProductTemplate", "ID") + 1));
+                    sqlCommand.Parameters.AddWithValue("@ID", (clsMain.Max_Tbl("ProductTemplate", "ID") + 1));
                     sqlCommand.Parameters.AddWithValue("@Title", Title);
                     sqlCommand.Parameters.AddWithValue("@TextColor", TextColor);
                     sqlCommand.Parameters.AddWithValue("@BackColor", BackColor);
@@ -283,7 +283,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -292,7 +292,7 @@ namespace ClickServerService
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand("update [ProductTemplate] set [Title]=@Title ,[TextColor]=@TextColor ,[BackColor]=@BackColor ,[ProductType]=@ProductType ,[ProductBarcode]=@ProductBarcode ,[ProductID]=@ProductID ,[Priority]=@Priority ,[ID_ProductTemplate_SubGroup]=@ID_ProductTemplate_SubGroup where [ID]=@ID ", connection);
@@ -311,7 +311,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -321,7 +321,7 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand selectCommand = new SqlCommand("select * from ProductTemplate where IsDeleted=0 and [ID]=@ID", connection);
@@ -332,7 +332,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }
@@ -342,7 +342,7 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand selectCommand = new SqlCommand("select * from ProductTemplate where IsDeleted=0 and [ID_ProductTemplate_SubGroup]=@ID_ProductTemplate_SubGroup", connection);
@@ -353,7 +353,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }

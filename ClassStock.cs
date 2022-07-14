@@ -6,17 +6,18 @@ namespace ClickServerService
 {
     internal class ClassStock
     {
-        private readonly MainClass objMain = new MainClass();
+        #region ' Useless '
+
+        private readonly MainClass clsMain = new MainClass();
 
         public int Stock_Product_Group_Update(int ID, string Title)
         {
-            DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Stock_Product_Group_Update), connection) { CommandType = CommandType.StoredProcedure };
+                    SqlCommand sqlCommand = new SqlCommand("Stock_Product_Group_Update", connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.Parameters.AddWithValue("@Title", Title);
                     sqlCommand.ExecuteNonQuery();
@@ -25,7 +26,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -35,7 +36,7 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand selectCommand = new SqlCommand("Stock_Product_Group_GetAll", connection) { CommandType = CommandType.StoredProcedure };
@@ -45,7 +46,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }
@@ -55,10 +56,10 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand(nameof(Stock_Product_Group_Get), connection) { CommandType = CommandType.StoredProcedure };
+                    SqlCommand selectCommand = new SqlCommand("Stock_Product_Group_Get", connection) { CommandType = CommandType.StoredProcedure };
                     selectCommand.Parameters.AddWithValue("@ID", ID);
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
@@ -66,20 +67,19 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }
 
         public int Stock_Product_Group_Delete(int ID)
         {
-            DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Stock_Product_Group_Delete), connection) { CommandType = CommandType.StoredProcedure };
+                    SqlCommand sqlCommand = new SqlCommand("Stock_Product_Group_Delete", connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.ExecuteNonQuery();
                 }
@@ -87,7 +87,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -97,7 +97,7 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand selectCommand = new SqlCommand("Stock_Product_GetAll", connection) { CommandType = CommandType.StoredProcedure };
@@ -107,7 +107,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }
@@ -117,10 +117,10 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand(nameof(Stock_Product_Get), connection) { CommandType = CommandType.StoredProcedure };
+                    SqlCommand selectCommand = new SqlCommand("Stock_Product_Get", connection) { CommandType = CommandType.StoredProcedure };
                     selectCommand.Parameters.AddWithValue("@ID", ID);
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
@@ -128,7 +128,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }
@@ -138,10 +138,10 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand(nameof(Stock_Product_GetByCode), connection) { CommandType = CommandType.StoredProcedure };
+                    SqlCommand selectCommand = new SqlCommand("Stock_Product_GetByCode", connection) { CommandType = CommandType.StoredProcedure };
                     selectCommand.Parameters.AddWithValue("@Code", Code);
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
@@ -149,20 +149,19 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }
 
         public int Stock_Product_Delete(int ID)
         {
-            DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Stock_Product_Delete), connection) { CommandType = CommandType.StoredProcedure };
+                    SqlCommand sqlCommand = new SqlCommand("Stock_Product_Delete", connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.ExecuteNonQuery();
                 }
@@ -170,20 +169,19 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
 
         public int Stock_Update(int ID, int ID_GameCenter, string Code, string Title, string Tel, string Address, string Des)
         {
-            DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Stock_Update), connection) { CommandType = CommandType.StoredProcedure };
+                    SqlCommand sqlCommand = new SqlCommand("Stock_Update", connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.Parameters.AddWithValue("@ID_GameCenter", ID_GameCenter);
                     sqlCommand.Parameters.AddWithValue("@Code", Code);
@@ -197,7 +195,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -207,7 +205,7 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand selectCommand = new SqlCommand("Stock_GetAll", connection) { CommandType = CommandType.StoredProcedure };
@@ -217,7 +215,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }
@@ -227,10 +225,10 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand(nameof(Stock_Get), connection) { CommandType = CommandType.StoredProcedure };
+                    SqlCommand selectCommand = new SqlCommand("Stock_Get", connection) { CommandType = CommandType.StoredProcedure };
                     selectCommand.Parameters.AddWithValue("@ID", ID);
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
@@ -238,20 +236,19 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }
 
         public int Stock_Delete(int ID)
         {
-            DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Stock_Delete), connection) { CommandType = CommandType.StoredProcedure };
+                    SqlCommand sqlCommand = new SqlCommand("Stock_Delete", connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.ExecuteNonQuery();
                 }
@@ -259,20 +256,19 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
 
         public int Stock_Supplier_Update(int ID, string Code, string Name, string LName, string Tel, string Mobile, string RegistrationCompanyID, string NationalCompanyID, string NationalCode, string Address, int Is_Company, int ID_Sex, string AliasName, string CompanyName)
         {
-            DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Stock_Supplier_Update), connection) { CommandType = CommandType.StoredProcedure };
+                    SqlCommand sqlCommand = new SqlCommand("Stock_Supplier_Update", connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.Parameters.AddWithValue("@Code", Code);
                     sqlCommand.Parameters.AddWithValue("@Name", Name);
@@ -293,7 +289,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -303,7 +299,7 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand selectCommand = new SqlCommand("Stock_Supplier_GetAll", connection) { CommandType = CommandType.StoredProcedure };
@@ -313,7 +309,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }
@@ -323,10 +319,10 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand(nameof(Stock_Supplier_Get), connection) { CommandType = CommandType.StoredProcedure };
+                    SqlCommand selectCommand = new SqlCommand("Stock_Supplier_Get", connection) { CommandType = CommandType.StoredProcedure };
                     selectCommand.Parameters.AddWithValue("@ID", ID);
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
@@ -334,20 +330,19 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }
 
         public int Stock_Supplier_Delete(int ID)
         {
-            DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Stock_Supplier_Delete), connection) { CommandType = CommandType.StoredProcedure };
+                    SqlCommand sqlCommand = new SqlCommand("Stock_Supplier_Delete", connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.ExecuteNonQuery();
                 }
@@ -355,21 +350,20 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
 
         public int Stock_Process_insert(int ID_Stock_Product, int ID_Stock_Supplier, int ID_Stock, int Count, DateTime Date, int FactorID, int Serial, string Des, int ID_Stock_Process_Type, int PriceBuy, int PriceSale)
         {
-            DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Stock_Process_insert), connection) { CommandType = CommandType.StoredProcedure };
-                    sqlCommand.Parameters.AddWithValue("@ID", (objMain.Max_Tbl("Stock_Process", "ID") + 1));
+                    SqlCommand sqlCommand = new SqlCommand("Stock_Process_insert", connection) { CommandType = CommandType.StoredProcedure };
+                    sqlCommand.Parameters.AddWithValue("@ID", (clsMain.Max_Tbl("Stock_Process", "ID") + 1));
                     sqlCommand.Parameters.AddWithValue("@ID_Stock_Product", ID_Stock_Product);
                     sqlCommand.Parameters.AddWithValue("@ID_Stock_Supplier", ID_Stock_Supplier);
                     sqlCommand.Parameters.AddWithValue("@ID_Stock", ID_Stock);
@@ -388,7 +382,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -398,7 +392,7 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand selectCommand = new SqlCommand("Stock_Process_GetAll", connection) { CommandType = CommandType.StoredProcedure };
@@ -408,7 +402,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }
@@ -418,10 +412,10 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand(nameof(Stock_Process_Get), connection) { CommandType = CommandType.StoredProcedure };
+                    SqlCommand selectCommand = new SqlCommand("Stock_Process_Get", connection) { CommandType = CommandType.StoredProcedure };
                     selectCommand.Parameters.AddWithValue("@ID", ID);
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
@@ -429,20 +423,19 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }
 
         public int Stock_Process_Delete(int ID)
         {
-            DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Stock_Process_Delete), connection) { CommandType = CommandType.StoredProcedure };
+                    SqlCommand sqlCommand = new SqlCommand("Stock_Process_Delete", connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.ExecuteNonQuery();
                 }
@@ -450,25 +443,23 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
-
-        #region ' Useless '
 
         public int Stock_Product_Group_insert(string Title)
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand("Stock_Product_Group_Insert", connection)
                     {
                         CommandType = CommandType.StoredProcedure
                     };
-                    sqlCommand.Parameters.AddWithValue("@ID", (objMain.Max_Tbl("Stock_Product_Group", "ID") + 1));
+                    sqlCommand.Parameters.AddWithValue("@ID", (clsMain.Max_Tbl("Stock_Product_Group", "ID") + 1));
                     sqlCommand.Parameters.AddWithValue("@Title", Title);
                     sqlCommand.Parameters.AddWithValue("@IsDeleted", 0);
                     sqlCommand.ExecuteNonQuery();
@@ -477,7 +468,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -486,14 +477,14 @@ namespace ClickServerService
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand("Stock_Product_Insert", connection)
                     {
                         CommandType = CommandType.StoredProcedure
                     };
-                    sqlCommand.Parameters.AddWithValue("@ID", (objMain.Max_Tbl("Stock_Product", "ID") + 1));
+                    sqlCommand.Parameters.AddWithValue("@ID", (clsMain.Max_Tbl("Stock_Product", "ID") + 1));
                     sqlCommand.Parameters.AddWithValue("@ID_Product_Group", ID_Product_Group);
                     sqlCommand.Parameters.AddWithValue("@Code", Code);
                     sqlCommand.Parameters.AddWithValue("@Title", Title);
@@ -520,7 +511,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -529,7 +520,7 @@ namespace ClickServerService
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand("stock_Product_Update", connection)
@@ -562,7 +553,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -571,14 +562,14 @@ namespace ClickServerService
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand("Stock_Insert", connection)
                     {
                         CommandType = CommandType.StoredProcedure
                     };
-                    sqlCommand.Parameters.AddWithValue("@ID", (objMain.Max_Tbl("Stock", "ID") + 1));
+                    sqlCommand.Parameters.AddWithValue("@ID", (clsMain.Max_Tbl("Stock", "ID") + 1));
                     sqlCommand.Parameters.AddWithValue("@ID_GameCenter", ID_GameCenter);
                     sqlCommand.Parameters.AddWithValue("@Code", Code);
                     sqlCommand.Parameters.AddWithValue("@Title", Title);
@@ -592,7 +583,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -601,14 +592,14 @@ namespace ClickServerService
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand("Stock_Supplier_Insert", connection)
                     {
                         CommandType = CommandType.StoredProcedure
                     };
-                    sqlCommand.Parameters.AddWithValue("@ID", (objMain.Max_Tbl("Stock_Supplier", "ID") + 1));
+                    sqlCommand.Parameters.AddWithValue("@ID", (clsMain.Max_Tbl("Stock_Supplier", "ID") + 1));
                     sqlCommand.Parameters.AddWithValue("@Code", Code);
                     sqlCommand.Parameters.AddWithValue("@Name", Name);
                     sqlCommand.Parameters.AddWithValue("@LName", LName);
@@ -629,7 +620,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -638,7 +629,7 @@ namespace ClickServerService
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand("Stock_Process_update", connection)
@@ -663,7 +654,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -673,7 +664,7 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand selectCommand = new SqlCommand("Stock_Process_Get_By_ProsessType", connection)
@@ -687,7 +678,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }
@@ -697,7 +688,7 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand selectCommand = new SqlCommand("Stock_Process_Get_By_ProsessType_FactorID", connection)
@@ -712,7 +703,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }
@@ -722,7 +713,7 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand selectCommand = new SqlCommand("Stock_Process_Get_By_ProsessType_OrderByFactorID", connection)
@@ -736,7 +727,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }
@@ -746,7 +737,7 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand selectCommand = new SqlCommand("Stock_Process_Get_By_ProsessTypes", connection)
@@ -760,7 +751,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }
@@ -770,7 +761,7 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand selectCommand = new SqlCommand("select * from Stock_Process where ID_Stock_Product=@ID_Stock_Product and ID_Stock_Process_Type=@ID_Stock_Process_Type and IsDeleted=0", connection);
@@ -782,7 +773,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }
@@ -791,8 +782,8 @@ namespace ClickServerService
         {
             try
             {
-                int num = objMain.Max_Tbl("Stock_Process_Transfer", "ID") + 1;
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                int num = clsMain.Max_Tbl("Stock_Process_Transfer", "ID") + 1;
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand("Stock_Process_Transfer_Insert", connection)
@@ -816,7 +807,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -826,7 +817,7 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand selectCommand = new SqlCommand("Stock_Process_Transfer_GetAll", connection)
@@ -839,7 +830,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }
@@ -849,7 +840,7 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand selectCommand = new SqlCommand("Stock_Product_Unit_GetAll", connection)
@@ -862,7 +853,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }

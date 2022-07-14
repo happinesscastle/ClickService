@@ -6,17 +6,17 @@ namespace ClickServerService.ClassCode
 {
     internal class RepairClass
     {
-        private readonly MainClass objMain = new MainClass();
+        private readonly MainClass clsMain = new MainClass();
 
         public void Create_Repair_Today_CheckList()
         {
             DataTable dataTable1 = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     SqlCommand selectCommand = new SqlCommand("Select * from Games_CheckList where CAST(Date as date)=CAST((Select GETDATE()) as date) and ID_Gamecenter=@ID_Gamecenter", connection);
-                    selectCommand.Parameters.Add("@ID_Gamecenter", SqlDbType.Int).Value = objMain.ID_GameCenter_Local_Get();
+                    selectCommand.Parameters.Add("@ID_Gamecenter", SqlDbType.Int).Value = clsMain.ID_GameCenter_Local_Get();
                     new SqlDataAdapter(selectCommand).Fill(dataTable1);
                 }
                 if (dataTable1.Rows.Count != 0)
@@ -24,10 +24,10 @@ namespace ClickServerService.ClassCode
                 DataSet dataSet = new DataSet();
                 DataTable dataTable2 = new DataTable();
                 DataTable dataTable3 = new DataTable();
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     SqlCommand selectCommand = new SqlCommand("SELECT distinct Games_Details.ID, Games_Details.ID_GameCenter, Games_Details.ID_Games, Games_Details.Title, Game_Visit_Items.Daily,   Game_Visit_Items.Weekly, Game_Visit_Items.Periodic, Games_Details.WeekDayIndex, Games_Details.Day,1 as ID_CheckList_Type  FROM Games_Details INNER JOIN Game_Visit_Items ON Games_Details.ID = Game_Visit_Items.ID_Games_Details AND Games_Details.ID_GameCenter = Game_Visit_Items.ID_GameCenter LEFT OUTER JOIN Games ON Games_Details.ID_Games = Games.ID where  Game_Visit_Items.Daily = 1 and Games_Details.ID_GameCenter=@ID_Gamecenter and ISNULL( Games.IsRetired,0)=0 and ISNULL( Games.IsDeleted,0)=0 SELECT distinct Games_Details.ID, Games_Details.ID_GameCenter, Games_Details.ID_Games,   Games_Details.Title, Game_Visit_Items.Daily,   Game_Visit_Items.Weekly, Game_Visit_Items.Periodic, Games_Details.WeekDayIndex, Games_Details.Day,2 as ID_CheckList_Type  FROM Games_Details INNER JOIN Game_Visit_Items ON Games_Details.ID = Game_Visit_Items.ID_Games_Details AND Games_Details.ID_GameCenter = Game_Visit_Items.ID_GameCenter   LEFT OUTER JOIN Games ON Games_Details.ID_Games = Games.ID where  Game_Visit_Items.Weekly = 1 and Games_Details.ID_GameCenter=@ID_Gamecenter and Games_Details.WeekDayIndex= (SELECT datepart(WEEKDAY,(select GETDATE()))) and ISNULL( Games.IsRetired,0)=0 and ISNULL( Games.IsDeleted,0)=0      SELECT   distinct     Games_Details.ID, Games_Details.ID_GameCenter, Games_Details.ID_Games,   Games_Details.Title, Game_Visit_Items.Daily,   Game_Visit_Items.Weekly, Game_Visit_Items.Periodic, Games_Details.WeekDayIndex, Games_Details.Day,3 as ID_CheckList_Type  FROM Games_Details INNER JOIN Game_Visit_Items ON Games_Details.ID = Game_Visit_Items.ID_Games_Details                            AND Games_Details.ID_GameCenter = Game_Visit_Items.ID_GameCenter   LEFT OUTER JOIN Games ON Games_Details.ID_Games = Games.ID where  Game_Visit_Items.Periodic = 1 and Games_Details.ID_GameCenter=@ID_Gamecenter  and Games_Details.period = 1 and  datepart (day,Games_Details.StartDate)= (SELECT datepart(DAY,(select GETDATE()))) and ISNULL( Games.IsRetired,0)=0 and ISNULL( Games.IsDeleted,0)=0         SELECT   distinct     Games_Details.ID, Games_Details.ID_GameCenter, Games_Details.ID_Games,  Games_Details.Title, Game_Visit_Items.Daily,   Game_Visit_Items.Weekly, Game_Visit_Items.Periodic, Games_Details.WeekDayIndex, Games_Details.Day, 3 as ID_CheckList_Type  FROM Games_Details INNER JOIN Game_Visit_Items ON Games_Details.ID = Game_Visit_Items.ID_Games_Details AND Games_Details.ID_GameCenter = Game_Visit_Items.ID_GameCenter   LEFT OUTER JOIN Games ON Games_Details.ID_Games = Games.ID where  Game_Visit_Items.Periodic = 1 and Games_Details.ID_GameCenter = 1 and Games_Details.period = 3 and (DATEDIFF(day, Games_Details.StartDate, (select GETDATE())) % 90) = 0 and ISNULL(Games.IsRetired, 0)= 0 and ISNULL(Games.IsDeleted, 0)= 0  ", connection);
-                    selectCommand.Parameters.Add("@ID_Gamecenter", SqlDbType.Int).Value = objMain.ID_GameCenter_Local_Get();
+                    selectCommand.Parameters.Add("@ID_Gamecenter", SqlDbType.Int).Value = clsMain.ID_GameCenter_Local_Get();
                     new SqlDataAdapter(selectCommand).Fill(dataSet);
                     if (dataSet.Tables[0].Rows.Count > 0)
                         dataTable2.Merge(dataSet.Tables[0]);
@@ -42,7 +42,7 @@ namespace ClickServerService.ClassCode
                 {
                     if (true)
                     {
-                        using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                        using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                         {
                             try
                             {
@@ -54,11 +54,11 @@ namespace ClickServerService.ClassCode
                                 com.Parameters.Add("@ID_Games_Details", SqlDbType.Int).Value = dataTable2.Rows[index]["ID"].ToString();
                                 com.Parameters.Add("@ID_CheckList_Type", SqlDbType.Int).Value = dataTable2.Rows[index]["ID_CheckList_Type"].ToString();
                                 com.ExecuteNonQuery();
-                                objMain.Synchronize_Insert(com);
+                                clsMain.Synchronize_Insert(com);
                             }
                             catch (Exception ex)
                             {
-                                objMain.ErrorLog(ex);
+                                clsMain.ErrorLog(ex);
                             }
                             finally
                             {
@@ -70,7 +70,7 @@ namespace ClickServerService.ClassCode
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
             }
         }
     }

@@ -1426,3 +1426,91 @@ Affected parameters are:
    i = 
    assemblypath = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe
    logfile = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.InstallLog
+Uninstalling assembly 'C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe
+   logfile = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.InstallLog
+Removing EventLog source ClickServiceTest.
+Service ClickServiceTest is being removed from the system...
+Service ClickServiceTest was successfully removed from the system.
+Installing assembly 'C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe'.
+Affected parameters are:
+   logtoconsole = 
+   i = 
+   assemblypath = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe
+   logfile = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.InstallLog
+Installing service ClickServiceTest...
+Service ClickServiceTest has been successfully installed.
+Creating EventLog source ClickServiceTest in log Application...
+Committing assembly 'C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe'.
+Affected parameters are:
+   logtoconsole = 
+   i = 
+   assemblypath = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe
+   logfile = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.InstallLog
+Uninstalling assembly 'C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe
+   logfile = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.InstallLog
+Removing EventLog source ClickServiceTest.
+Service ClickServiceTest is being removed from the system...
+Service ClickServiceTest was successfully removed from the system.
+Installing assembly 'C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe'.
+Affected parameters are:
+   logtoconsole = 
+   i = 
+   assemblypath = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe
+   logfile = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.InstallLog
+Installing service ClickServiceTest...
+Service ClickServiceTest has been successfully installed.
+Creating EventLog source ClickServiceTest in log Application...
+Committing assembly 'C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe'.
+Affected parameters are:
+   logtoconsole = 
+   i = 
+   assemblypath = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe
+   logfile = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.InstallLog
+Uninstalling assembly 'C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe
+   logfile = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.InstallLog
+Removing EventLog source ClickServiceTest.
+Service ClickServiceTest is being removed from the system...
+Service ClickServiceTest was successfully removed from the system.
+Uninstalling assembly 'C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe
+   logfile = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.InstallLog
+Removing EventLog source ClickServiceTest.
+Warning: The source ClickServiceTest is not registered on the local machine.
+Service ClickServiceTest is being removed from the system...
+An exception occurred during the uninstallation of the System.ServiceProcess.ServiceInstaller installer.
+System.ComponentModel.Win32Exception: The specified service does not exist as an installed service
+An exception occurred while uninstalling. This exception will be ignored and the uninstall will continue. However, the application might not be fully uninstalled after the uninstall is complete.
+Installing assembly 'C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe'.
+Affected parameters are:
+   logtoconsole = 
+   i = 
+   assemblypath = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe
+   logfile = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.InstallLog
+Installing service ClickServiceTest...
+Service ClickServiceTest has been successfully installed.
+Creating EventLog source ClickServiceTest in log Application...
+Committing assembly 'C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe'.
+Affected parameters are:
+   logtoconsole = 
+   i = 
+   assemblypath = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe
+   logfile = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.InstallLog
+Uninstalling assembly 'C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.exe
+   logfile = C:\Users\Meti\source\repos\happinesscastle\ClickService\bin\Debug\ClickServerService.InstallLog
+Removing EventLog source ClickServiceTest.
+Service ClickServiceTest is being removed from the system...
+Service ClickServiceTest was successfully removed from the system.

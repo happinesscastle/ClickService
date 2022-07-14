@@ -6,14 +6,14 @@ namespace ClickServerService
 {
     internal class UsersClass
     {
-        private readonly MainClass objMain = new MainClass();
+        private readonly MainClass clsMain = new MainClass();
 
         public DataTable Users_Get()
         {
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand selectCommand = new SqlCommand("Users_GetAll", connection) { CommandType = CommandType.StoredProcedure };
@@ -23,21 +23,20 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }
 
-        public DataTable Users_GetByGUID(string Card_GUID)
+        public DataTable Users_GetByGUID(string card_GUID)
         {
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand("Select * from Users where Card_GUID=@Card_GUID and Enable=1 ", connection);
-                    selectCommand.Parameters.AddWithValue(nameof(Card_GUID), Card_GUID);
+                    SqlCommand selectCommand = new SqlCommand($"Select * From Users Where Card_GUID={card_GUID} And Enable=1 ", connection);
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                     connection.Close();
                     connection.Dispose();
@@ -46,20 +45,22 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }
+
+        #region ' Useless '
 
         public DataTable Users_Get(int ID)
         {
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand(nameof(Users_Get), connection) { CommandType = CommandType.StoredProcedure };
+                    SqlCommand selectCommand = new SqlCommand("Users_Get", connection) { CommandType = CommandType.StoredProcedure };
                     selectCommand.Parameters.AddWithValue("@ID", ID);
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
@@ -67,20 +68,19 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }
 
         public int Users_Delete(int ID)
         {
-            DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Users_Delete), connection) { CommandType = CommandType.StoredProcedure };
+                    SqlCommand sqlCommand = new SqlCommand("Users_Delete", connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.ExecuteNonQuery();
                 }
@@ -88,7 +88,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -98,7 +98,7 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand selectCommand = new SqlCommand("Users_Groups_GetAll", connection) { CommandType = CommandType.StoredProcedure };
@@ -108,7 +108,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }
@@ -118,10 +118,10 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand(nameof(Users_Groups_Get), connection) { CommandType = CommandType.StoredProcedure };
+                    SqlCommand selectCommand = new SqlCommand("Users_Groups_Get", connection) { CommandType = CommandType.StoredProcedure };
                     selectCommand.Parameters.AddWithValue("@ID", ID);
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
@@ -129,20 +129,19 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }
 
         public int Users_Groups_Delete(int ID)
         {
-            DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Users_Groups_Delete), connection) { CommandType = CommandType.StoredProcedure };
+                    SqlCommand sqlCommand = new SqlCommand("Users_Groups_Delete", connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.ExecuteNonQuery();
                 }
@@ -150,19 +149,17 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
-
-        #region ' Useless '
 
         public DataTable Permision_GetByParentID(int ParentID)
         {
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand selectCommand = new SqlCommand("Permision_GetbyParent", connection) { CommandType = CommandType.StoredProcedure };
@@ -173,7 +170,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }
@@ -182,11 +179,11 @@ namespace ClickServerService
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand("INSERT INTO [Permision] ([ID] ,[Title] ,[ParentID] ,[Path]) VALUES (@ID ,@Title ,@ParentID ,@Path)", connection);
-                    sqlCommand.Parameters.AddWithValue("@ID", (objMain.Max_Tbl("Permision", "ID") + 1));
+                    sqlCommand.Parameters.AddWithValue("@ID", (clsMain.Max_Tbl("Permision", "ID") + 1));
                     sqlCommand.Parameters.AddWithValue("@Title", Title);
                     sqlCommand.Parameters.AddWithValue("@ParentID", ParentID);
                     sqlCommand.Parameters.AddWithValue("@Path", Path);
@@ -196,7 +193,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -206,7 +203,7 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand selectCommand = new SqlCommand("Permision_GetbyPath", connection) { CommandType = CommandType.StoredProcedure };
@@ -217,7 +214,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }
@@ -226,11 +223,11 @@ namespace ClickServerService
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand("INSERT INTO [Users] ([ID] ,[Name] ,[LName] ,[Tel] ,[Address] ,[UserName] ,[Password] ,[RFIDcard] ,[Date] ,[Enable] ,[IsDeleted] ,[PersonnelCode],[ID_GameCenter],[ID_UsersGroup]) VALUES (@ID ,@Name ,@LName ,@Tel ,@Address ,@UserName ,@Password ,@RFIDcard ,@Date ,@Enable ,@IsDeleted,@PersonnelCode,@ID_GameCenter,@ID_UsersGroup)", connection);
-                    sqlCommand.Parameters.AddWithValue("@ID", (objMain.Max_Tbl("Users", "ID") + 1));
+                    sqlCommand.Parameters.AddWithValue("@ID", (clsMain.Max_Tbl("Users", "ID") + 1));
                     sqlCommand.Parameters.AddWithValue("@Name", Name);
                     sqlCommand.Parameters.AddWithValue("@LName", LName);
                     sqlCommand.Parameters.AddWithValue("@Tel", Tel);
@@ -250,7 +247,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -259,7 +256,7 @@ namespace ClickServerService
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand("update [Users] set [Name]=@Name ,[LName]=@LName ,[Tel]=@Tel ,[Address]=@Address ,[UserName]=@UserName ,[Password]=@Password ,[RFIDcard]=@RFIDcard ,[Enable]=@Enable ,[PersonnelCode]=@PersonnelCode,[ID_GameCenter]=@ID_GameCenter,[ID_UsersGroup]=@ID_UsersGroup where [ID]=@ID ", connection);
@@ -281,7 +278,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -290,11 +287,11 @@ namespace ClickServerService
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand("INSERT INTO [dbo].[Users_Groups] ([ID] ,[Title] ,[PermisionList]) VALUES (@ID ,@Title ,@PermisionList)", connection);
-                    sqlCommand.Parameters.AddWithValue("@ID", (objMain.Max_Tbl("Users_Groups", "ID") + 1));
+                    sqlCommand.Parameters.AddWithValue("@ID", (clsMain.Max_Tbl("Users_Groups", "ID") + 1));
                     sqlCommand.Parameters.AddWithValue("@Title", Title);
                     sqlCommand.Parameters.AddWithValue("@PermisionList", PermisionList);
                     sqlCommand.ExecuteNonQuery();
@@ -303,7 +300,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -312,7 +309,7 @@ namespace ClickServerService
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand("Update [Users_Groups] set [Title]=@Title,[PermisionList]=@PermisionList Where [ID]=@ID ", connection);
@@ -325,7 +322,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }

@@ -22,10 +22,10 @@ namespace ClickServerService.Improved
 
         public static int ServerBufferLength = 1000;
 
-        readonly MainClass objMain = new MainClass();
+        readonly MainClass clsMain = new MainClass();
         readonly ClsSender clsSender = new ClsSender();
-        readonly GamesClass objGames = new GamesClass();
-        readonly SwiperClass objSwiper = new SwiperClass();
+        readonly GamesClass clsGames = new GamesClass();
+        readonly SwiperClass clsSwiper = new SwiperClass();
 
         readonly System.Timers.Timer TimerChargeRate = new System.Timers.Timer();
         readonly System.Timers.Timer Timer_Create_Repair_CheckList = new System.Timers.Timer();
@@ -61,9 +61,9 @@ namespace ClickServerService.Improved
         {
             try
             {
-                if (!objMain.Licence_Check())
+                if (!clsMain.Licence_Check())
                 {
-                    objMain.MyPrint(" :1:Licence ERROR ", ConsoleColor.Red);
+                    clsMain.MyPrint(" :1:Licence ERROR ", ConsoleColor.Red);
                     Dispose();
                 }
                 else
@@ -71,7 +71,7 @@ namespace ClickServerService.Improved
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
             }
         }
 
@@ -79,14 +79,14 @@ namespace ClickServerService.Improved
         {
             try
             {
-                objMain.MyPrint("Starter - AppLoadMain", ConsoleColor.Blue);
-                accessPoints = objMain.GetAccessPoints();
-                SwiperClass.Swipers = objSwiper.GetAllSwiper();
-                SwiperClass.Swipers_ChargeRate = objSwiper.Swipers_GetByChargeRate();
+                clsMain.MyPrint("Starter - AppLoadMain", ConsoleColor.Blue);
+                accessPoints = clsMain.GetAccessPoints();
+                SwiperClass.Swipers = clsSwiper.GetAllSwiper();
+                SwiperClass.Swipers_ChargeRate = clsSwiper.Swipers_GetByMacAddressByChargeRate();
                 Thread.Sleep(0);
                 if (accessPoints.Any())
                 {
-                    MainClass.key_Value_List = objMain.Key_Value_Get();
+                    MainClass.key_Value_List = clsMain.Key_Value_Get();
 
                     foreach (var item in accessPoints)
                     {
@@ -100,12 +100,12 @@ namespace ClickServerService.Improved
                             }
                             catch
                             {
-                                objMain.MyPrint("Not Connect " + item.AP_IP, ConsoleColor.Red);
+                                clsMain.MyPrint("Not Connect " + item.AP_IP, ConsoleColor.Red);
                             }
                             Thread.Sleep(0);
                             Task.Run(() => new ClsReceiver(item.AP_ID).Start());
                             Thread.Sleep(0);
-                            objMain.MyPrint("*AccessPoints : " + item.AP_ID.ToString(), ConsoleColor.White);
+                            clsMain.MyPrint("*AccessPoints : " + item.AP_ID.ToString(), ConsoleColor.White);
                         }
                         catch { }
                     }
@@ -135,7 +135,7 @@ namespace ClickServerService.Improved
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
             }
         }
 
@@ -147,14 +147,15 @@ namespace ClickServerService.Improved
             {
                 if (DateTime.Now.Minute != 0)
                     return;
-                objGames.Charge_Rate_GetAll(objMain.ID_GameCenter_Local_Get());
-                clsSender.ManualChargeRate();
-                SwiperClass.Swipers_ChargeRate = objSwiper.Swipers_GetByChargeRate();
                 TimerChargeRate.Interval = 60000.0;// 1 Min
+                clsGames.Charge_Rate_GetAll(clsMain.ID_GameCenter_Local_Get());
+                clsSender.ManualChargeRate();
+                SwiperClass.Swipers = clsSwiper.GetAllSwiper();
+                SwiperClass.Swipers_ChargeRate = clsSwiper.Swipers_GetByMacAddressByChargeRate();
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
             }
         }
 
@@ -166,7 +167,7 @@ namespace ClickServerService.Improved
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
             }
         }
 
@@ -174,11 +175,11 @@ namespace ClickServerService.Improved
         {
             try
             {
-                objSwiper.Swiper_StateUpdateToNotReceiveForChargeRate();
+                clsSwiper.Swiper_UpdateStateToNotReceiveForChargeRate();
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
             }
         }
 

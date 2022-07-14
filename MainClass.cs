@@ -25,7 +25,7 @@ namespace ClickServerService
         /// <summary>
         /// Parameter for Printing Logs on Console When in Debug Mode. ( for Programmers )
         /// </summary>
-        readonly bool inDebugMode = false;
+        readonly bool inDebugMode = true;
 
         private readonly PersianCalendar persianCalendar = new PersianCalendar();
 
@@ -196,36 +196,26 @@ namespace ClickServerService
             }
         }
 
-        public void ErrorLogTemp(string errorText)
+        public void ErrorLogTemp(string errText)
         {
             try
             {
-                WriteToFileError($"Date: {DateTime.Now} - P: {errorText}");
+                WriteToFileError($"Date: {DateTime.Now} - P: {errText}");
             }
             catch { }
         }
 
-        public void WriteToFileError(string Message)
+        public void WriteToFileError(string message)
         {
             try
             {
-                string path1 = AppDomain.CurrentDomain.BaseDirectory + "\\ServiceLogs";
-                if (!Directory.Exists(path1))
-                    Directory.CreateDirectory(path1);
-                string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-                DateTime dateTime = DateTime.Now.Date;
-                string str = dateTime.ToShortDateString().Replace('/', '_');
-                string path2 = baseDirectory + "\\ServiceLogs\\ErrorLog_" + str + ".txt";
-                if (!File.Exists(path2))
-                {
-                    using (StreamWriter text = File.CreateText(path2))
-                        text.WriteLine(Message);
-                }
-                else
-                {
-                    using (StreamWriter streamWriter = File.AppendText(path2))
-                        streamWriter.WriteLine(Message);
-                }
+                string pathErrorLog = AppDomain.CurrentDomain.BaseDirectory + "\\ServiceLogs";
+                if (!Directory.Exists(pathErrorLog))
+                    Directory.CreateDirectory(pathErrorLog);
+
+                pathErrorLog += $"\\ErrorLog_{DateTime.Now:yyyy-MM-dd}.txt";
+
+                File.AppendAllText(pathErrorLog, message, Encoding.UTF8);
             }
             catch { }
         }
@@ -331,7 +321,6 @@ namespace ClickServerService
                 if (Parameters.Length > 0)
                     Parameters = Parameters.Remove(Parameters.Length - 1, 1);
                 SynchronizeTable_Insert(ID_GameCenter_Local_Get(), DateTime.Now, commandText, CommandTypeB, Parameters, arrayList2.Count >= 1 ? arrayList2[0].ToString() : "", arrayList2.Count >= 2 ? arrayList2[1].ToString() : "", arrayList2.Count >= 3 ? arrayList2[2].ToString() : "", arrayList2.Count >= 4 ? arrayList2[3].ToString() : "", arrayList2.Count >= 5 ? arrayList2[4].ToString() : "", arrayList2.Count >= 6 ? arrayList2[5].ToString() : "", arrayList2.Count >= 7 ? arrayList2[6].ToString() : "", arrayList2.Count >= 8 ? arrayList2[7].ToString() : "", arrayList2.Count >= 9 ? arrayList2[8].ToString() : "", arrayList2.Count >= 10 ? arrayList2[9].ToString() : "", arrayList2.Count >= 11 ? arrayList2[10].ToString() : "", arrayList2.Count >= 12 ? arrayList2[11].ToString() : "", arrayList2.Count >= 13 ? arrayList2[12].ToString() : "", arrayList2.Count >= 14 ? arrayList2[13].ToString() : "", arrayList2.Count >= 15 ? arrayList2[14].ToString() : "", arrayList2.Count >= 16 ? arrayList2[15].ToString() : "", arrayList2.Count >= 17 ? arrayList2[16].ToString() : "", arrayList2.Count >= 18 ? arrayList2[17].ToString() : "", arrayList2.Count >= 19 ? arrayList2[18].ToString() : "", arrayList2.Count >= 20 ? arrayList2[19].ToString() : "", arrayList2.Count >= 21 ? arrayList2[20].ToString() : "", arrayList2.Count >= 22 ? arrayList2[21].ToString() : "", arrayList2.Count >= 23 ? arrayList2[22].ToString() : "", arrayList2.Count >= 24 ? arrayList2[23].ToString() : "", arrayList2.Count >= 25 ? arrayList2[24].ToString() : "", arrayList2.Count >= 26 ? arrayList2[25].ToString() : "", arrayList2.Count >= 27 ? arrayList2[26].ToString() : "", arrayList2.Count >= 28 ? arrayList2[27].ToString() : "", arrayList2.Count >= 29 ? arrayList2[28].ToString() : "", arrayList2.Count >= 30 ? arrayList2[29].ToString() : "", arrayList2.Count >= 31 ? arrayList2[30].ToString() : "", arrayList2.Count >= 32 ? arrayList2[31].ToString() : "", arrayList2.Count >= 33 ? arrayList2[32].ToString() : "", arrayList2.Count >= 34 ? arrayList2[33].ToString() : "", arrayList2.Count >= 35 ? arrayList2[34].ToString() : "", arrayList2.Count >= 36 ? arrayList2[35].ToString() : "", arrayList2.Count >= 37 ? arrayList2[36].ToString() : "", arrayList2.Count >= 38 ? arrayList2[37].ToString() : "", arrayList2.Count >= 39 ? arrayList2[38].ToString() : "", arrayList2.Count >= 40 ? arrayList2[39].ToString() : "", arrayList2.Count >= 41 ? arrayList2[40].ToString() : "", arrayList2.Count >= 42 ? arrayList2[41].ToString() : "", arrayList2.Count >= 43 ? arrayList2[42].ToString() : "", arrayList2.Count >= 44 ? arrayList2[43].ToString() : "", arrayList2.Count >= 45 ? arrayList2[44].ToString() : "", arrayList2.Count >= 46 ? arrayList2[45].ToString() : "", arrayList2.Count >= 47 ? arrayList2[46].ToString() : "", arrayList2.Count >= 48 ? arrayList2[47].ToString() : "", arrayList2.Count >= 49 ? arrayList2[48].ToString() : "", arrayList2.Count >= 50 ? arrayList2[49].ToString() : "", arrayList2.Count >= 51 ? arrayList2[50].ToString() : "", arrayList2.Count >= 52 ? arrayList2[51].ToString() : "", arrayList2.Count >= 53 ? arrayList2[52].ToString() : "", arrayList2.Count >= 54 ? arrayList2[53].ToString() : "", arrayList2.Count >= 55 ? arrayList2[54].ToString() : "", arrayList2.Count >= 56 ? arrayList2[55].ToString() : "", arrayList2.Count >= 57 ? arrayList2[56].ToString() : "", arrayList2.Count >= 58 ? arrayList2[57].ToString() : "", arrayList2.Count >= 59 ? arrayList2[58].ToString() : "", arrayList2.Count >= 60 ? arrayList2[59].ToString() : "", arrayList2.Count >= 61 ? arrayList2[60].ToString() : "", arrayList2.Count >= 62 ? arrayList2[61].ToString() : "", arrayList2.Count >= 63 ? arrayList2[62].ToString() : "", arrayList2.Count >= 64 ? arrayList2[63].ToString() : "", arrayList2.Count >= 65 ? arrayList2[64].ToString() : "", arrayList2.Count >= 66 ? arrayList2[65].ToString() : "", arrayList2.Count >= 67 ? arrayList2[66].ToString() : "", arrayList2.Count >= 68 ? arrayList2[67].ToString() : "", arrayList2.Count >= 69 ? arrayList2[68].ToString() : "", arrayList2.Count >= 70 ? arrayList2[69].ToString() : "", arrayList2.Count >= 71 ? arrayList2[70].ToString() : "", arrayList2.Count >= 72 ? arrayList2[71].ToString() : "", arrayList2.Count >= 73 ? arrayList2[72].ToString() : "", arrayList2.Count >= 74 ? arrayList2[73].ToString() : "", arrayList2.Count >= 75 ? arrayList2[74].ToString() : "", arrayList2.Count >= 76 ? arrayList2[75].ToString() : "", arrayList2.Count >= 77 ? arrayList2[76].ToString() : "", arrayList2.Count >= 78 ? arrayList2[77].ToString() : "", arrayList2.Count >= 79 ? arrayList2[78].ToString() : "", arrayList2.Count >= 80 ? arrayList2[79].ToString() : "", arrayList2.Count >= 81 ? arrayList2[80].ToString() : "", arrayList2.Count >= 82 ? arrayList2[81].ToString() : "", arrayList2.Count >= 83 ? arrayList2[82].ToString() : "", arrayList2.Count >= 84 ? arrayList2[83].ToString() : "", arrayList2.Count >= 85 ? arrayList2[84].ToString() : "", arrayList2.Count >= 86 ? arrayList2[85].ToString() : "", arrayList2.Count >= 87 ? arrayList2[86].ToString() : "", arrayList2.Count >= 88 ? arrayList2[87].ToString() : "", arrayList2.Count >= 89 ? arrayList2[88].ToString() : "", arrayList2.Count >= 90 ? arrayList2[89].ToString() : "", arrayList2.Count >= 91 ? arrayList2[90].ToString() : "", arrayList2.Count >= 92 ? arrayList2[91].ToString() : "", arrayList2.Count >= 93 ? arrayList2[92].ToString() : "", arrayList2.Count >= 94 ? arrayList2[93].ToString() : "", arrayList2.Count >= 95 ? arrayList2[94].ToString() : "", arrayList2.Count >= 96 ? arrayList2[95].ToString() : "", arrayList2.Count >= 97 ? arrayList2[96].ToString() : "", arrayList2.Count >= 98 ? arrayList2[97].ToString() : "", arrayList2.Count >= 99 ? arrayList2[98].ToString() : "", arrayList2.Count >= 100 ? arrayList2[99].ToString() : "");
-
             }
             catch (Exception ex)
             {
@@ -358,7 +347,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(SynchronizeTable_Insert), connection) { CommandType = CommandType.StoredProcedure };
+                    SqlCommand sqlCommand = new SqlCommand("SynchronizeTable_Insert", connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.Clear();
                     num = Max_Tbl("SynchronizeTable", "ID") + 1;
                     sqlCommand.Parameters.AddWithValue("@ID", num);
@@ -612,7 +601,7 @@ namespace ClickServerService
             }
         }
 
-        public int ServerConfig_SetApStatus(int ID_GameCenter, bool Status, int multiRun_AP_ID = 0)
+        public void ServerConfig_SetApStatus(int ID_GameCenter, bool Status, int multiRun_AP_ID = 0)
         {
             try
             {
@@ -625,12 +614,10 @@ namespace ClickServerService
                     sqlCommand.Parameters.AddWithValue("@Status", Status);
                     sqlCommand.ExecuteNonQuery();
                 }
-                return 1;
             }
             catch (Exception ex)
             {
                 ErrorLog(ex);
-                return -1;
             }
         }
 
@@ -711,73 +698,43 @@ namespace ClickServerService
             return flag;
         }
 
-        public int ReceiveStorage_insert(string receiveText, int P)
+        public void ReceiveStorage_insert(string receiveText, int P)
         {
             try
             {
                 using (SqlConnection connection = new SqlConnection(DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(ReceiveStorage_insert), connection) { CommandType = CommandType.StoredProcedure };
+                    SqlCommand sqlCommand = new SqlCommand("ReceiveStorage_insert", connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ReciveText", receiveText);
                     sqlCommand.Parameters.AddWithValue("@P", P);
                     sqlCommand.ExecuteNonQuery();
                     connection.Close();
                 }
-                return 1;
             }
             catch (Exception ex)
             {
                 ErrorLog(ex);
-                return -1;
             }
         }
 
-        public int ReceiveStorage_getReciveText(string receiveText)
+        public void ReceiveStorage_UpdateIsProcess(string receiveText)
         {
             try
             {
-                int num = 0;
                 using (SqlConnection connection = new SqlConnection(DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(ReceiveStorage_getReciveText), connection) { CommandType = CommandType.StoredProcedure };
-                    sqlCommand.Parameters.AddWithValue("@ReciveText", receiveText);
-                    SqlParameter sqlParameter = sqlCommand.Parameters.Add("@RetState", SqlDbType.Int);
-                    sqlParameter.Direction = ParameterDirection.Output;
-                    sqlCommand.ExecuteNonQuery();
-                    num = int.Parse(sqlParameter.Value.ToString());
-                    connection.Close();
-                }
-                return num;
-            }
-            catch (Exception ex)
-            {
-                ErrorLog(ex);
-                return -1;
-            }
-        }
-
-        public int ReceiveStorage_UpdateIsProcess(string receiveText)
-        {
-            try
-            {
-                int num = 0;
-                using (SqlConnection connection = new SqlConnection(DBPath()))
-                {
-                    connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(ReceiveStorage_UpdateIsProcess), connection) { CommandType = CommandType.StoredProcedure };
+                    SqlCommand sqlCommand = new SqlCommand("ReceiveStorage_UpdateIsProcess", connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ReciveText", receiveText);
                     sqlCommand.Parameters.AddWithValue("@Processed_Date", DateTime.Now);
                     sqlCommand.ExecuteNonQuery();
                     connection.Close();
                 }
-                return num;
             }
             catch (Exception ex)
             {
                 ErrorLog(ex);
-                return -1;
             }
         }
 
@@ -789,7 +746,7 @@ namespace ClickServerService
                 using (SqlConnection connection = new SqlConnection(DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand(nameof(ReceiveStorage_GetForSend), connection) { CommandType = CommandType.StoredProcedure };
+                    SqlCommand selectCommand = new SqlCommand("ReceiveStorage_GetForSend", connection) { CommandType = CommandType.StoredProcedure };
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                     connection.Close();
                 }
@@ -877,6 +834,31 @@ namespace ClickServerService
         #endregion
 
         #region ' Useless '
+
+        public int ReceiveStorage_getReciveText(string receiveText)
+        {
+            try
+            {
+                int num = 0;
+                using (SqlConnection connection = new SqlConnection(DBPath()))
+                {
+                    connection.Open();
+                    SqlCommand sqlCommand = new SqlCommand("ReceiveStorage_getReciveText", connection) { CommandType = CommandType.StoredProcedure };
+                    sqlCommand.Parameters.AddWithValue("@ReciveText", receiveText);
+                    SqlParameter sqlParameter = sqlCommand.Parameters.Add("@RetState", SqlDbType.Int);
+                    sqlParameter.Direction = ParameterDirection.Output;
+                    sqlCommand.ExecuteNonQuery();
+                    num = int.Parse(sqlParameter.Value.ToString());
+                    connection.Close();
+                }
+                return num;
+            }
+            catch (Exception ex)
+            {
+                ErrorLog(ex);
+                return -1;
+            }
+        }
 
         public string Encrypt(string plainText)
         {

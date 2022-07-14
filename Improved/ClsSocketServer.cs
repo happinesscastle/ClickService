@@ -11,7 +11,7 @@ namespace ClickServerService.Improved
     {
         #region ' Variables '
 
-        readonly MainClass objMain = new MainClass();
+        readonly MainClass clsMain = new MainClass();
 
         private readonly int PortNumber = 2930;
 
@@ -21,11 +21,11 @@ namespace ClickServerService.Improved
         {
             try
             {
-                PortNumber = Convert.ToInt32(objMain.GetData_SocketInterfaceConfig("SocketPort"));
+                PortNumber = Convert.ToInt32(clsMain.GetData_SocketInterfaceConfig("SocketPort"));
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
             }
         }
 
@@ -45,8 +45,8 @@ namespace ClickServerService.Improved
                     }
                     catch (Exception ex)
                     {
-                        objMain.MyPrint(ex.Message, ConsoleColor.DarkRed);
-                        objMain.ErrorLog(ex);
+                        clsMain.MyPrint(ex.Message, ConsoleColor.DarkRed);
+                        clsMain.ErrorLog(ex);
                     }
                 }
                 mainSocket.Listen(5);
@@ -55,7 +55,7 @@ namespace ClickServerService.Improved
             }
             catch (Exception ex)
             {
-                objMain.MyPrint(ex.Message, ConsoleColor.Red);
+                clsMain.MyPrint(ex.Message, ConsoleColor.Red);
             }
         }
 
@@ -80,7 +80,7 @@ namespace ClickServerService.Improved
                 }
                 catch (Exception ex)
                 {
-                    objMain.MyPrint(ex.Message, ConsoleColor.Red);
+                    clsMain.MyPrint(ex.Message, ConsoleColor.Red);
                 }
             }
         }
@@ -104,7 +104,7 @@ namespace ClickServerService.Improved
             }
             catch (Exception ex)
             {
-                objMain.MyPrint(ex.Message, ConsoleColor.Red);
+                clsMain.MyPrint(ex.Message, ConsoleColor.Red);
             }
             finally
             {

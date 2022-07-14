@@ -6,14 +6,39 @@ namespace ClickServerService
 {
     internal class CashierClass
     {
-        private readonly MainClass objMain = new MainClass();
+        private readonly MainClass clsMain = new MainClass();
+
+        public DataTable Orders_Get(int id, int id_GameCenter)
+        {
+            DataTable dataTable = new DataTable();
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
+                {
+                    connection.Open();
+                    SqlCommand selectCommand = new SqlCommand("Select * from [dbo].[Orders] where ID=@ID and ID_GameCenter=@ID_GameCenter", connection);
+                    selectCommand.Parameters.AddWithValue("@ID", id);
+                    selectCommand.Parameters.AddWithValue("@ID_GameCenter", id_GameCenter);
+                    new SqlDataAdapter(selectCommand).Fill(dataTable);
+                    connection.Close();
+                }
+                return dataTable;
+            }
+            catch (Exception ex)
+            {
+                clsMain.ErrorLog(ex);
+                return dataTable;
+            }
+        }
+
+        #region ' Useless '
 
         public DataTable CashierDesk_Get()
         {
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand selectCommand = new SqlCommand("CashierDesk_GetAll", connection) { CommandType = CommandType.StoredProcedure };
@@ -23,20 +48,20 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }
 
+
         public int CashierDesk_Update(int ID, string Title, bool Enable, string UsersIDAccess, int GameCenterID)
         {
-            DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(CashierDesk_Update), connection) { CommandType = CommandType.StoredProcedure };
+                    SqlCommand sqlCommand = new SqlCommand("CashierDesk_Update", connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.Parameters.AddWithValue("@Title", Title);
                     sqlCommand.Parameters.AddWithValue("@Enable", Enable);
@@ -49,7 +74,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -59,10 +84,10 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand(nameof(CashierDesk_Get), connection) { CommandType = CommandType.StoredProcedure };
+                    SqlCommand selectCommand = new SqlCommand("CashierDesk_Get", connection) { CommandType = CommandType.StoredProcedure };
                     selectCommand.Parameters.AddWithValue("@ID", ID);
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
                 }
@@ -70,20 +95,19 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }
 
         public int CashierDesk_Delete(int ID)
         {
-            DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(CashierDesk_Delete), connection) { CommandType = CommandType.StoredProcedure };
+                    SqlCommand sqlCommand = new SqlCommand("CashierDesk_Delete", connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.ExecuteNonQuery();
                 }
@@ -91,48 +115,23 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
-
-        public DataTable Orders_Get(int ID, int ID_GameCenter)
-        {
-            DataTable dataTable = new DataTable();
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
-                {
-                    connection.Open();
-                    SqlCommand selectCommand = new SqlCommand("select * from [dbo].[Orders] where ID=@ID and ID_GameCenter=@ID_GameCenter", connection);
-                    selectCommand.Parameters.AddWithValue("@ID", ID);
-                    selectCommand.Parameters.AddWithValue("@ID_GameCenter", ID_GameCenter);
-                    new SqlDataAdapter(selectCommand).Fill(dataTable);
-                    connection.Close();
-                }
-                return dataTable;
-            }
-            catch (Exception ex)
-            {
-                objMain.ErrorLog(ex);
-                return dataTable;
-            }
-        }
-
-        #region ' Useless '
 
         public int CashierDesk_insert(string Title, bool Enable, string UsersIDAccess, int GameCenterID)
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand("CashierDesk_Insert", connection)
                     {
                         CommandType = CommandType.StoredProcedure
                     };
-                    sqlCommand.Parameters.AddWithValue("@ID", (objMain.Max_Tbl("CashierDesk", "ID") + 1));
+                    sqlCommand.Parameters.AddWithValue("@ID", (clsMain.Max_Tbl("CashierDesk", "ID") + 1));
                     sqlCommand.Parameters.AddWithValue("@Title", Title);
                     sqlCommand.Parameters.AddWithValue("@Enable", Enable);
                     sqlCommand.Parameters.AddWithValue("@UsersIDAccess", UsersIDAccess);
@@ -145,7 +144,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -154,8 +153,8 @@ namespace ClickServerService
         {
             try
             {
-                int num = objMain.Max_Tbl("Orders", "ID") + 1;
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                int num = clsMain.Max_Tbl("Orders", "ID") + 1;
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand("INSERT INTO [dbo].[Orders]             ([ID]             ,[ID_GameCenter]             ,[ID_User]             ,[Date]             ,[ID_CashierDesk]             ,[ID_Card]             ,[CardMacAddress]             ,[SumPrice]             ,[SumBonus]             ,[SumFreeGame]             ,[SumFreeDailyGame]             ,[ID_Coupon]             ,[CashPrice]             ,[PosPrice]             ,[IsDeleted]           )       VALUES             (@ID             ,@ID_GameCenter             ,@ID_User             ,@Date             ,@ID_CashierDesk             ,@ID_Card             ,@CardMacAddress             ,@SumPrice             ,@SumBonus             ,@SumFreeGame             ,@SumFreeDailyGame             ,@ID_Coupon             ,@CashPrice             ,@PosPrice             ,@IsDeleted)", connection);
@@ -180,21 +179,20 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
 
         public int Order_Details_insert(int ID_GameCenter, int ID_Order, int ID_OrderItemType, int ID_OrderDetail, int Count, int Price, int Bonus, int ID_Coupon)
         {
-            DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand(" INSERT INTO [dbo].[Order_Details]             ([ID]             ,[ID_GameCenter]             ,[ID_Order]             ,[ID_OrderItemType]             ,[ID_OrderDetail]             ,[Count]             ,[Price]             ,[Bonus]             ,[ID_Coupon])       VALUES             (@ID             ,@ID_GameCenter             ,@ID_Order             ,@ID_OrderItemType             ,@ID_OrderDetail             ,@Count             ,@Price             ,@Bonus             ,@ID_Coupon)", connection);
-                    sqlCommand.Parameters.AddWithValue("@ID", (objMain.Max_Tbl("Order_Details", "ID") + 1));
+                    sqlCommand.Parameters.AddWithValue("@ID", (clsMain.Max_Tbl("Order_Details", "ID") + 1));
                     sqlCommand.Parameters.AddWithValue("@ID_GameCenter", ID_GameCenter);
                     sqlCommand.Parameters.AddWithValue("@ID_Order", ID_Order);
                     sqlCommand.Parameters.AddWithValue("@ID_OrderItemType", ID_OrderItemType);
@@ -209,7 +207,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }

@@ -6,14 +6,14 @@ namespace ClickServerService
 {
     internal class CouponClass
     {
-        private readonly MainClass objMain = new MainClass();
+        private readonly MainClass clsMain = new MainClass();
 
         public DataTable Coupon_Get()
         {
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand selectCommand = new SqlCommand("Coupon_GetAll", connection) { CommandType = CommandType.StoredProcedure };
@@ -23,20 +23,21 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }
 
+        #region ' Useless '
+
         public int Coupon_Update(int ID, int ID_GameCenter, string Title, string Barcode, string Serial, bool IsPercent, int Amount, bool AmountIsLock, bool ForItem, bool ForAll, string Users_GroupsIds, bool EnableDateAlways, DateTime EnableDateFrom, DateTime EnableDateTo, bool EnableTimeAlways, string EnableTimeFrom, string EnableTimeTo, bool EnableEveryDay, string EnableDays, bool ForAllProduct, bool ForAllStockProduct, bool ForAllCardProduct, bool ForSelectedProduct, string SelectedProductList)
         {
-            DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Coupon_Update), connection) { CommandType = CommandType.StoredProcedure };
+                    SqlCommand sqlCommand = new SqlCommand("Coupon_Update", connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.Parameters.AddWithValue("@ID_GameCenter", ID_GameCenter);
                     sqlCommand.Parameters.AddWithValue("@Title", Title);
@@ -68,7 +69,7 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
@@ -78,10 +79,10 @@ namespace ClickServerService
             DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand selectCommand = new SqlCommand(nameof(Coupon_Get), connection) { CommandType = CommandType.StoredProcedure };
+                    SqlCommand selectCommand = new SqlCommand("Coupon_Get", connection) { CommandType = CommandType.StoredProcedure };
                     selectCommand.Parameters.AddWithValue("@ID", ID);
                     selectCommand.Parameters.AddWithValue("@ID_GameCenter", ID_GameCenter);
                     new SqlDataAdapter(selectCommand).Fill(dataTable);
@@ -90,20 +91,19 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return dataTable;
             }
         }
 
         public int Coupon_Delete(int ID, int ID_GameCenter)
         {
-            DataTable dataTable = new DataTable();
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
-                    SqlCommand sqlCommand = new SqlCommand(nameof(Coupon_Delete), connection) { CommandType = CommandType.StoredProcedure };
+                    SqlCommand sqlCommand = new SqlCommand("Coupon_Delete", connection) { CommandType = CommandType.StoredProcedure };
                     sqlCommand.Parameters.AddWithValue("@ID", ID);
                     sqlCommand.Parameters.AddWithValue("@ID_GameCenter", ID_GameCenter);
                     sqlCommand.ExecuteNonQuery();
@@ -112,25 +112,23 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
-
-        #region ' Useless '
 
         public int Coupon_insert(int ID_GameCenter, string Title, string Barcode, string Serial, bool IsPercent, int Amount, bool AmountIsLock, bool ForItem, bool ForAll, string Users_GroupsIds, bool EnableDateAlways, DateTime EnableDateFrom, DateTime EnableDateTo, bool EnableTimeAlways, string EnableTimeFrom, string EnableTimeTo, bool EnableEveryDay, string EnableDays, bool ForAllProduct, bool ForAllStockProduct, bool ForAllCardProduct, bool ForSelectedProduct, string SelectedProductList)
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(objMain.DBPath()))
+                using (SqlConnection connection = new SqlConnection(clsMain.DBPath()))
                 {
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand("Coupon_Insert", connection)
                     {
                         CommandType = CommandType.StoredProcedure
                     };
-                    sqlCommand.Parameters.AddWithValue("@ID", (objMain.Max_Tbl("Coupon", "ID") + 1));
+                    sqlCommand.Parameters.AddWithValue("@ID", (clsMain.Max_Tbl("Coupon", "ID") + 1));
                     sqlCommand.Parameters.AddWithValue("@ID_GameCenter", ID_GameCenter);
                     sqlCommand.Parameters.AddWithValue("@Title", Title);
                     sqlCommand.Parameters.AddWithValue("@Barcode", Barcode);
@@ -162,12 +160,11 @@ namespace ClickServerService
             }
             catch (Exception ex)
             {
-                objMain.ErrorLog(ex);
+                clsMain.ErrorLog(ex);
                 return -1;
             }
         }
 
         #endregion
-
     }
 }

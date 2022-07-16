@@ -25,7 +25,7 @@ namespace ClickServerService
         /// <summary>
         /// Parameter for Printing Logs on Console When in Debug Mode. ( for Programmers )
         /// </summary>
-        readonly bool inDebugMode = true;
+        readonly bool inDebugMode = false;
 
         private readonly PersianCalendar persianCalendar = new PersianCalendar();
 
@@ -171,7 +171,7 @@ namespace ClickServerService
                 }
                 catch (Exception)
                 {
-                    WriteToFileError("Date: " + DateTime.Now.ToString() + " - Line: " + num.ToString() + " - MSG: " + exp.Message.ToString() + " - Trace: " + str1 + " " + Environment.NewLine);
+                    WriteToFileError("Date: " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:dd:fff") + " - Line: " + num.ToString() + " - MSG: " + exp.Message.ToString() + " - Trace: " + str1 + " " + Environment.NewLine);
                 }
             }
             catch { }
@@ -200,7 +200,7 @@ namespace ClickServerService
         {
             try
             {
-                WriteToFileError($"Date: {DateTime.Now} - P: {errText}");
+                WriteToFileError($"Date: {DateTime.Now:yyyy-MM-dd HH:mm:dd:fff} - P: {errText}");
             }
             catch { }
         }
@@ -577,30 +577,6 @@ namespace ClickServerService
             }
         }
 
-        public List<ServerConfigView> ServerConfig_GetByGameCenterID(int id_GameCenter, int? multiRun_AP_ID = null)
-        {
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(DBPath()))
-                {
-                    string query_ServerConfigView = @"Select dbo.Access_Point.AP_ID, dbo.ServerConfig.ID, dbo.Access_Point.ID_GameCenter, dbo.Access_Point.AP_Name, dbo.Access_Point.AP_IP, dbo.Access_Point.AP_Port, dbo.Access_Point.AP_IsEnable, dbo.Access_Point.AP_Status, dbo.ServerConfig.ValidateReceivedData, dbo.ServerConfig.ServerIP, dbo.ServerConfig.RepeatConfig, dbo.ServerConfig.IsShowAllRecive As 'IsShowAllReceive', dbo.ServerConfig.IsShowAllSend, dbo.ServerConfig.IsDecreasePriceInLevel2, dbo.ServerConfig.IsEnableTimerSync, dbo.ServerConfig.TimeSync, dbo.ServerConfig.IsRestart, dbo.ServerConfig.Ftp_UserName, dbo.ServerConfig.Ftp_Password
-                                                      From dbo.Access_Point Inner Join dbo.ServerConfig
-                                                      On dbo.Access_Point.ID_GameCenter = dbo.ServerConfig.ID_GameCenter ";
-                    string query = $@"{query_ServerConfigView} Where dbo.Access_Point.ID_GameCenter = @ID_GameCenter ;
-                                     Update ServerConfig Set IsRestart = 0  Where ID_GameCenter = @ID_GameCenter";
-                    List<ServerConfigView> temp = (List<ServerConfigView>)connection.Query<ServerConfigView>(query, new { ID_GameCenter = id_GameCenter });
-                    if (multiRun_AP_ID != null)
-                        temp = temp.Where(i => i.AP_ID == multiRun_AP_ID).ToList();
-                    return temp;
-                }
-            }
-            catch (Exception ex)
-            {
-                ErrorLog(ex);
-                return null;
-            }
-        }
-
         public void ServerConfig_SetApStatus(int ID_GameCenter, bool Status, int multiRun_AP_ID = 0)
         {
             try
@@ -760,6 +736,33 @@ namespace ClickServerService
         }
 
         #region ' SEM '
+
+        /// <summary>
+        /// ServerConfig View - (ServerConfig , Access_Point)
+        /// </summary>
+        public List<ServerConfigView> ServerConfig_GetByGameCenterID(int id_GameCenter, int? multiRun_AP_ID = null)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(DBPath()))
+                {
+                    string query_ServerConfigView = @"Select dbo.Access_Point.AP_ID, dbo.ServerConfig.ID, dbo.Access_Point.ID_GameCenter, dbo.Access_Point.AP_Name, dbo.Access_Point.AP_IP, dbo.Access_Point.AP_Port, dbo.Access_Point.AP_IsEnable, dbo.Access_Point.AP_Status, dbo.ServerConfig.ValidateReceivedData, dbo.ServerConfig.ServerIP, dbo.ServerConfig.RepeatConfig, dbo.ServerConfig.IsShowAllRecive As 'IsShowAllReceive', dbo.ServerConfig.IsShowAllSend, dbo.ServerConfig.IsDecreasePriceInLevel2, dbo.ServerConfig.IsEnableTimerSync, dbo.ServerConfig.TimeSync, dbo.ServerConfig.IsRestart, dbo.ServerConfig.Ftp_UserName, dbo.ServerConfig.Ftp_Password
+                                                      From dbo.Access_Point Inner Join dbo.ServerConfig
+                                                      On dbo.Access_Point.ID_GameCenter = dbo.ServerConfig.ID_GameCenter ";
+                    string query = $@"{query_ServerConfigView} Where dbo.Access_Point.ID_GameCenter = @ID_GameCenter And dbo.Access_Point.AP_IsEnable = 1 ;
+                                     Update ServerConfig Set IsRestart = 0  Where ID_GameCenter = @ID_GameCenter";
+                    List<ServerConfigView> temp = (List<ServerConfigView>)connection.Query<ServerConfigView>(query, new { ID_GameCenter = id_GameCenter });
+                    if (multiRun_AP_ID != null)
+                        temp = temp.Where(i => i.AP_ID == multiRun_AP_ID).ToList();
+                    return temp;
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLog(ex);
+                return null;
+            }
+        }
 
         /// <summary>
         /// Get All Enable AccessPoints in Table(Access_Point) Where ID_GameCenter

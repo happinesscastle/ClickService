@@ -64,7 +64,7 @@ namespace ClickServerService.Improved
         {
             try
             {
-                //clsMain.MyPrint("Receive - AppLoadMain", ConsoleColor.Blue);
+                clsMain.MyPrint("Receive - AppLoadMain", ConsoleColor.Blue);
                 flagConnectToSQL = false;
                 serverConfigView.ValidateReceivedData = 2;
                 serverConfigView.AP_IsEnable = false;
@@ -157,7 +157,7 @@ namespace ClickServerService.Improved
             {
                 try
                 {
-                    if ((Send_Main(serverConfigView.AP_IP, "check", ClsStarter.tCPClientList.SingleOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient) == 1) && receiveThread.IsAlive)
+                    if ((Send_Main(serverConfigView.AP_IP, "check", ClsStarter.tCPClientList.FirstOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient) == 1) && receiveThread.IsAlive)
                     {
                         clsMain.ServerConfig_SetApStatus(clsMain.ID_GameCenter_Local_Get(), true, multiRun_AP_ID);
                     }
@@ -220,13 +220,13 @@ namespace ClickServerService.Improved
                     {
                         clsMain.MyPrint($"R%clientAp{multiRun_AP_ID}.Connect (IP : {serverConfigView.AP_IP} , Port: {serverConfigView.AP_Port})", ConsoleColor.Magenta);
                         NetworkStream stream = null;
-                        if (!ClsStarter.tCPClientList.SingleOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient.Connected)
+                        if (!ClsStarter.tCPClientList.FirstOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient.Connected)
                         {
-                            ClsStarter.tCPClientList.SingleOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient.Close();
-                            ClsStarter.tCPClientList.SingleOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient = new TcpClient();
-                            ClsStarter.tCPClientList.SingleOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient.Connect(serverConfigView.AP_IP, serverConfigView.AP_Port);
+                            ClsStarter.tCPClientList.FirstOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient.Close();
+                            ClsStarter.tCPClientList.FirstOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient = new TcpClient();
+                            ClsStarter.tCPClientList.FirstOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient.Connect(serverConfigView.AP_IP, serverConfigView.AP_Port);
                         }
-                        stream = ClsStarter.tCPClientList.SingleOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient.GetStream();
+                        stream = ClsStarter.tCPClientList.FirstOrDefault(i => i.AP_ID == multiRun_AP_ID).TCPClient.GetStream();
                         try
                         {
                             int count;

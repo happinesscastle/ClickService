@@ -32,7 +32,7 @@ namespace ClickServerService.Improved
         {
             try
             {
-                //clsMain.MyPrint("Send - AppLoadMain", ConsoleColor.Blue);
+                clsMain.MyPrint("Send - AppLoadMain", ConsoleColor.Blue);
                 txtSend = "";
                 clsMain.LoadGameCenterID();
                 main_ID_GameCenter = clsMain.ID_GameCenter_Local_Get();
@@ -312,7 +312,7 @@ namespace ClickServerService.Improved
                                 foreach (var item in serverConfigView)
                                 {
                                     Send_DisplayText(str2, $"P{item.AP_ID}", t_SwiperName, t_CardmacAddress, DateTime.Now);
-                                    Send_Main(item.AP_IP, str2, ClsStarter.tCPClientList.SingleOrDefault(i => i.AP_ID == item.AP_ID).TCPClient);
+                                    Send_Main(item.AP_IP, str2, ClsStarter.tCPClientList.FirstOrDefault(i => i.AP_ID == item.AP_ID).TCPClient);
                                 }
                                 Thread.Sleep(10);
                             }
@@ -328,7 +328,7 @@ namespace ClickServerService.Improved
                                 foreach (var item in serverConfigView)
                                 {
                                     Send_DisplayText(str2, $"P{item.AP_ID}", "", "");
-                                    Send_Main(item.AP_IP, Command, ClsStarter.tCPClientList.SingleOrDefault(i => i.AP_ID == item.AP_ID).TCPClient);
+                                    Send_Main(item.AP_IP, Command, ClsStarter.tCPClientList.FirstOrDefault(i => i.AP_ID == item.AP_ID).TCPClient);
                                     Thread.Sleep(10);
                                 }
                                 Thread.Sleep(100);
@@ -382,11 +382,11 @@ namespace ClickServerService.Improved
                     try
                     {
                         bool isAllowedToSend = false;
-                        var swiper = SwiperClass.Swipers.SingleOrDefault(mc => mc.MacAddress.ToUpper() == clsSwiper.GetMacSwiper(command).ToUpper());
+                        var swiper = SwiperClass.Swipers.FirstOrDefault(mc => mc.MacAddress.ToUpper() == clsSwiper.GetMacSwiper(command).ToUpper());
                         if (swiper != null)
                         {
                             if (swiper.ID_Swiper_Segment != null)
-                                isAllowedToSend = ClsStarter.accessPoints.Where(ap => ap.AP_ID == item.AP_ID).SingleOrDefault().ListSwiperSegmentIDs.Contains(swiper.ID_Swiper_Segment.Value.ToString());
+                                isAllowedToSend = ClsStarter.accessPoints.Where(ap => ap.AP_ID == item.AP_ID).FirstOrDefault().ListSwiperSegmentIDs.Contains(swiper.ID_Swiper_Segment.Value.ToString());
                         }
                         if (isAllowedToSend)
                         {
@@ -413,13 +413,13 @@ namespace ClickServerService.Improved
             try
             {
                 bool isAllowedToSend = false;
-                var swiper = SwiperClass.Swipers.SingleOrDefault(mc => mc.MacAddress.ToUpper() == clsSwiper.GetMacSwiper(command).ToUpper());
+                var swiper = SwiperClass.Swipers.FirstOrDefault(mc => mc.MacAddress.ToUpper() == clsSwiper.GetMacSwiper(command).ToUpper());
                 if (swiper != null)
                 {
                     if (swiper.ID_Swiper_Segment != null)
                     {
                         int id_ap = ClsStarter.accessPoints.Where(i => i.AP_IP == ipAp).FirstOrDefault().AP_ID;
-                        isAllowedToSend = ClsStarter.accessPoints.Where(ap => ap.AP_ID == id_ap).SingleOrDefault().ListSwiperSegmentIDs.Contains(swiper.ID_Swiper_Segment.Value.ToString());
+                        isAllowedToSend = ClsStarter.accessPoints.Where(ap => ap.AP_ID == id_ap).FirstOrDefault().ListSwiperSegmentIDs.Contains(swiper.ID_Swiper_Segment.Value.ToString());
                     }
                 }
                 if (isAllowedToSend)
@@ -516,7 +516,7 @@ namespace ClickServerService.Improved
                         ch = str8[3];
                         string str25 = ch.ToString();
                         string macStamp = str24 + str25;
-                        Swipers_ChargeRate addressByChargeRate = SwiperClass.Swipers_ChargeRate.SingleOrDefault(mac => mac.MacAddress.ToUpper() == macAddress.ToUpper());
+                        Swipers_ChargeRate addressByChargeRate = SwiperClass.Swipers_ChargeRate.FirstOrDefault(mac => mac.MacAddress.ToUpper() == macAddress.ToUpper());
                         if (addressByChargeRate != null)
                         {
                             str3_Title = addressByChargeRate.Title;
@@ -538,7 +538,7 @@ namespace ClickServerService.Improved
                         string str5 = receiveText.Substring(1, 12);
                         string macAddress = str5.Substring(0, 2) + str5.Substring(3, 2) + str5.Substring(6, 2) + str5.Substring(9, 2);
                         string macStamp = MacAndTimeStamp_Create(macAddress);
-                        Swipers_ChargeRate addressByChargeRate = SwiperClass.Swipers_ChargeRate.SingleOrDefault(mac => mac.MacAddress == macAddress.ToUpper());
+                        Swipers_ChargeRate addressByChargeRate = SwiperClass.Swipers_ChargeRate.FirstOrDefault(mac => mac.MacAddress == macAddress.ToUpper());
                         if (addressByChargeRate != null)
                         {
                             str3_Title = addressByChargeRate.Title;
@@ -686,7 +686,7 @@ namespace ClickServerService.Improved
                         string str5 = receiveText.Substring(1, 12);
                         string macAddress = str5.Substring(0, 2) + str5.Substring(3, 2) + str5.Substring(6, 2) + str5.Substring(9, 2);
                         string macStamp = MacAndTimeStamp_Create(macAddress);
-                        Swipers_ChargeRate addressByChargeRate = SwiperClass.Swipers_ChargeRate.SingleOrDefault(mac => mac.MacAddress == macAddress.ToUpper());
+                        Swipers_ChargeRate addressByChargeRate = SwiperClass.Swipers_ChargeRate.FirstOrDefault(mac => mac.MacAddress == macAddress.ToUpper());
                         str27_Error = "1524";
                         if (addressByChargeRate != null)
                         {
@@ -985,7 +985,7 @@ namespace ClickServerService.Improved
                         string macAddress = str5.Substring(0, 2) + str5.Substring(3, 2) + str5.Substring(6, 2) + str5.Substring(9, 2);
                         string macStamp = MacAndTimeStamp_Create(macAddress);
                         string MacCode = receiveText.Split('=')[1].Replace("\r", "").Split(',')[0];
-                        Swipers_ChargeRate addressByChargeRate = SwiperClass.Swipers_ChargeRate.SingleOrDefault(mac => mac.MacAddress == macAddress.ToUpper());
+                        Swipers_ChargeRate addressByChargeRate = SwiperClass.Swipers_ChargeRate.FirstOrDefault(mac => mac.MacAddress == macAddress.ToUpper());
                         int num1 = 0;
                         if (addressByChargeRate != null)
                         {
@@ -1212,7 +1212,7 @@ namespace ClickServerService.Improved
                             }
                         }
                         string macStamp = MacAndTimeStamp_Create(macAddress);
-                        Swipers_ChargeRate addressByChargeRate = SwiperClass.Swipers_ChargeRate.SingleOrDefault(mac => mac.MacAddress == macAddress.ToUpper());
+                        Swipers_ChargeRate addressByChargeRate = SwiperClass.Swipers_ChargeRate.FirstOrDefault(mac => mac.MacAddress == macAddress.ToUpper());
                         int ID_Games = -1;
                         int ID_Swiper = -1;
                         string str9_Vrsn = "1";
@@ -1369,7 +1369,7 @@ namespace ClickServerService.Improved
                         string str6 = str5.Substring(0, 2) + str5.Substring(3, 2) + str5.Substring(6, 2) + str5.Substring(9, 2);
                         string macAddress = str6;
                         string macStamp = MacAndTimeStamp_Create(macAddress);
-                        Swipers_ChargeRate addressByChargeRate = SwiperClass.Swipers_ChargeRate.SingleOrDefault(mac => mac.MacAddress == macAddress.ToUpper());
+                        Swipers_ChargeRate addressByChargeRate = SwiperClass.Swipers_ChargeRate.FirstOrDefault(mac => mac.MacAddress == macAddress.ToUpper());
                         if (addressByChargeRate != null)
                         {
                             str3_Title = addressByChargeRate.Title;
@@ -1391,7 +1391,7 @@ namespace ClickServerService.Improved
                         string str5 = receiveText.Substring(1, 12);
                         string macAddress = str5.Substring(0, 2) + str5.Substring(3, 2) + str5.Substring(6, 2) + str5.Substring(9, 2); ;
                         string macStamp = MacAndTimeStamp_Create(macAddress);
-                        Swipers_ChargeRate addressByChargeRate = SwiperClass.Swipers_ChargeRate.SingleOrDefault(mac => mac.MacAddress == macAddress.ToUpper());
+                        Swipers_ChargeRate addressByChargeRate = SwiperClass.Swipers_ChargeRate.FirstOrDefault(mac => mac.MacAddress == macAddress.ToUpper());
                         if (addressByChargeRate != null)
                         {
                             str3_Title = addressByChargeRate.Title;
@@ -1552,7 +1552,7 @@ namespace ClickServerService.Improved
                         string macAddress = str5.Substring(0, 2) + str5.Substring(3, 2) + str5.Substring(6, 2) + str5.Substring(9, 2);
                         string macStamp = MacAndTimeStamp_Create(macAddress);
 
-                        Swipers_ChargeRate addressByChargeRate = SwiperClass.Swipers_ChargeRate.SingleOrDefault(mac => mac.MacAddress == macAddress.ToUpper());
+                        Swipers_ChargeRate addressByChargeRate = SwiperClass.Swipers_ChargeRate.FirstOrDefault(mac => mac.MacAddress == macAddress.ToUpper());
                         if (addressByChargeRate != null)
                         {
                             str4_Mac = receiveText.Split('=')[1].Replace("\r", "").Split(',')[0].ToUpper();
@@ -1761,7 +1761,7 @@ namespace ClickServerService.Improved
                         string macAddress = stateForChangePrice[index2].MacAddress;
                         string macStamp = MacAndTimeStamp_Create(macAddress);
 
-                        Swipers_ChargeRate addressByChargeRate = SwiperClass.Swipers_ChargeRate.SingleOrDefault(mac => mac.MacAddress == macAddress.ToUpper());
+                        Swipers_ChargeRate addressByChargeRate = SwiperClass.Swipers_ChargeRate.FirstOrDefault(mac => mac.MacAddress == macAddress.ToUpper());
                         if (addressByChargeRate != null)
                         {
                             clsSwiper.Swiper_UpdateStateByMacAddress(macAddress.ToUpper(), -3);
@@ -1772,7 +1772,7 @@ namespace ClickServerService.Improved
                                 foreach (var item in serverConfigView)
                                 {
                                     Send_DisplayText(str4, $"P{item.AP_ID}", "", "");
-                                    Send_Main(item.AP_IP, str4, ClsStarter.tCPClientList.SingleOrDefault(i => i.AP_ID == item.AP_ID).TCPClient);
+                                    Send_Main(item.AP_IP, str4, ClsStarter.tCPClientList.FirstOrDefault(i => i.AP_ID == item.AP_ID).TCPClient);
                                 }
                                 Thread.Sleep(70);
                             }
@@ -1782,7 +1782,7 @@ namespace ClickServerService.Improved
                                 foreach (var item in serverConfigView)
                                 {
                                     Send_DisplayText(str5, $"P{item.AP_ID}", "", "");
-                                    Send_Main(item.AP_IP, str5, ClsStarter.tCPClientList.SingleOrDefault(i => i.AP_ID == item.AP_ID).TCPClient);
+                                    Send_Main(item.AP_IP, str5, ClsStarter.tCPClientList.FirstOrDefault(i => i.AP_ID == item.AP_ID).TCPClient);
                                 }
                                 Thread.Sleep(70);
                             }

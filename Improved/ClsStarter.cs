@@ -96,7 +96,7 @@ namespace ClickServerService.Improved
                             tCPClientList.Add(new MyTCPClient(item.AP_ID, tcp));
                             try
                             {
-                                tCPClientList.SingleOrDefault(i => i.AP_ID == item.AP_ID).TCPClient.Connect(item.AP_IP, item.AP_Port);
+                                tCPClientList.FirstOrDefault(i => i.AP_ID == item.AP_ID).TCPClient.Connect(item.AP_IP, item.AP_Port);
                             }
                             catch
                             {

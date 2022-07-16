@@ -89,7 +89,7 @@ namespace ClickServerService
                     sqlCommand.ExecuteNonQuery();
                     connection.Close();
                     connection.Dispose();
-                    Swipers.Where(mac => mac.MacAddress == macAddress).Where(gameCenterID => gameCenterID.ID_GameCenter == clsMain.ID_GameCenter_Local_Get()).SingleOrDefault().Config_State = configState;
+                    Swipers.Where(mac => mac.MacAddress == macAddress).Where(gameCenterID => gameCenterID.ID_GameCenter == clsMain.ID_GameCenter_Local_Get()).FirstOrDefault().Config_State = configState;
                 }
             }
             catch (Exception ex)
@@ -150,7 +150,7 @@ namespace ClickServerService
                     sqlCommand.Parameters.AddWithValue("@ID_GameCenter", id_GameCenter);
                     sqlCommand.Parameters.AddWithValue("@ID", id);
                     sqlCommand.ExecuteNonQuery();
-                    Swipers.Where(i => i.ID == id).Where(gcID => gcID.ID_GameCenter == id_GameCenter).Where(conState => conState.Config_State == -1).SingleOrDefault().Config_State = 0;
+                    Swipers.Where(i => i.ID == id).Where(gcID => gcID.ID_GameCenter == id_GameCenter).Where(conState => conState.Config_State == -1).FirstOrDefault().Config_State = 0;
                 }
             }
             catch (Exception ex)
@@ -216,7 +216,7 @@ namespace ClickServerService
                     sqlCommand.Parameters.AddWithValue("@Config_State", config_State);
                     sqlCommand.Parameters.AddWithValue("@MacAddress ", macAddress);
                     sqlCommand.ExecuteNonQuery();
-                    Swipers.SingleOrDefault(mac => mac.MacAddress == macAddress.ToUpper()).Config_State = config_State;
+                    Swipers.FirstOrDefault(mac => mac.MacAddress == macAddress.ToUpper()).Config_State = config_State;
                 }
             }
             catch (Exception ex)

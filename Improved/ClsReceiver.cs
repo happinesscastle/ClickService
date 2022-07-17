@@ -485,7 +485,7 @@ namespace ClickServerService.Improved
 
                 pathFileLog += $"\\ServiceLog_AP{multiRun_AP_ID}_{DateTime.Now:yyyy-MM-dd}.txt";
 
-                File.AppendAllText(pathFileLog, message, Encoding.UTF8);
+                File.AppendAllText(pathFileLog, message + "\n", Encoding.UTF8);
             }
             catch (Exception ex)
             {

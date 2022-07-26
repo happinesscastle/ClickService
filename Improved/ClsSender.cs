@@ -1811,7 +1811,7 @@ namespace ClickServerService.Improved
 
                     pathFileSendReceive += $"\\ServiceLog_Send{DateTime.Now:yyyy-MM-dd}.txt";
 
-                    File.AppendAllText(pathFileSendReceive, message + "\n", Encoding.UTF8);
+                    File.AppendAllText(pathFileSendReceive, message + Environment.NewLine, Encoding.UTF8);
                 }
             }
             catch (Exception ex)

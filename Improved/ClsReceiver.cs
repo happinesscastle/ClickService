@@ -483,9 +483,9 @@ namespace ClickServerService.Improved
                 if (!Directory.Exists(pathFileLog))
                     Directory.CreateDirectory(pathFileLog);
 
-                pathFileLog += $"\\ServiceLog_AP{multiRun_AP_ID}_{DateTime.Now:yyyy-MM-dd}.txt";
+                pathFileLog += $"\\ServiceLog_{DateTime.Now:yyyy-MM-dd}_AP{multiRun_AP_ID}.txt";
 
-                File.AppendAllText(pathFileLog, message + "\n", Encoding.UTF8);
+                File.AppendAllText(pathFileLog, message + Environment.NewLine, Encoding.UTF8);
             }
             catch (Exception ex)
             {
@@ -508,8 +508,8 @@ namespace ClickServerService.Improved
                     if (!Directory.Exists(pathFileReceive))
                         Directory.CreateDirectory(pathFileReceive);
 
-                    pathFileReceive += $"\\ServiceLog_Receive_AP{multiRun_AP_ID}_{DateTime.Now:yyyy-MM-dd}.txt";
-                    File.WriteAllText(pathFileReceive, message, Encoding.UTF8);
+                    pathFileReceive += $"\\ServiceLog_Receive_{DateTime.Now:yyyy-MM-dd}_AP{multiRun_AP_ID}.txt";
+                    File.WriteAllText(pathFileReceive, message + Environment.NewLine, Encoding.UTF8);
                 }
             }
             catch (Exception ex)

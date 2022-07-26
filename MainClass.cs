@@ -215,7 +215,7 @@ namespace ClickServerService
 
                 pathErrorLog += $"\\ErrorLog_{DateTime.Now:yyyy-MM-dd}.txt";
 
-                File.AppendAllText(pathErrorLog, message + "\n", Encoding.UTF8);
+                File.AppendAllText(pathErrorLog, message + Environment.NewLine, Encoding.UTF8);
             }
             catch { }
         }

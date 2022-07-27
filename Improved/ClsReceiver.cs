@@ -76,7 +76,7 @@ namespace ClickServerService.Improved
 
                 if (!clsMain.Licence_Check())
                 {
-                    WriteToFile(DateTime.Now.ToString() + ":1:Licence ERROR ");
+                    WriteToFile(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ":1:Licence ERROR ");
                 }
                 else
                 {
@@ -163,7 +163,7 @@ namespace ClickServerService.Improved
                     }
                     else
                     {
-                        WriteToFile(DateTime.Now.ToString() + $": Ap{multiRun_AP_ID} is Disconnect.");
+                        WriteToFile(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $": Ap{multiRun_AP_ID} is Disconnect.");
                         clsMain.ServerConfig_SetApStatus(clsMain.ID_GameCenter_Local_Get(), false, multiRun_AP_ID);
                         try
                         {
@@ -186,7 +186,7 @@ namespace ClickServerService.Improved
                 }
                 catch (Exception ex)
                 {
-                    WriteToFile(DateTime.Now.ToString() + $": Ap{multiRun_AP_ID} :" + ex.Message);
+                    WriteToFile(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + $": Ap{multiRun_AP_ID} :" + ex.Message);
                     clsMain.ErrorLog(ex);
                 }
             }
